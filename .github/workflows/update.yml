@@ -1,0 +1,43 @@
+name: Update IPO Tracker
+
+on:
+  schedule:
+    - cron: '30 4 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install -r requirements.txt
+
+      - run: python update_tracker.py
+
+      - name: Sync public tracker data
+        run: |
+          mkdir -p data
+          cp site/data/tracker.json data/tracker.json 2>/dev/null || true
+
+      - name: Commit updated tracker
+        run: |
+          git config user.name "ipo-tracker-bot"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add index.html data/tracker.json docs/data.json
+
+          if git diff --cached --quiet; then
+            echo "No tracker changes to commit"
+          else
+            git commit -m "Update IPO tracker"
+            git push
+          fi

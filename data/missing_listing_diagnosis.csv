@@ -1,0 +1,6 @@
+COMPANY,SYMBOL,LISTING_DATE,REASON,DETAIL
+Rambhajo Jewellery,RAMBHAJO,2026-06-05,LISTING_DATE_MISMATCH,First later trading row: 2026-07-01
+Dhoot Transmission,DHOOT,2026-08-18,REQUEST_ERROR,404 Client Error: Not Found for url: https://query1.finance.yahoo.com/v8/finance/chart/DHOOT.NS?period1=1786924800&period2=1787240393&interval=1d&events=history
+Behari Lal Engineering,BEHA,2026-08-18,REQUEST_ERROR,404 Client Error: Not Found for url: https://query1.finance.yahoo.com/v8/finance/chart/BEHA.NS?period1=1786924800&period2=1787240394&interval=1d&events=history
+Protean eGov,PROTEAN,2023-11-13,LISTING_DATE_MISMATCH,First later trading row: 2025-02-06
+International Gemmological Institute,IGIL,2024-12-20,LISTING_DATE_MISMATCH,First later trading row: 2024-12-30
