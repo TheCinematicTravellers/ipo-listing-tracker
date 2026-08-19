@@ -1,0 +1,2109 @@
+{
+  "date": "2026-08-19",
+  "summary": {
+    "total_tracked": 337,
+    "listing_levels": 298,
+    "historical_breaks": 250,
+    "todays_breakouts": 2
+  },
+  "today": [
+    {
+      "symbol": "LEAPIND",
+      "company": "LEAP India",
+      "breakout_pct": "2.54"
+    },
+    {
+      "symbol": "MILKYMIST",
+      "company": "Milky Mist",
+      "breakout_pct": "10.00"
+    }
+  ],
+  "ipos": [
+    {
+      "symbol": "AMAGI",
+      "company": "Amagi Media Labs",
+      "listing_date": "2026-01-21",
+      "listing_high": "356.95001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SHADOWFAX",
+      "company": "Shadowfax Technologies",
+      "listing_date": "2026-01-28",
+      "listing_high": "119.66999816894531",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AYE",
+      "company": "Aye Finance",
+      "listing_date": "2026-02-16",
+      "listing_high": "133.8000030517578",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "FRACTAL",
+      "company": "Fractal Analytics",
+      "listing_date": "2026-02-16",
+      "listing_high": "897.2999877929688",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GAUDIUMIVF",
+      "company": "Gaudium IVF",
+      "listing_date": "2026-02-27",
+      "listing_high": "87.1500015258789",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SRTL",
+      "company": "Shree Ram Twistex",
+      "listing_date": "2026-03-02",
+      "listing_high": "71.4000015258789",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PNGSREVA",
+      "company": "PNGS Reva",
+      "listing_date": "2026-03-04",
+      "listing_high": "433.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "OMNI",
+      "company": "Omnitech Engineering",
+      "listing_date": "2026-03-05",
+      "listing_high": "224.6999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SEDEMAC",
+      "company": "Sedemac Mechatronics",
+      "listing_date": "2026-03-11",
+      "listing_high": "1613.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RSL",
+      "company": "Rajputana Stainless",
+      "listing_date": "2026-03-19",
+      "listing_high": "122.0999984741211",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GSPCROP",
+      "company": "GSP Crop Science",
+      "listing_date": "2026-03-24",
+      "listing_high": "364.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SAIPARENT",
+      "company": "Sai Parenteral\u2019s",
+      "listing_date": "2026-04-02",
+      "listing_high": "416.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AEROPLANE",
+      "company": "Aeroplane Basmati",
+      "listing_date": "2026-05-05",
+      "listing_high": "132.8000030517578",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "POWERICA",
+      "company": "Powerica",
+      "listing_date": "2026-04-02",
+      "listing_high": "397.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "OMPOWER",
+      "company": "Om Power",
+      "listing_date": "2026-04-17",
+      "listing_high": "195.3000030517578",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KISSHT",
+      "company": "Kissht",
+      "listing_date": "2026-05-08",
+      "listing_high": "227.39999389648438",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HEXAGON",
+      "company": "Hexagon Nutrition",
+      "listing_date": "2026-06-12",
+      "listing_high": "50.65999984741211",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TURTLEMINT",
+      "company": "Turtlemint Fintech",
+      "listing_date": "2026-06-29",
+      "listing_high": "144.9499969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AASTHA",
+      "company": "Aastha Spintex",
+      "listing_date": "2026-07-06",
+      "listing_high": "136.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KNACK",
+      "company": "Knack Packaging",
+      "listing_date": "2026-07-08",
+      "listing_high": "192.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KUSUMGAR",
+      "company": "Kusumgar",
+      "listing_date": "2026-07-15",
+      "listing_high": "625.9000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LASERPOWER",
+      "company": "Laser Power",
+      "listing_date": "2026-07-16",
+      "listing_high": "270.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CMLL",
+      "company": "Caliber Mining",
+      "listing_date": "2026-07-24",
+      "listing_high": "538.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "XTRANET",
+      "company": "Xtranet Technologies",
+      "listing_date": "2026-07-30",
+      "listing_high": "136.89999389648438",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LCL",
+      "company": "Lohia Corp",
+      "listing_date": "2026-07-30",
+      "listing_high": "508.6499938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INDOMIM",
+      "company": "Indo-MIM",
+      "listing_date": "2026-07-30",
+      "listing_high": "757.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MANIPALHOS",
+      "company": "Manipal Health",
+      "listing_date": "2026-08-05",
+      "listing_high": "675.7999877929688",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MVELECTRO",
+      "company": "MV Electrosystems",
+      "listing_date": "2026-08-06",
+      "listing_high": "624.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ARDEE",
+      "company": "Ardee Industries",
+      "listing_date": "2026-08-12",
+      "listing_high": "73.19000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LEAPIND",
+      "company": "LEAP India",
+      "listing_date": "2026-08-14",
+      "listing_high": "167.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MILKYMIST",
+      "company": "Milky Mist",
+      "listing_date": "2026-08-18",
+      "listing_high": "181.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ELIN",
+      "company": "Elin Electronics",
+      "listing_date": "2022-12-30",
+      "listing_high": "245.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KFINTECH",
+      "company": "KFin Technologies",
+      "listing_date": "2022-12-29",
+      "listing_high": "373.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LANDMARK",
+      "company": "Landmark Cars",
+      "listing_date": "2022-12-23",
+      "listing_high": "481.1499938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SULA",
+      "company": "Sula Vineyards",
+      "listing_date": "2022-12-22",
+      "listing_high": "363.29998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "UNIPARTS",
+      "company": "Uniparts",
+      "listing_date": "2022-12-12",
+      "listing_high": "577.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DHARMAJ",
+      "company": "Dharmaj Crop Guard",
+      "listing_date": "2022-12-08",
+      "listing_high": "279.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RUSTOMJEE",
+      "company": "Keystone Realtors",
+      "listing_date": "2022-11-24",
+      "listing_high": "569.9500122070312",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INOXGREEN",
+      "company": "Inox Green Energy",
+      "listing_date": "2022-11-23",
+      "listing_high": "64.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KAYNES",
+      "company": "Kaynes Technology",
+      "listing_date": "2022-11-22",
+      "listing_high": "786.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "FIVESTAR",
+      "company": "Five-Star Business Finance",
+      "listing_date": "2022-11-21",
+      "listing_high": "543.5999755859375",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ACI",
+      "company": "Archean Chemical",
+      "listing_date": "2022-11-21",
+      "listing_high": "476.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BIKAJI",
+      "company": "Bikaji Foods",
+      "listing_date": "2022-11-16",
+      "listing_high": "334.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DCXINDIA",
+      "company": "DCX Systems",
+      "listing_date": "2022-11-11",
+      "listing_high": "319.8999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TRACXN",
+      "company": "Tracxn",
+      "listing_date": "2022-10-20",
+      "listing_high": "100.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EMIL",
+      "company": "Electronics Mart",
+      "listing_date": "2022-10-17",
+      "listing_high": "91.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HARSHA",
+      "company": "Harsha Engineers",
+      "listing_date": "2022-09-26",
+      "listing_high": "527.6500244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TMB",
+      "company": "Tamilnad Mercantile Bank",
+      "listing_date": "2022-09-15",
+      "listing_high": "515.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DREAMFOLKS",
+      "company": "DreamFolks",
+      "listing_date": "2022-09-06",
+      "listing_high": "549.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SYRMA",
+      "company": "Syrma SGS",
+      "listing_date": "2022-08-26",
+      "listing_high": "312.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INNOVACAP",
+      "company": "Innova Captab",
+      "listing_date": "2023-12-29",
+      "listing_high": "542.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AZAD",
+      "company": "Azad Engineering",
+      "listing_date": "2023-12-28",
+      "listing_high": "727.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HAPPYFORGE",
+      "company": "Happy Forgings",
+      "listing_date": "2023-12-27",
+      "listing_high": "1087.4000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RBZJEWEL",
+      "company": "RBZ Jewellers",
+      "listing_date": "2023-12-27",
+      "listing_high": "105.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MUFTI",
+      "company": "Credo Brands",
+      "listing_date": "2023-12-27",
+      "listing_high": "324.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SURAJEST",
+      "company": "Suraj Estate",
+      "listing_date": "2023-12-26",
+      "listing_high": "354.45001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MUTHOOTMF",
+      "company": "Muthoot Microfin",
+      "listing_date": "2023-12-26",
+      "listing_high": "281.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MOTISONS",
+      "company": "Motisons Jewellers",
+      "listing_date": "2023-12-26",
+      "listing_high": "10.979999542236328",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INOXINDIA",
+      "company": "INOX India",
+      "listing_date": "2023-12-21",
+      "listing_high": "990.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DOMS",
+      "company": "DOMS Industries",
+      "listing_date": "2023-12-20",
+      "listing_high": "1434.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INDIASHLTR",
+      "company": "India Shelter Finance",
+      "listing_date": "2023-12-20",
+      "listing_high": "630.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "FLAIR",
+      "company": "Flair Writing",
+      "listing_date": "2023-12-01",
+      "listing_high": "514.4000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TATATECH",
+      "company": "Tata Technologies",
+      "listing_date": "2023-11-30",
+      "listing_high": "1400.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GANDHAR",
+      "company": "Gandhar Oil",
+      "listing_date": "2023-11-30",
+      "listing_high": "344.04998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ASKAUTOLTD",
+      "company": "ASK Automotive",
+      "listing_date": "2023-11-15",
+      "listing_high": "316.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CELLO",
+      "company": "Cello World",
+      "listing_date": "2023-11-06",
+      "listing_high": "837.4000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BLUEJET",
+      "company": "Blue Jet Healthcare",
+      "listing_date": "2023-11-01",
+      "listing_high": "417.95001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "IRMENERGY",
+      "company": "IRM Energy",
+      "listing_date": "2023-10-26",
+      "listing_high": "483.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PLAZACABLE",
+      "company": "Plaza Wires",
+      "listing_date": "2023-10-13",
+      "listing_high": "84.19999694824219",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VALIANTLAB",
+      "company": "Valiant Laboratories",
+      "listing_date": "2023-10-06",
+      "listing_high": "170.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "UDS",
+      "company": "Updater Services",
+      "listing_date": "2023-10-04",
+      "listing_high": "298.6499938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JSWINFRA",
+      "company": "JSW Infra",
+      "listing_date": "2023-10-03",
+      "listing_high": "157.3000030517578",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MVGJL",
+      "company": "Manoj Vaibhav Gems",
+      "listing_date": "2023-10-03",
+      "listing_high": "222.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "YATRA",
+      "company": "Yatra Online",
+      "listing_date": "2023-09-28",
+      "listing_high": "138.5500030517578",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SIGNATURE",
+      "company": "Signature Global",
+      "listing_date": "2023-09-27",
+      "listing_high": "474.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KALAMANDIR",
+      "company": "Sai Silks",
+      "listing_date": "2023-09-27",
+      "listing_high": "247.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ZAGGLE",
+      "company": "Zaggle Prepaid",
+      "listing_date": "2023-09-22",
+      "listing_high": "176.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SAMHI",
+      "company": "Samhi Hotels",
+      "listing_date": "2023-09-22",
+      "listing_high": "146.60000610351562",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "APOLLO",
+      "company": "EMS Limited",
+      "listing_date": "2023-09-21",
+      "listing_high": "55.900001525878906",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RRKABEL",
+      "company": "RR Kabel",
+      "listing_date": "2023-09-20",
+      "listing_high": "1212.699951171875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JLHL",
+      "company": "Jupiter Life Line Hospitals",
+      "listing_date": "2023-09-18",
+      "listing_high": "221.7899932861328",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RATNAVEER",
+      "company": "Ratnaveer Precision Engineering",
+      "listing_date": "2023-09-11",
+      "listing_high": "129.35000610351562",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RISHABH",
+      "company": "Rishabh Instruments",
+      "listing_date": "2023-09-11",
+      "listing_high": "470.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VPRPL",
+      "company": "Vishnu Prakash Punglia",
+      "listing_date": "2023-09-05",
+      "listing_high": "165.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AEROFLEX",
+      "company": "Aeroflex Industries",
+      "listing_date": "2023-08-31",
+      "listing_high": "196.35000610351562",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PYRAMID",
+      "company": "Pyramid Technoplast",
+      "listing_date": "2023-08-29",
+      "listing_high": "188.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TVSSCS",
+      "company": "TVS Supply Chain",
+      "listing_date": "2023-08-23",
+      "listing_high": "208.60000610351562",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CONCORDBIO",
+      "company": "Concord Biotech",
+      "listing_date": "2023-08-18",
+      "listing_high": "987.7000122070312",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SBFC",
+      "company": "SBFC Finance",
+      "listing_date": "2023-08-16",
+      "listing_high": "95.44999694824219",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "YATHARTH",
+      "company": "Yatharth Hospital",
+      "listing_date": "2023-08-07",
+      "listing_high": "343.1000061035156",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "NETWEB",
+      "company": "Netweb Technologies",
+      "listing_date": "2023-07-27",
+      "listing_high": "952.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "UTKARSHBNK",
+      "company": "Utkarsh Small Finance Bank",
+      "listing_date": "2023-07-21",
+      "listing_high": "48.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SENCO",
+      "company": "Senco Gold",
+      "listing_date": "2023-07-14",
+      "listing_high": "222.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CYIENTDLM",
+      "company": "Cyient DLM",
+      "listing_date": "2023-07-10",
+      "listing_high": "427.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "IDEAFORGE",
+      "company": "IdeaForge",
+      "listing_date": "2023-07-07",
+      "listing_high": "1343.949951171875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HMAAGRO",
+      "company": "HMA Agro",
+      "listing_date": "2023-07-04",
+      "listing_high": "66.69999694824219",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MANKIND",
+      "company": "Mankind Pharma",
+      "listing_date": "2023-05-09",
+      "listing_high": "1430.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AVALON",
+      "company": "Avalon Technologies",
+      "listing_date": "2023-04-18",
+      "listing_high": "436.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "USK",
+      "company": "Udayshivakumar Infra",
+      "listing_date": "2023-04-03",
+      "listing_high": "31.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GSLSU",
+      "company": "Global Surfaces",
+      "listing_date": "2023-03-23",
+      "listing_high": "172.1999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DIVGIITTS",
+      "company": "Divgi TorqTransfer",
+      "listing_date": "2023-03-14",
+      "listing_high": "620.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RADIANTCMS",
+      "company": "Radiant Cash Management",
+      "listing_date": "2023-01-04",
+      "listing_high": "116.80000305175781",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "UNIMECH",
+      "company": "Unimech Aerospace",
+      "listing_date": "2024-12-31",
+      "listing_high": "1485.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SENORES",
+      "company": "Senores Pharmaceutical",
+      "listing_date": "2024-12-30",
+      "listing_high": "609.6500244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CARRARO",
+      "company": "Carraro India",
+      "listing_date": "2024-12-30",
+      "listing_high": "682.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VENTIVE",
+      "company": "Ventive Hospitality",
+      "listing_date": "2024-12-30",
+      "listing_high": "749.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CEWATER",
+      "company": "Concord Enviro Systems",
+      "listing_date": "2024-12-27",
+      "listing_high": "860.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DAMCAPITAL",
+      "company": "DAM Capital",
+      "listing_date": "2024-12-27",
+      "listing_high": "456.8999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SANATHAN",
+      "company": "Sanathan Textiles",
+      "listing_date": "2024-12-27",
+      "listing_high": "423.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MAMATA",
+      "company": "Mamata Machinery",
+      "listing_date": "2024-12-27",
+      "listing_high": "630.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TRANSRAILL",
+      "company": "Transrail Lighting",
+      "listing_date": "2024-12-27",
+      "listing_high": "605.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "IKS",
+      "company": "Inventurus Knowledge Solutions",
+      "listing_date": "2024-12-19",
+      "listing_high": "2031.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MOBIKWIK",
+      "company": "One Mobikwik Systems",
+      "listing_date": "2024-12-18",
+      "listing_high": "528.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VMM",
+      "company": "Vishal Mega Mart",
+      "listing_date": "2024-12-18",
+      "listing_high": "114.4000015258789",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SAILIFE",
+      "company": "Sai Life Sciences",
+      "listing_date": "2024-12-18",
+      "listing_high": "780.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SURAKSHA",
+      "company": "Suraksha Diagnostic",
+      "listing_date": "2024-12-06",
+      "listing_high": "449.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EIEL",
+      "company": "Enviro Infra",
+      "listing_date": "2024-11-29",
+      "listing_high": "233.6999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "NTPCGREEN",
+      "company": "NTPC Green Energy",
+      "listing_date": "2024-11-27",
+      "listing_high": "122.6500015258789",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "NIVABUPA",
+      "company": "Niva Bupa Health Insurance",
+      "listing_date": "2024-11-14",
+      "listing_high": "81.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SWIGGY",
+      "company": "Swiggy",
+      "listing_date": "2024-11-13",
+      "listing_high": "465.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ACMESOLAR",
+      "company": "ACME Solar",
+      "listing_date": "2024-11-13",
+      "listing_high": "276.1000061035156",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AFCONS",
+      "company": "Afcons Infrastructure",
+      "listing_date": "2024-11-04",
+      "listing_high": "479.45001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GODAVARIB",
+      "company": "Godavari Biorefineries",
+      "listing_date": "2024-10-30",
+      "listing_high": "354.45001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "WAAREEENER",
+      "company": "Waaree Energies",
+      "listing_date": "2024-10-28",
+      "listing_high": "2624.39990234375",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GARUDA",
+      "company": "Garuda Construction",
+      "listing_date": "2024-10-15",
+      "listing_high": "120.98999786376953",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DIFFNKG",
+      "company": "Diffusion Engineers",
+      "listing_date": "2024-10-04",
+      "listing_high": "203.1699981689453",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KRN",
+      "company": "KRN Heat Exchanger",
+      "listing_date": "2024-10-03",
+      "listing_high": "513.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MANBA",
+      "company": "Manba Finance",
+      "listing_date": "2024-09-30",
+      "listing_high": "152.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ARKADE",
+      "company": "Arkade Developers",
+      "listing_date": "2024-09-24",
+      "listing_high": "190.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "WCIL",
+      "company": "Western Carriers",
+      "listing_date": "2024-09-24",
+      "listing_high": "177.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "NORTHARC",
+      "company": "Northern Arc Capital",
+      "listing_date": "2024-09-24",
+      "listing_high": "350.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PNGJL",
+      "company": "PN Gadgil Jewellers",
+      "listing_date": "2024-09-17",
+      "listing_high": "848.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KROSS",
+      "company": "Kross",
+      "listing_date": "2024-09-16",
+      "listing_high": "270.8900146484375",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BAJAJHFL",
+      "company": "Bajaj Housing Finance",
+      "listing_date": "2024-09-16",
+      "listing_high": "165.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TOLINS",
+      "company": "Tolins Tyres",
+      "listing_date": "2024-09-16",
+      "listing_high": "239.39999389648438",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BALAJEE",
+      "company": "Shree Tirupati Balajee Agro",
+      "listing_date": "2024-09-12",
+      "listing_high": "94.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GALAPREC",
+      "company": "Gala Precision",
+      "listing_date": "2024-09-09",
+      "listing_high": "757.1500244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "STYLEBAAZA",
+      "company": "Baazar Style Retail",
+      "listing_date": "2024-09-06",
+      "listing_high": "431.1499938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PREMIERENE",
+      "company": "Premier Energies",
+      "listing_date": "2024-09-03",
+      "listing_high": "994.5499877929688",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ORIENTTECH",
+      "company": "Orient Technologies",
+      "listing_date": "2024-08-28",
+      "listing_high": "274.9090881347656",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SSDL",
+      "company": "Saraswati Saree",
+      "listing_date": "2024-08-20",
+      "listing_high": "203.6999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "UNIECOM",
+      "company": "Unicommerce eSolutions",
+      "listing_date": "2024-08-13",
+      "listing_high": "255.99000549316406",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "OLAELEC",
+      "company": "OLA Electric",
+      "listing_date": "2024-08-09",
+      "listing_high": "91.19999694824219",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CEIGALL",
+      "company": "Ceigall India",
+      "listing_date": "2024-08-08",
+      "listing_high": "424.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AKUMS",
+      "company": "Akums Drugs",
+      "listing_date": "2024-08-06",
+      "listing_high": "797.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SANSTAR",
+      "company": "Sanstar",
+      "listing_date": "2024-07-26",
+      "listing_high": "128.7899932861328",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EMCURE",
+      "company": "Emcure Pharma",
+      "listing_date": "2024-07-10",
+      "listing_high": "1385.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BANSALWIRE",
+      "company": "Bansal Wire",
+      "listing_date": "2024-07-10",
+      "listing_high": "372.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VRAJ",
+      "company": "Vraj Iron",
+      "listing_date": "2024-07-03",
+      "listing_high": "252.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ABDL",
+      "company": "Allied Blenders",
+      "listing_date": "2024-07-02",
+      "listing_high": "324.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "STANLEY",
+      "company": "Stanley Lifestyles",
+      "listing_date": "2024-06-28",
+      "listing_high": "509.3999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AFIL",
+      "company": "Akme Fintrade",
+      "listing_date": "2024-06-26",
+      "listing_high": "13.335000038146973",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DEEDEV",
+      "company": "Dee Development",
+      "listing_date": "2024-06-26",
+      "listing_high": "365.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KRONOX",
+      "company": "Kronox Lab",
+      "listing_date": "2024-06-10",
+      "listing_high": "165.60000610351562",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AWFIS",
+      "company": "Awfis Space",
+      "listing_date": "2024-05-30",
+      "listing_high": "451.45001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TBOTEK",
+      "company": "TBO Tek",
+      "listing_date": "2024-05-15",
+      "listing_high": "1455.949951171875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AADHARHFC",
+      "company": "Aadhar Housing Finance",
+      "listing_date": "2024-05-15",
+      "listing_high": "343.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INDGN",
+      "company": "Indegene",
+      "listing_date": "2024-05-13",
+      "listing_high": "660.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JNKINDIA",
+      "company": "JNK India",
+      "listing_date": "2024-04-30",
+      "listing_high": "712.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BHARTIHEXA",
+      "company": "Bharti Hexacom",
+      "listing_date": "2024-04-12",
+      "listing_high": "880.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SRM",
+      "company": "SRM Contractors",
+      "listing_date": "2024-04-03",
+      "listing_high": "226.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KRYSTAL",
+      "company": "Krystal Integrated",
+      "listing_date": "2024-03-21",
+      "listing_high": "793.7999877929688",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PVSL",
+      "company": "Popular Vehicles",
+      "listing_date": "2024-03-19",
+      "listing_high": "289.20001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GOPAL",
+      "company": "Gopal Snacks",
+      "listing_date": "2024-03-14",
+      "listing_high": "384.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JGCHEM",
+      "company": "JG Chemicals",
+      "listing_date": "2024-03-13",
+      "listing_high": "213.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RKSWAMY",
+      "company": "R K Swamy",
+      "listing_date": "2024-03-12",
+      "listing_high": "284.8999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MUKKA",
+      "company": "Mukka Proteins",
+      "listing_date": "2024-03-07",
+      "listing_high": "42.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PLATIND",
+      "company": "Platinum Industries",
+      "listing_date": "2024-03-05",
+      "listing_high": "236.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EXICOM",
+      "company": "Exicom Tele-Systems",
+      "listing_date": "2024-03-05",
+      "listing_high": "274.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GPTHEALTH",
+      "company": "GPT Healthcare",
+      "listing_date": "2024-02-29",
+      "listing_high": "219.89999389648438",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JUNIPER",
+      "company": "Juniper Hotels",
+      "listing_date": "2024-02-28",
+      "listing_high": "401.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VSTL",
+      "company": "Vibhor Steel",
+      "listing_date": "2024-02-20",
+      "listing_high": "446.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ENTERO",
+      "company": "Entero Healthcare",
+      "listing_date": "2024-02-16",
+      "listing_high": "1258.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RPTECH",
+      "company": "Rashi Peripherals",
+      "listing_date": "2024-02-14",
+      "listing_high": "342.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CAPITALSFB",
+      "company": "Capital Small Finance Bank",
+      "listing_date": "2024-02-14",
+      "listing_high": "462.8999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JSFB",
+      "company": "Jana Small Finance Bank",
+      "listing_date": "2024-02-14",
+      "listing_high": "409.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PARKHOTELS",
+      "company": "Apeejay Surrendra Park Hotels",
+      "listing_date": "2024-02-12",
+      "listing_high": "223.1999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BLSE",
+      "company": "BLS E-Services",
+      "listing_date": "2024-02-06",
+      "listing_high": "366.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "NOVAAGRI",
+      "company": "Nova Agri",
+      "listing_date": "2024-01-31",
+      "listing_high": "57.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EPACK",
+      "company": "EPACK Durable",
+      "listing_date": "2024-01-30",
+      "listing_high": "224.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MEDIASSIST",
+      "company": "Medi Assist Healthcare",
+      "listing_date": "2024-01-23",
+      "listing_high": "518.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JYOTICNC",
+      "company": "Jyoti CNC",
+      "listing_date": "2024-01-16",
+      "listing_high": "444.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GKSL",
+      "company": "Gujarat Kidney Super Speciality",
+      "listing_date": "2025-12-30",
+      "listing_high": "123.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KSHINTL",
+      "company": "KSH International",
+      "listing_date": "2025-12-23",
+      "listing_high": "370.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PARKHOSPS",
+      "company": "Park Medi World",
+      "listing_date": "2025-12-17",
+      "listing_high": "165.8699951171875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CORONA",
+      "company": "Corona Remedies",
+      "listing_date": "2025-12-15",
+      "listing_high": "1497.800048828125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "WAKEFIT",
+      "company": "Wakefit Innovations",
+      "listing_date": "2025-12-15",
+      "listing_high": "203.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VIDYAWIRES",
+      "company": "Vidya Wires",
+      "listing_date": "2025-12-10",
+      "listing_high": "58.45000076293945",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MEESHO",
+      "company": "Meesho",
+      "listing_date": "2025-12-10",
+      "listing_high": "177.49000549316406",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AEQUS",
+      "company": "Aequs",
+      "listing_date": "2025-12-10",
+      "listing_high": "157.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SUDEEPPHRM",
+      "company": "Sudeep Pharma",
+      "listing_date": "2025-11-28",
+      "listing_high": "795.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EXCELSOFT",
+      "company": "Excelsoft Technologies",
+      "listing_date": "2025-11-26",
+      "listing_high": "142.58999633789062",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CAPILLARY",
+      "company": "Capillary Technologies",
+      "listing_date": "2025-11-21",
+      "listing_high": "633.9000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TENNIND",
+      "company": "Tenneco Clean Air",
+      "listing_date": "2025-11-19",
+      "listing_high": "517.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PWL",
+      "company": "Physicswallah",
+      "listing_date": "2025-11-18",
+      "listing_high": "161.99000549316406",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EMMVEE",
+      "company": "Emmvee Photovoltaic",
+      "listing_date": "2025-11-18",
+      "listing_high": "227.7100067138672",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PINELABS",
+      "company": "Pine Labs",
+      "listing_date": "2025-11-14",
+      "listing_high": "284.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "STUDDS",
+      "company": "Studds Accessories",
+      "listing_date": "2025-11-07",
+      "listing_high": "585.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ORKLAINDIA",
+      "company": "Orkla India",
+      "listing_date": "2025-11-06",
+      "listing_high": "760.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MIDWESTLTD",
+      "company": "Midwest",
+      "listing_date": "2025-10-24",
+      "listing_high": "1190.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CANHLIFE",
+      "company": "Canara HSBC Life",
+      "listing_date": "2025-10-17",
+      "listing_high": "112.80000305175781",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "RUBICON",
+      "company": "Rubicon Research",
+      "listing_date": "2025-10-16",
+      "listing_high": "639.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CRAMC",
+      "company": "Canara Robeco",
+      "listing_date": "2025-10-16",
+      "listing_high": "318.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LGEINDIA",
+      "company": "LG Electronics",
+      "listing_date": "2025-10-14",
+      "listing_high": "1749.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TATACAP",
+      "company": "Tata Capital",
+      "listing_date": "2025-10-13",
+      "listing_high": "333.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "WEWORK",
+      "company": "WeWork India",
+      "listing_date": "2025-10-10",
+      "listing_high": "650.1500244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ADVANCE",
+      "company": "Advance Agrolife",
+      "listing_date": "2025-10-08",
+      "listing_high": "114.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "OMFREIGHT",
+      "company": "Om Freight Forwarders",
+      "listing_date": "2025-10-08",
+      "listing_high": "85.56999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GLOTTIS",
+      "company": "Glottis",
+      "listing_date": "2025-10-07",
+      "listing_high": "93.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "FABTECH",
+      "company": "Fabtech Technologies",
+      "listing_date": "2025-10-07",
+      "listing_high": "192.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PACEDIGITK",
+      "company": "Pace Digitek",
+      "listing_date": "2025-10-06",
+      "listing_high": "231.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JKIPL",
+      "company": "Jinkushal Industries",
+      "listing_date": "2025-10-03",
+      "listing_high": "126.94999694824219",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BMWVENTLTD",
+      "company": "BMW Ventures",
+      "listing_date": "2025-10-01",
+      "listing_high": "78.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "STYL",
+      "company": "Seshaasai Technologies",
+      "listing_date": "2025-09-30",
+      "listing_high": "437.45001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ARSSBL",
+      "company": "Anand Rathi Share",
+      "listing_date": "2025-09-30",
+      "listing_high": "458.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SOLARWORLD",
+      "company": "Solarworld Energy",
+      "listing_date": "2025-09-30",
+      "listing_high": "388.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ATLANTAELE",
+      "company": "Atlanta Electricals",
+      "listing_date": "2025-09-29",
+      "listing_high": "865.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GANESHCP",
+      "company": "Ganesh Consumer",
+      "listing_date": "2025-09-29",
+      "listing_high": "308.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SAATVIKGL",
+      "company": "Saatvik Green Energy",
+      "listing_date": "2025-09-26",
+      "listing_high": "465.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GKENERGY",
+      "company": "GK Energy",
+      "listing_date": "2025-09-26",
+      "listing_high": "174.6999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "IVALUE",
+      "company": "iValue Infosolutions",
+      "listing_date": "2025-09-25",
+      "listing_high": "298.3500061035156",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VMSTMT",
+      "company": "VMS TMT",
+      "listing_date": "2025-09-24",
+      "listing_high": "105.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EUROPRATIK",
+      "company": "Euro Pratik Sales",
+      "listing_date": "2025-09-23",
+      "listing_high": "278.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "URBANCO",
+      "company": "Urban Company",
+      "listing_date": "2025-09-17",
+      "listing_high": "179.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SHRINGARMS",
+      "company": "Shringar House of Mangalsutra",
+      "listing_date": "2025-09-17",
+      "listing_high": "191.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DEVX",
+      "company": "Dev Accelerator",
+      "listing_date": "2025-09-17",
+      "listing_high": "64.05000305175781",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VIKRAN",
+      "company": "Vikran Engineering",
+      "listing_date": "2025-09-03",
+      "listing_high": "101.7699966430664",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AHCL",
+      "company": "Anlon Healthcare",
+      "listing_date": "2025-09-03",
+      "listing_high": "9.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MEIL",
+      "company": "Mangal Electrical",
+      "listing_date": "2025-08-28",
+      "listing_high": "566.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "VIKRAMSOLR",
+      "company": "Vikram Solar",
+      "listing_date": "2025-08-26",
+      "listing_high": "381.6499938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GEMAROMA",
+      "company": "Gem Aromatics",
+      "listing_date": "2025-08-26",
+      "listing_high": "349.6000061035156",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SHREEJISPG",
+      "company": "Shreeji Shipping",
+      "listing_date": "2025-08-26",
+      "listing_high": "275.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PATELRMART",
+      "company": "Patel Retail",
+      "listing_date": "2025-08-26",
+      "listing_high": "305.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "REGAAL",
+      "company": "Regaal Resources",
+      "listing_date": "2025-08-20",
+      "listing_high": "145.6999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BLUESTONE",
+      "company": "BlueStone Jewellery",
+      "listing_date": "2025-08-19",
+      "listing_high": "564.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JSWCEMENT",
+      "company": "JSW Cement",
+      "listing_date": "2025-08-14",
+      "listing_high": "154.77000427246094",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ALLTIME",
+      "company": "All Time Plastics",
+      "listing_date": "2025-08-14",
+      "listing_high": "325.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HILINFRA",
+      "company": "Highway Infrastructure",
+      "listing_date": "2025-08-12",
+      "listing_high": "120.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LOTUSDEV",
+      "company": "Sri Lotus Developers",
+      "listing_date": "2025-08-06",
+      "listing_high": "195.8000030517578",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MBEL",
+      "company": "M&B Engineering",
+      "listing_date": "2025-08-06",
+      "listing_high": "418.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CPPLUS",
+      "company": "Aditya Infotech",
+      "listing_date": "2025-08-05",
+      "listing_high": "1104.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LAXMIINDIA",
+      "company": "Laxmi India Finance",
+      "listing_date": "2025-08-05",
+      "listing_high": "146.67999267578125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SHANTIGOLD",
+      "company": "Shanti Gold",
+      "listing_date": "2025-08-01",
+      "listing_high": "238.36000061035156",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BRIGHOTEL",
+      "company": "Brigade Hotel Ventures",
+      "listing_date": "2025-07-31",
+      "listing_high": "87.83999633789062",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INDIQUBE",
+      "company": "IndiQube Spaces",
+      "listing_date": "2025-07-30",
+      "listing_high": "222.97000122070312",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EBGNG",
+      "company": "GNG Electronics",
+      "listing_date": "2025-07-30",
+      "listing_high": "359.3999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ANTHEM",
+      "company": "Anthem Biosciences",
+      "listing_date": "2025-07-21",
+      "listing_high": "747.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SMARTWORKS",
+      "company": "Smartworks Coworking",
+      "listing_date": "2025-07-17",
+      "listing_high": "469.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TRAVELFOOD",
+      "company": "Travel Food Services",
+      "listing_date": "2025-07-14",
+      "listing_high": "1130.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CRIZAC",
+      "company": "Crizac",
+      "listing_date": "2025-07-09",
+      "listing_high": "309.1499938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "IGCL",
+      "company": "Indogulf Cropsciences",
+      "listing_date": "2025-07-03",
+      "listing_high": "113.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HDBFS",
+      "company": "HDB Financial Services",
+      "listing_date": "2025-07-02",
+      "listing_high": "851.4000244140625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SAMBHV",
+      "company": "Sambhv Steel Tubes",
+      "listing_date": "2025-07-02",
+      "listing_high": "111.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "KALPATARU",
+      "company": "Kalpataru",
+      "listing_date": "2025-07-01",
+      "listing_high": "452.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ELLEN",
+      "company": "Ellenbarrie Industrial",
+      "listing_date": "2025-07-01",
+      "listing_high": "534.5999755859375",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "GLOBECIVIL",
+      "company": "Globe Civil Projects",
+      "listing_date": "2025-07-01",
+      "listing_high": "94.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ARIS",
+      "company": "ArisInfra Solutions",
+      "listing_date": "2025-06-25",
+      "listing_high": "208.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "OSWALPUMPS",
+      "company": "Oswal Pumps",
+      "listing_date": "2025-06-20",
+      "listing_high": "652.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SCODATUBES",
+      "company": "Scoda Tubes",
+      "listing_date": "2025-06-04",
+      "listing_high": "147.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "PROSTARM",
+      "company": "Prostarm Info Systems",
+      "listing_date": "2025-06-03",
+      "listing_high": "126.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AEGISVOPAK",
+      "company": "Aegis Vopak Terminals",
+      "listing_date": "2025-06-02",
+      "listing_high": "242.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BELRISE",
+      "company": "Belrise Industries",
+      "listing_date": "2025-05-28",
+      "listing_high": "102.4000015258789",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BORANA",
+      "company": "Borana Weaves",
+      "listing_date": "2025-05-27",
+      "listing_high": "255.14999389648438",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ATHERENERG",
+      "company": "Ather Energy",
+      "listing_date": "2025-05-06",
+      "listing_high": "333.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "QPOWER",
+      "company": "Quality Power Electrical",
+      "listing_date": "2025-02-24",
+      "listing_high": "430.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "HEXT",
+      "company": "Hexaware Technologies",
+      "listing_date": "2025-02-19",
+      "listing_high": "788.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AJAXENGG",
+      "company": "Ajax Engineering",
+      "listing_date": "2025-02-17",
+      "listing_high": "609.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AGARWALEYE",
+      "company": "Dr. Agarwal\u2019s Health",
+      "listing_date": "2025-02-04",
+      "listing_high": "412.8999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DENTA",
+      "company": "Denta Water and Infra",
+      "listing_date": "2025-01-29",
+      "listing_high": "341.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "STALLION",
+      "company": "Stallion India",
+      "listing_date": "2025-01-23",
+      "listing_high": "126.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LAXMIDENTL",
+      "company": "Laxmi Dental",
+      "listing_date": "2025-01-20",
+      "listing_high": "584.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "QUADFUTURE",
+      "company": "Quadrant Future Tek",
+      "listing_date": "2025-01-14",
+      "listing_high": "444.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INDOFARM",
+      "company": "Indo Farm Equipment",
+      "listing_date": "2025-01-07",
+      "listing_high": "287.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BLEL",
+      "company": "Behari Lal Engineering",
+      "listing_date": "2026-08-19",
+      "listing_high": "537.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SHIPROCKET",
+      "company": "Shiprocket",
+      "listing_date": "2026-08-19",
+      "listing_high": "156.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "DHOOTTRANS",
+      "company": "Dhoot Transmission",
+      "listing_date": "2026-08-17",
+      "listing_high": "1205.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MOLBIO",
+      "company": "Molbio Diagnostics",
+      "listing_date": "2026-08-17",
+      "listing_high": "1064.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TECHNOCRAF",
+      "company": "Technocraft Ventures",
+      "listing_date": "2026-08-14",
+      "listing_high": "334.3999938964844",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SBIFUNDS",
+      "company": "SBI Funds Management",
+      "listing_date": "2026-07-21",
+      "listing_high": "624.9500122070312",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "ALPINETEX",
+      "company": "Alpine Texworld",
+      "listing_date": "2026-07-21",
+      "listing_high": "105.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CSM",
+      "company": "CSM Technologies",
+      "listing_date": "2026-07-02",
+      "listing_high": "113.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CORDELIA",
+      "company": "Waterways Leisure Tourism",
+      "listing_date": "2026-07-01",
+      "listing_high": "722.7000122070312",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CMRGREEN",
+      "company": "CMR Green",
+      "listing_date": "2026-06-10",
+      "listing_high": "268.9599914550781",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CMPDI",
+      "company": "Central Mine Planning",
+      "listing_date": "2026-03-30",
+      "listing_high": "168.6999969482422",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "INNOVISION",
+      "company": "Innovision",
+      "listing_date": "2026-03-23",
+      "listing_high": "470.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "CLEANMAX",
+      "company": "Clean Max Enviro Energy",
+      "listing_date": "2026-03-02",
+      "listing_high": "960.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "BHARATCOAL",
+      "company": "Bharat Coking Coal",
+      "listing_date": "2026-01-19",
+      "listing_high": "45.09000015258789",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JNPR",
+      "company": "Juniper Green Energy",
+      "listing_date": "2026-08-06",
+      "listing_high": "264.3599853515625",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "MEDANTA",
+      "company": "Global Health (Medanta)",
+      "listing_date": "2022-11-16",
+      "listing_high": "422.79998779296875",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "LENSKART",
+      "company": "Lenskart Solutions",
+      "listing_date": "2025-11-07",
+      "listing_high": "413.75",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "TRUALT",
+      "company": "TruAlt Bioenergy",
+      "listing_date": "2025-10-03",
+      "listing_high": "534.5",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "JAINREC",
+      "company": "Jain Resource Recycling",
+      "listing_date": "2025-10-01",
+      "listing_high": "341.70001220703125",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "EPACKPEB",
+      "company": "EPACK Prefab",
+      "listing_date": "2025-10-01",
+      "listing_high": "199.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AMANTA",
+      "company": "Amanta Healthcare",
+      "listing_date": "2025-09-09",
+      "listing_high": "149.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "AERONEU",
+      "company": "Sah Polymers",
+      "listing_date": "2023-01-12",
+      "listing_high": "89.25",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "SETL",
+      "company": "Standard Glass Lining",
+      "listing_date": "2025-01-13",
+      "listing_high": "182.0",
+      "breakout_date": ""
+    },
+    {
+      "symbol": NaN,
+      "company": "Groww",
+      "listing_date": "2025-11-12",
+      "listing_high": "83.58000183105469",
+      "breakout_date": ""
+    },
+    {
+      "symbol": "",
+      "company": "Groww",
+      "listing_date": "2025-11-12",
+      "listing_high": 83.58000183105469,
+      "breakout_date": ""
+    }
+  ]
+}

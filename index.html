@@ -60,8 +60,9 @@ function draw(q){
  }).join("");
 }
 document.getElementById("search").addEventListener("input",e=>draw(e.target.value));
-fetch("data/tracker.json").then(r=>r.json()).then(x=>{DATA=x;render()}).catch(e=>{document.getElementById("meta").textContent="tracker.json not found. Run the updater/export script."});
+fetch("tracker.json").then(r=>r.json()).then(x=>{DATA=x;render()}).catch(e=>{document.getElementById("meta").textContent="tracker.json not found. Run the updater/export script."});
 </script>
 </body>
 </html>
+
 
