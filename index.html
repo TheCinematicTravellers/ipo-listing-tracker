@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IPO Listing High Tracker</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0b0f14;color:#e8edf3;margin:0}
+.wrap{max-width:1200px;margin:auto;padding:28px}
+h1{margin:0 0 6px;font-size:30px}.sub{color:#9aa7b5;margin-bottom:24px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.card{background:#131a22;border:1px solid #27313c;border-radius:12px;padding:18px}
+.num{font-size:28px;font-weight:700}.label{color:#9aa7b5;font-size:13px;margin-top:5px}
+.panel{background:#111820;border:1px solid #27313c;border-radius:12px;padding:18px;margin-top:18px}
+input{width:100%;box-sizing:border-box;background:#0b0f14;color:white;border:1px solid #34404d;border-radius:8px;padding:12px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:10px;border-bottom:1px solid #252e38;font-size:14px}th{color:#9aa7b5}
+.green{color:#54d68b}.yellow{color:#f4c95d}.muted{color:#8996a5}
+@media(max-width:800px){.cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>IPO Listing High Tracker</h1>
+<div class="sub" id="meta">Loading...</div>
+<div class="cards">
+<div class="card"><div class="num" id="tracked">-</div><div class="label">IPOs tracked</div></div>
+<div class="card"><div class="num" id="levels">-</div><div class="label">Listing levels</div></div>
+<div class="card"><div class="num" id="breaks">-</div><div class="label">Historical breaks</div></div>
+<div class="card"><div class="num green" id="todayCount">-</div><div class="label">Today's breaks</div></div>
+</div>
+<div class="panel">
+<h2>Today's Breakouts</h2>
+<div id="today">Loading...</div>
+</div>
+<div class="panel">
+<h2>All Tracked IPOs</h2>
+<input id="search" placeholder="Search company or symbol...">
+<table><thead><tr><th>Symbol</th><th>Company</th><th>Listing date</th><th>Listing high</th><th>Status</th><th>Breakout date</th></tr></thead>
+<tbody id="rows"></tbody></table>
+</div>
+</div>
+<script>
+let DATA;
+const money=x=>x===""||x==null?"-":"₹"+Number(x).toFixed(2);
+function render(){
+ document.getElementById("meta").textContent=`Date: ${DATA.date} · Window: rolling 4 years · Mainboard only · Rule: later HIGH > listing-day HIGH`;
+ document.getElementById("tracked").textContent=DATA.summary.total_tracked;
+ document.getElementById("levels").textContent=DATA.summary.listing_levels;
+ document.getElementById("breaks").textContent=DATA.summary.historical_breaks;
+ document.getElementById("todayCount").textContent=DATA.summary.todays_breakouts;
+ document.getElementById("today").innerHTML=DATA.today.length?DATA.today.map(x=>`<div style="padding:8px 0"><b>${x.symbol}</b> &nbsp; ${x.company} &nbsp; <span class="green">+${Number(x.breakout_pct).toFixed(2)}%</span></div>`).join(""):"<span class='muted'>No breakout today.</span>";
+ draw("");
+}
+function draw(q){
+ q=q.toLowerCase();
+ const a=DATA.ipos.filter(x=>(x.symbol+" "+x.company).toLowerCase().includes(q));
+ document.getElementById("rows").innerHTML=a.map(x=>{
+   const broken=x.breakout_date?`<span class="green">BROKEN</span>`:"<span class='muted'>"+(x.listing_high?"Tracking":"Pending level")+"</span>";
+   return `<tr><td>${x.symbol||"-"}</td><td>${x.company}</td><td>${x.listing_date||"-"}</td><td>${money(x.listing_high)}</td><td>${broken}</td><td>${x.breakout_date||"-"}</td></tr>`
+ }).join("");
+}
+document.getElementById("search").addEventListener("input",e=>draw(e.target.value));
+fetch("../data/tracker.json").then(r=>r.json()).then(x=>{DATA=x;render()}).catch(e=>{document.getElementById("meta").textContent="tracker.json not found. Run the updater/export script."});
+</script>
+</body>
+</html>
