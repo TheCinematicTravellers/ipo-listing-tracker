@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IPO Listing High Tracker</title>
+<title>Our Screener</title>
 <style>
 body{font-family:Arial,sans-serif;background:#0b0f14;color:#e8edf3;margin:0}.wrap{max-width:1250px;margin:auto;padding:28px}
 h1{margin:0 0 6px;font-size:30px}.sub{color:#9aa7b5;margin-bottom:24px}
@@ -12,12 +12,13 @@ h1{margin:0 0 6px;font-size:30px}.sub{color:#9aa7b5;margin-bottom:24px}
 .movers{display:grid;grid-template-columns:1fr 1fr;gap:18px}.green{color:#54d68b}.red{color:#ff6b6b}.yellow{color:#f4c95d}.muted{color:#8996a5}
 input{width:100%;box-sizing:border-box;background:#0b0f14;color:white;border:1px solid #34404d;border-radius:8px;padding:12px;margin-bottom:12px}
 table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #252e38;font-size:13px}th{color:#9aa7b5}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+.stamp{margin-top:14px;font-size:13px;color:#9aa7b5}
 @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.movers{grid-template-columns:1fr}.wrap{padding:14px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>IPO Listing High Tracker</h1>
+<h1>Our Screener</h1>
 <div class="sub" id="meta">Loading...</div>
 
 <div class="panel">
@@ -27,7 +28,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 <div><h3 class="green">🟢 Top 10 Gainers</h3><div id="gainers">Loading...</div></div>
 <div><h3 class="red">🔴 Top 10 Losers</h3><div id="losers">Loading...</div></div>
 </div>
-<div class="muted" id="fnoStamp" style="margin-top:14px"></div>
+<div class="stamp" id="fnoStamp"></div>
 </div>
 
 <div class="cards">
@@ -49,7 +50,7 @@ const n=x=>x==null||x===""?"-":Number(x).toLocaleString('en-IN',{maximumFraction
 const vol=x=>x==null||x===""?"-":Number(x).toLocaleString('en-IN');
 const pct=x=>x==null||x===""?"-":(Number(x)>=0?'+':'')+Number(x).toFixed(2)+'%';
 function fnoTable(rows,side){
- if(!rows||!rows.length)return "<span class='muted'>No data published yet.</span>";
+ if(!rows||!rows.length)return "<span class='muted'>No eligible data published yet.</span>";
  return `<table><thead><tr><th>#</th><th>Stock</th><th>Change %</th><th>Open</th><th>${side==='g'?'Low':'High'}</th><th>CMP</th><th>Daily Volume</th></tr></thead><tbody>`+
  rows.map((x,i)=>`<tr><td>${i+1}</td><td>${x.symbol}</td><td class='${side==='g'?'green':'red'}'>${pct(x.change_pct)}</td><td>${n(x.open)}</td><td>${n(side==='g'?x.low:x.high)}</td><td>${n(x.cmp)}</td><td>${vol(x.volume)}</td></tr>`).join('')+'</tbody></table>';
 }
@@ -64,8 +65,14 @@ function render(){
 }
 function draw(q){q=q.toLowerCase();const a=DATA.ipos.filter(x=>(x.symbol+" "+x.company).toLowerCase().includes(q));document.getElementById("rows").innerHTML=a.map(x=>{const broken=x.breakout_date?`<span class="green">BROKEN</span>`:`<span class='muted'>`+(x.listing_high?"Tracking":"Pending level")+`</span>`;return `<tr><td>${x.symbol||"-"}</td><td>${x.company}</td><td>${x.listing_date||"-"}</td><td>${money(x.listing_high)}</td><td>${broken}</td><td>${x.breakout_date||"-"}</td></tr>`}).join("");}
 document.getElementById("search").addEventListener("input",e=>draw(e.target.value));
-fetch("tracker.json").then(r=>r.json()).then(x=>{DATA=x;render()}).catch(()=>{document.getElementById("meta").textContent="tracker.json not found. Run the updater/export script."});
-fetch("fno_movers.json?ts="+Date.now()).then(r=>r.json()).then(d=>{document.getElementById("fnoMeta").textContent=`${d.date_ist||'Waiting for first daily update'} · ${d.available||0}/${d.universe_size} stocks`;document.getElementById("gainers").innerHTML=fnoTable(d.gainers,'g');document.getElementById("losers").innerHTML=fnoTable(d.losers,'l');document.getElementById("fnoStamp").textContent=d.updated_ist?`Last updated: ${d.updated_ist} · IST (Asia/Kolkata)`:"Daily F&O data will appear after the first scheduled update."}).catch(()=>document.getElementById("fnoMeta").textContent="F&O daily data unavailable.");
+fetch("tracker.json?ts="+Date.now()).then(r=>r.json()).then(x=>{DATA=x;render()}).catch(()=>{document.getElementById("meta").textContent="tracker.json not found. Run the updater/export script."});
+fetch("fno_movers.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
+ const stamp=d.updated_ist?`Last updated: ${d.updated_ist} IST`:'Daily F&O data will appear after the first scheduled update.';
+ document.getElementById("fnoMeta").textContent=`${d.date_ist||'Waiting for first daily update'} · ${d.available||0}/${d.universe_size} stocks · ${stamp}`;
+ document.getElementById("gainers").innerHTML=fnoTable(d.gainers,'g');
+ document.getElementById("losers").innerHTML=fnoTable(d.losers,'l');
+ document.getElementById("fnoStamp").textContent=d.updated_ist?`Data timestamp: ${d.updated_ist} IST (Asia/Kolkata)`:'';
+}).catch(()=>document.getElementById("fnoMeta").textContent="F&O daily data unavailable.");
 </script>
 </body>
 </html>
