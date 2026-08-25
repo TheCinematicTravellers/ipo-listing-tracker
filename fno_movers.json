@@ -1,9 +1,191 @@
 {
-  "date_ist": "",
-  "updated_ist": "",
+  "date_ist": "25-Aug-2026",
+  "updated_ist": "25-Aug-2026 03:56:12 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 0,
-  "gainers": [],
-  "losers": []
+  "available": 208,
+  "gainers": [
+    {
+      "symbol": "IDEA",
+      "change_pct": 7.96,
+      "open": 14.09,
+      "high": 15.31,
+      "low": 14.08,
+      "cmp": 15.19,
+      "volume": 1532097430
+    },
+    {
+      "symbol": "PAYTM",
+      "change_pct": 5.82,
+      "open": 1622.7,
+      "high": 1718.0,
+      "low": 1612.0,
+      "cmp": 1718.0,
+      "volume": 10108650
+    },
+    {
+      "symbol": "ANGELONE",
+      "change_pct": 5.21,
+      "open": 286.8,
+      "high": 301.55,
+      "low": 284.0,
+      "cmp": 300.9,
+      "volume": 10819653
+    },
+    {
+      "symbol": "IREDA",
+      "change_pct": 4.51,
+      "open": 115.0,
+      "high": 121.14,
+      "low": 114.4,
+      "cmp": 120.61,
+      "volume": 11092821
+    },
+    {
+      "symbol": "ADANIENT",
+      "change_pct": 3.72,
+      "open": 2998.0,
+      "high": 3110.0,
+      "low": 2962.5,
+      "cmp": 3110.0,
+      "volume": 2022632
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "change_pct": 3.56,
+      "open": 1808.0,
+      "high": 1869.4,
+      "low": 1796.5,
+      "cmp": 1866.2,
+      "volume": 3550471
+    },
+    {
+      "symbol": "INDUSTOWER",
+      "change_pct": 3.47,
+      "open": 374.25,
+      "high": 388.6,
+      "low": 374.25,
+      "cmp": 387.25,
+      "volume": 6991234
+    },
+    {
+      "symbol": "ADANIENSOL",
+      "change_pct": 3.41,
+      "open": 1554.9,
+      "high": 1594.5,
+      "low": 1532.0,
+      "cmp": 1594.5,
+      "volume": 2043619
+    },
+    {
+      "symbol": "HDFCAMC",
+      "change_pct": 3.37,
+      "open": 2609.9,
+      "high": 2698.0,
+      "low": 2606.8,
+      "cmp": 2698.0,
+      "volume": 1157332
+    },
+    {
+      "symbol": "LICHSGFIN",
+      "change_pct": 2.97,
+      "open": 490.0,
+      "high": 506.4,
+      "low": 489.15,
+      "cmp": 506.0,
+      "volume": 3617012
+    }
+  ],
+  "losers": [
+    {
+      "symbol": "FEDERALBNK",
+      "change_pct": -3.89,
+      "open": 357.7,
+      "high": 358.7,
+      "low": 342.05,
+      "cmp": 346.95,
+      "volume": 16133447
+    },
+    {
+      "symbol": "DALBHARAT",
+      "change_pct": -2.98,
+      "open": 1854.8,
+      "high": 1854.8,
+      "low": 1780.1,
+      "cmp": 1824.0,
+      "volume": 512897
+    },
+    {
+      "symbol": "OIL",
+      "change_pct": -1.99,
+      "open": 479.0,
+      "high": 479.0,
+      "low": 466.05,
+      "cmp": 467.5,
+      "volume": 1222451
+    },
+    {
+      "symbol": "HEROMOTOCO",
+      "change_pct": -1.93,
+      "open": 5665.0,
+      "high": 5682.0,
+      "low": 5590.0,
+      "cmp": 5624.5,
+      "volume": 432332
+    },
+    {
+      "symbol": "HINDZINC",
+      "change_pct": -1.89,
+      "open": 600.0,
+      "high": 600.6,
+      "low": 586.85,
+      "cmp": 592.6,
+      "volume": 9502817
+    },
+    {
+      "symbol": "NAM-INDIA",
+      "change_pct": -1.88,
+      "open": 1247.0,
+      "high": 1253.1,
+      "low": 1220.0,
+      "cmp": 1224.4,
+      "volume": 1193172
+    },
+    {
+      "symbol": "POWERINDIA",
+      "change_pct": -1.6,
+      "open": 33680.0,
+      "high": 33695.0,
+      "low": 33005.0,
+      "cmp": 33300.0,
+      "volume": 88339
+    },
+    {
+      "symbol": "MOTHERSON",
+      "change_pct": -1.51,
+      "open": 167.61,
+      "high": 168.28,
+      "low": 164.81,
+      "cmp": 166.45,
+      "volume": 8698221
+    },
+    {
+      "symbol": "RVNL",
+      "change_pct": -1.49,
+      "open": 221.7,
+      "high": 224.1,
+      "low": 217.02,
+      "cmp": 218.4,
+      "volume": 7338806
+    },
+    {
+      "symbol": "NATIONALUM",
+      "change_pct": -1.36,
+      "open": 402.0,
+      "high": 402.0,
+      "low": 392.05,
+      "cmp": 397.8,
+      "volume": 3853990
+    }
+  ]
 }
