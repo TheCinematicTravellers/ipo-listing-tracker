@@ -32,13 +32,14 @@ function totp(secret, now = Date.now()) {
   return String(code % 1000000).padStart(6,'0');
 }
 
-function headers(apiKey, jwt) {
+function headers(apiKey, jwt, macAddress) {
   return {
     'Content-Type':'application/json',
     'Accept':'application/json',
     'X-UserType':'USER',
     'X-SourceID':'WEB',
     'X-PrivateKey':apiKey,
+    'X-MACAddress':macAddress,
     ...(jwt ? {'Authorization':`Bearer ${jwt}`} : {})
   };
 }
@@ -68,21 +69,22 @@ async function login() {
   const client = process.env.ANGEL_CLIENT_ID;
   const pin = process.env.ANGEL_PIN;
   const secret = process.env.ANGEL_TOTP_SECRET;
-  if (!apiKey || !client || !pin || !secret) throw new Error('Missing Angel One environment variables');
+  const macAddress = process.env.ANGEL_MAC_ADDRESS;
+  if (!apiKey || !client || !pin || !secret || !macAddress) throw new Error('Missing Angel One environment variables');
   const r = await fetch(LOGIN_URL, {
     method:'POST',
-    headers:headers(apiKey),
+    headers:headers(apiKey, null, macAddress),
     body:JSON.stringify({clientcode:client,password:pin,totp:totp(secret)})
   });
   const d = await r.json();
   if (!r.ok || !d?.data?.jwtToken) throw new Error(`Angel login failed: ${d?.message || r.status}`);
-  return {apiKey, jwt:d.data.jwtToken};
+  return {apiKey, jwt:d.data.jwtToken, macAddress};
 }
 
 async function quote(auth, tokens) {
   const r = await fetch(QUOTE_URL, {
     method:'POST',
-    headers:headers(auth.apiKey, auth.jwt),
+    headers:headers(auth.apiKey, auth.jwt, auth.macAddress),
     body:JSON.stringify({mode:'FULL',exchangeTokens:{NSE:tokens}})
   });
   const d = await r.json();
