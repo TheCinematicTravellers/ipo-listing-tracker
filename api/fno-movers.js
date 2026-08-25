@@ -17,12 +17,15 @@ function num(x){const n=Number(x);return Number.isFinite(n)?n:null}
 function parts(d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:IST,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d),o={};for(const x of p)o[x.type]=x.value;return o}
 function stamp(){return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date())}
 function stateFor(orbCandles,oneMin,direction){
-  if(orbCandles.length<3)return {status:'⏳ Pending',result:'⏳'};
-  const orb=orbCandles.slice(0,3);
+  const orderedOrb=orbCandles.filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
+  if(orderedOrb.length<3)return {status:'⏳ Pending',result:'⏳'};
+  const orb=orderedOrb.slice(0,3);
   const hi=Math.max(...orb.map(c=>Number(c[2]))),lo=Math.min(...orb.map(c=>Number(c[3])));
+  const candlesAfterOrb=oneMin.filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
   let entry=null,sl=null,target=null;
-  for(let i=0;i<oneMin.length;i++){
-    const c=oneMin[i],h=Number(c[2]),l=Number(c[3]);
+  for(const c of candlesAfterOrb){
+    const h=Number(c[2]),l=Number(c[3]);
+    if(!Number.isFinite(h)||!Number.isFinite(l))continue;
     if(entry===null){
       if(direction==='LONG'){
         if(h>=hi){
@@ -31,10 +34,9 @@ function stateFor(orbCandles,oneMin,direction){
           const risk=entry-sl;
           if(risk<=0)return {status:'⚠️ Invalidated level',result:'⚠️'};
           target=entry+.4*risk;
-          // The breakout candle establishes entry and SL. Do not count its earlier range as post-entry movement.
+          // Breakout candle establishes entry and SL; post-entry outcome starts on the next candle.
           continue;
         }
-        // Before entry, only an opposite ORB-low break invalidates the long setup.
         if(l<=lo)return {status:'⚠️ Invalidated level',result:'⚠️'};
       }else{
         if(l<=lo){
@@ -43,10 +45,9 @@ function stateFor(orbCandles,oneMin,direction){
           const risk=sl-entry;
           if(risk<=0)return {status:'⚠️ Invalidated level',result:'⚠️'};
           target=entry-.4*risk;
-          // The breakout candle establishes entry and SL. Do not count its earlier range as post-entry movement.
+          // Breakout candle establishes entry and SL; post-entry outcome starts on the next candle.
           continue;
         }
-        // Before entry, only an opposite ORB-high break invalidates the short setup.
         if(h>=hi)return {status:'⚠️ Invalidated level',result:'⚠️'};
       }
     }else{
