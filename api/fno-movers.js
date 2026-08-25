@@ -38,8 +38,10 @@ function headers(apiKey, jwt, macAddress) {
     'Accept':'application/json',
     'X-UserType':'USER',
     'X-SourceID':'WEB',
-    'X-PrivateKey':apiKey,
+    'X-ClientLocalIP':'127.0.0.1',
+    'X-ClientPublicIP':process.env.ANGEL_CLIENT_PUBLIC_IP || '127.0.0.1',
     'X-MACAddress':macAddress,
+    'X-PrivateKey':apiKey,
     ...(jwt ? {'Authorization':`Bearer ${jwt}`} : {})
   };
 }
@@ -69,8 +71,8 @@ async function login() {
   const client = process.env.ANGEL_CLIENT_ID;
   const pin = process.env.ANGEL_PIN;
   const secret = process.env.ANGEL_TOTP_SECRET;
-  const macAddress = process.env.ANGEL_MAC_ADDRESS;
-  if (!apiKey || !client || !pin || !secret || !macAddress) throw new Error('Missing Angel One environment variables');
+  const macAddress = process.env.ANGEL_MAC_ADDRESS || '00:00:00:00:00:00';
+  if (!apiKey || !client || !pin || !secret) throw new Error('Missing Angel One environment variables');
   const r = await fetch(LOGIN_URL, {
     method:'POST',
     headers:headers(apiKey, null, macAddress),
