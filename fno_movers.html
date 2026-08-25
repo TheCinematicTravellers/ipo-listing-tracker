@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSE F&O Daily Top Movers</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0b0f14;color:#e8edf3;margin:0}.wrap{max-width:1250px;margin:auto;padding:28px}h1{margin:0 0 6px;font-size:30px}.sub{color:#9aa7b5;margin-bottom:24px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.panel{background:#111820;border:1px solid #27313c;border-radius:12px;padding:18px}h2{margin-top:0}table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #252e38;font-size:14px}th{color:#9aa7b5}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}.green{color:#54d68b}.red{color:#ff6b6b}.muted{color:#8996a5}.rank{font-weight:700}.stamp{margin-top:16px;color:#8996a5;font-size:13px}@media(max-width:900px){.grid{grid-template-columns:1fr}.wrap{padding:14px}table{font-size:12px}th,td{padding:7px 5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>NSE F&O Daily Top Movers</h1>
+<div class="sub" id="meta">Loading...</div>
+<div class="grid">
+<div class="panel"><h2 class="green">🟢 Top 10 Gainers</h2><div id="gainers">Loading...</div></div>
+<div class="panel"><h2 class="red">🔴 Top 10 Losers</h2><div id="losers">Loading...</div></div>
+</div>
+<div class="stamp" id="stamp"></div>
+</div>
+<script>
+const n=x=>x==null||x===""?"-":Number(x).toLocaleString('en-IN',{maximumFractionDigits:2});
+const p=x=>x==null||x===""?"-":(Number(x)>=0?'+':'')+Number(x).toFixed(2)+'%';
+const v=x=>x==null||x===""?"-":Number(x).toLocaleString('en-IN');
+function table(rows,side){
+ if(!rows.length)return '<span class="muted">No data yet.</span>';
+ return `<table><thead><tr><th>#</th><th>Stock</th><th>Change %</th><th>Open</th><th>${side==='g'?'Low':'High'}</th><th>CMP</th><th>Daily Volume</th></tr></thead><tbody>`+
+ rows.map((x,i)=>`<tr><td class="rank">${i+1}</td><td>${x.symbol}</td><td class="${side==='g'?'green':'red'}">${p(x.change_pct)}</td><td>${n(x.open)}</td><td>${n(side==='g'?x.low:x.high)}</td><td>${n(x.cmp)}</td><td>${v(x.volume)}</td></tr>`).join('')+'</tbody></table>';
+}
+fetch('fno_movers.json?ts='+Date.now()).then(r=>r.json()).then(d=>{
+ document.getElementById('meta').textContent=`${d.date_ist} · NSE F&O universe: ${d.universe_size} stocks`;
+ document.getElementById('gainers').innerHTML=table(d.gainers,'g');
+ document.getElementById('losers').innerHTML=table(d.losers,'l');
+ document.getElementById('stamp').textContent=`Last updated: ${d.updated_ist} · IST (Asia/Kolkata)`;
+}).catch(()=>document.getElementById('meta').textContent='Data unavailable. The daily updater has not published a fresh snapshot yet.');
+</script>
+</body>
+</html>
