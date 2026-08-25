@@ -58,28 +58,34 @@ export function stateFor(orbCandles, oneMin, direction){
     if(!Number.isFinite(h)||!Number.isFinite(l))continue;
     if(!active){
       if(direction==='LONG'){
-        if(h>=entry){
+        const touchedEntry=h>=entry,touchedSl=l<=sl;
+        if(touchedEntry&&touchedSl)return {status:'❌ SL',result:'❌'};
+        if(touchedEntry){
           active=true;
           if(h>=target)return {status:'🎯 Target',result:'0.4R ✅'};
-          if(l<=sl)return {status:'❌ SL',result:'❌'};
-        }else if(l<=sl){
+        }else if(touchedSl){
           return {status:'⚠️ Invalidated level',result:'⚠️'};
         }
       }else{
-        if(l<=entry){
+        const touchedEntry=l<=entry,touchedSl=h>=sl;
+        if(touchedEntry&&touchedSl)return {status:'❌ SL',result:'❌'};
+        if(touchedEntry){
           active=true;
           if(l<=target)return {status:'🎯 Target',result:'0.4R ✅'};
-          if(h>=sl)return {status:'❌ SL',result:'❌'};
-        }else if(h>=sl){
+        }else if(touchedSl){
           return {status:'⚠️ Invalidated level',result:'⚠️'};
         }
       }
     }else if(direction==='LONG'){
-      if(h>=target)return {status:'🎯 Target',result:'0.4R ✅'};
-      if(l<=sl)return {status:'❌ SL',result:'❌'};
+      const touchedTarget=h>=target,touchedSl=l<=sl;
+      if(touchedTarget&&touchedSl)return {status:'❌ SL',result:'❌'};
+      if(touchedTarget)return {status:'🎯 Target',result:'0.4R ✅'};
+      if(touchedSl)return {status:'❌ SL',result:'❌'};
     }else{
-      if(l<=target)return {status:'🎯 Target',result:'0.4R ✅'};
-      if(h>=sl)return {status:'❌ SL',result:'❌'};
+      const touchedTarget=l<=target,touchedSl=h>=sl;
+      if(touchedTarget&&touchedSl)return {status:'❌ SL',result:'❌'};
+      if(touchedTarget)return {status:'🎯 Target',result:'0.4R ✅'};
+      if(touchedSl)return {status:'❌ SL',result:'❌'};
     }
   }
   return active?{status:'✅ Trade Active',result:'⚖️'}:{status:'⏳ Pending',result:'⏳'};
