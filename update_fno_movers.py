@@ -9,9 +9,11 @@ OUT = "fno_movers.json"
 with open("fno_universe.json", encoding="utf-8") as f:
     symbols = json.load(f)
 
-# Yahoo Finance symbols for NSE equities.
-yahoo = {s: f"{s.replace('&','%26').replace('-','-')}.NS" for s in symbols}
+yahoo = {s: f"{s}.NS" for s in symbols}
 rows = []
+
+def same_price(a, b):
+    return round(float(a), 2) == round(float(b), 2)
 
 for start in range(0, len(symbols), 25):
     batch = symbols[start:start+25]
@@ -40,34 +42,55 @@ for start in range(0, len(symbols), 25):
             prev = float(x["Close"].iloc[-2])
             row = x.iloc[-1]
             close = float(row["Close"])
+            opn = float(row["Open"])
+            high = float(row["High"])
+            low = float(row["Low"])
             change = (close / prev - 1) * 100 if prev else 0.0
+
             rows.append({
                 "symbol": s,
                 "change_pct": round(change, 2),
-                "open": round(float(row["Open"]), 2),
-                "high": round(float(row["High"]), 2),
-                "low": round(float(row["Low"]), 2),
+                "open": round(opn, 2),
+                "high": round(high, 2),
+                "low": round(low, 2),
                 "cmp": round(close, 2),
                 "volume": int(row["Volume"]),
+                "open_eq_low": same_price(opn, low),
+                "open_eq_high": same_price(opn, high),
             })
         except Exception as e:
             print(f"{s}: {e}")
     time.sleep(1)
 
-rows.sort(key=lambda x: x["change_pct"], reverse=True)
-gainers = rows[:10]
-losers = sorted(rows, key=lambda x: x["change_pct"])[:10]
-now = datetime.now(IST)
+# Filter FIRST, then rank.
+# Gainers: OPEN = LOW only.
+# Losers: OPEN = HIGH only.
+open_low = [x for x in rows if x["open_eq_low"]]
+open_high = [x for x in rows if x["open_eq_high"]]
 
+gainers = sorted(open_low, key=lambda x: x["change_pct"], reverse=True)[:10]
+losers = sorted(open_high, key=lambda x: x["change_pct"])[:10]
+
+for x in gainers + losers:
+    x.pop("open_eq_low", None)
+    x.pop("open_eq_high", None)
+
+now = datetime.now(IST)
 out = {
     "date_ist": now.strftime("%d-%b-%Y"),
     "updated_ist": now.strftime("%d-%b-%Y %I:%M:%S %p"),
     "timezone": "Asia/Kolkata",
     "universe_size": len(symbols),
     "available": len(rows),
+    "eligible_open_low": len(open_low),
+    "eligible_open_high": len(open_high),
     "gainers": gainers,
     "losers": losers,
 }
 with open(OUT, "w", encoding="utf-8") as f:
     json.dump(out, f, indent=2)
-print(f"Published {len(rows)}/{len(symbols)} stocks at {out['updated_ist']} IST")
+
+print(
+    f"Published {len(rows)}/{len(symbols)} stocks at {out['updated_ist']} IST | "
+    f"OPEN=LOW: {len(open_low)} | OPEN=HIGH: {len(open_high)}"
+)
