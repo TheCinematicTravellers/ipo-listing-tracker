@@ -17,46 +17,51 @@ function num(x){const n=Number(x);return Number.isFinite(n)?n:null}
 function parts(d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:IST,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d),o={};for(const x of p)o[x.type]=x.value;return o}
 function stamp(){return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date())}
 
-// Final S2 state machine:
-// LONG: ORB HIGH = entry trigger; ORB LOW = fixed invalidation before entry AND fixed SL after entry.
-// SHORT: ORB LOW = entry trigger; ORB HIGH = fixed invalidation before entry AND fixed SL after entry.
-// ORB levels are the HIGH/LOW of the first three 5-minute candles (09:15, 09:20, 09:25).
-// Risk is defined from those fixed ORB levels. Breakout-candle high/low is NEVER used as SL.
-// Target = 0.4R. No body/volume/breakout-candle filters.
 export function stateFor(orbCandles, oneMin, direction){
-  const orderedOrb=orbCandles.filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
-  if(orderedOrb.length<3)return {status:'⏳ Pending',result:'⏳'};
-  const orb=orderedOrb.slice(0,3);
+  const ord=arr=>arr.filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
+  const orb=ord(orbCandles).slice(0,3);
+  if(orb.length<3)return {status:'⏳ Pending',result:'⏳'};
   const hi=Math.max(...orb.map(c=>Number(c[2]))),lo=Math.min(...orb.map(c=>Number(c[3])));
   if(!Number.isFinite(hi)||!Number.isFinite(lo)||hi<=lo)return {status:'⏳ Pending',result:'⏳'};
-  const after=oneMin.filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
-  const entryLevel=direction==='LONG'?hi:lo;
-  const risk=direction==='LONG'?hi-lo:hi-lo;
-  const target=direction==='LONG'?entryLevel+0.4*risk:entryLevel-0.4*risk;
-  const invalidation=direction==='LONG'?lo:hi;
+  const candles1=ord(oneMin);
+  const entry=direction==='LONG'?hi:lo;
+  const sl=direction==='LONG'?lo:hi;
+  const target=direction==='LONG'?entry+0.4*(hi-lo):entry-0.4*(hi-lo);
   let active=false;
-  for(const c of after){
+  for(const c of candles1){
     const h=Number(c[2]),l=Number(c[3]);
     if(!Number.isFinite(h)||!Number.isFinite(l))continue;
     if(!active){
       if(direction==='LONG'){
-        if(h>=entryLevel){active=true;continue;}
-        if(l<=invalidation)return {status:'⚠️ Invalidated level',result:'⚠️'};
+        // Before entry, only a break of ORB LOW invalidates. Entry has priority when both levels are touched in one candle.
+        if(h>=entry){
+          active=true;
+          // The entry candle is part of the post-entry sequence. If its range reaches target, target wins.
+          if(h>=target)return {status:'🎯 Target',result:'0.4R ✅'};
+          if(l<=sl)return {status:'❌ SL',result:'❌'};
+        }else if(l<=sl){
+          return {status:'⚠️ Invalidated level',result:'⚠️'};
+        }
       }else{
-        if(l<=entryLevel){active=true;continue;}
-        if(h>=invalidation)return {status:'⚠️ Invalidated level',result:'⚠️'};
+        if(l<=entry){
+          active=true;
+          if(l<=target)return {status:'🎯 Target',result:'0.4R ✅'};
+          if(h>=sl)return {status:'❌ SL',result:'❌'};
+        }else if(h>=sl){
+          return {status:'⚠️ Invalidated level',result:'⚠️'};
+        }
       }
     }else if(direction==='LONG'){
       if(h>=target)return {status:'🎯 Target',result:'0.4R ✅'};
-      if(l<=invalidation)return {status:'❌ SL',result:'❌'};
+      if(l<=sl)return {status:'❌ SL',result:'❌'};
     }else{
       if(l<=target)return {status:'🎯 Target',result:'0.4R ✅'};
-      if(h>=invalidation)return {status:'❌ SL',result:'❌'};
+      if(h>=sl)return {status:'❌ SL',result:'❌'};
     }
   }
   return active?{status:'✅ Trade Active',result:'⚖️'}:{status:'⏳ Pending',result:'⏳'};
 }
 export default async function handler(req,res){res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Methods','GET,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');res.setHeader('Cache-Control','no-store,max-age=0');if(req.method==='OPTIONS')return res.status(204).end();if(req.method!=='GET')return res.status(405).json({error:'GET only'});try{const raw=await fetch('https://raw.githubusercontent.com/TheCinematicTravellers/ipo-listing-tracker/main/fno_universe.json',{cache:'no-store'}).then(r=>r.json()),symbols=Array.isArray(raw)?raw:JSON.parse(raw.content),m=await master(),matched=symbols.map(s=>({symbol:s,token:m.get(norm(s))})).filter(x=>x.token),missing=symbols.filter(s=>!m.get(norm(s))),a=await login(),rows=[];for(let i=0;i<matched.length;i+=50){const batch=matched.slice(i,i+50),f=await quote(a,batch.map(x=>String(x.token))),by=new Map(f.map(x=>[String(x.symbolToken),x]));for(const x of batch){const q=by.get(String(x.token));if(!q)continue;const open=num(q.open),high=num(q.high),low=num(q.low),cmp=num(q.ltp),close=num(q.close);if([open,high,low,cmp,close].some(v=>v===null)||!close)continue;rows.push({symbol:x.symbol,token:x.token,change_pct:(cmp/close-1)*100,open,high,low,cmp})}}
 const gainers=rows.filter(x=>Math.abs(x.open-x.low)<1e-7).sort((a,b)=>b.change_pct-a.change_pct).slice(0,10),losers=rows.filter(x=>Math.abs(x.open-x.high)<1e-7).sort((a,b)=>a.change_pct-b.change_pct).slice(0,10);const p=parts(),start=`${p.year}-${p.month}-${p.day} 09:15`,orbEnd=`${p.year}-${p.month}-${p.day} 09:30`,end=`${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
-for(const x of gainers.concat(losers)){try{const orb=await candles(a,x.token,start,orbEnd,'FIVE_MINUTE'),one=await candles(a,x.token,orbEnd,end,'ONE_MINUTE');const s=stateFor(orb,one,gainers.includes(x)?'LONG':'SHORT');x.status=s.status;x.result=s.result}catch(e){x.status='⏳ Pending';x.result='⏳'}x.change_pct=Number(x.change_pct.toFixed(2))}
+for(const x of gainers.concat(losers)){try{const orb=await candles(a,x.token,start,orbEnd,'FIVE_MINUTE'),one=await candles(a,x.token,orbEnd,end,'ONE_MINUTE');const s=stateFor(orb,one,gainers.includes(x)?'LONG':'SHORT');x.status=s.status;x.result=s.result}catch(e){console.error(`state ${x.symbol}:`,e);x.status='⏳ Pending';x.result='⏳'}x.change_pct=Number(x.change_pct.toFixed(2))}
 return res.status(200).json({date_ist:new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric'}).format(new Date()),updated_ist:stamp(),timezone:IST,universe_size:symbols.length,available:rows.length,matched:matched.length,missing,gainers,losers})}catch(e){console.error(e);return res.status(500).json({error:e.message||'AUTO feed failed'})}}
