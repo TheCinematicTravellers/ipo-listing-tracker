@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+import crypto from 'node:crypto';
 
 const IST = 'Asia/Kolkata';
 const MASTER_URL = 'https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json';
@@ -43,9 +43,7 @@ function headers(apiKey, jwt) {
   };
 }
 
-function normalize(s) {
-  return String(s).trim().toUpperCase().replace(/-EQ$/,'');
-}
+function normalize(s) { return String(s).trim().toUpperCase().replace(/-EQ$/,''); }
 
 async function getMaster() {
   if (cachedMaster && Date.now() - cachedAt < 10*60*1000) return cachedMaster;
@@ -93,20 +91,16 @@ async function quote(auth, tokens) {
 }
 
 function asNum(x) { const n = Number(x); return Number.isFinite(n) ? n : null; }
-function stamp() {
-  return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date());
-}
-function dateIST() {
-  return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric'}).format(new Date());
-}
+function stamp() { return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date()); }
+function dateIST() { return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric'}).format(new Date()); }
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin','*');
   res.setHeader('Access-Control-Allow-Methods','GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers','Content-Type');
   res.setHeader('Cache-Control','no-store, max-age=0');
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'GET') return res.status(405).json({error:'GET only'});
-
   try {
     const raw = await fetch('https://raw.githubusercontent.com/TheCinematicTravellers/ipo-listing-tracker/main/fno_universe.json',{cache:'no-store'}).then(r=>r.json());
     const symbols = Array.isArray(raw) ? raw : JSON.parse(raw.content);
