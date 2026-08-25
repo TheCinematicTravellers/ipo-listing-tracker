@@ -20,15 +20,33 @@ function stateFor(orbCandles,oneMin,direction){
   if(orbCandles.length<3)return {status:'⏳ Pending',result:'⏳'};
   const orb=orbCandles.slice(0,3);
   const hi=Math.max(...orb.map(c=>Number(c[2]))),lo=Math.min(...orb.map(c=>Number(c[3])));
-  let entry=null,sl=null,target=null,enteredAt=-1;
+  let entry=null,sl=null,target=null;
   for(let i=0;i<oneMin.length;i++){
     const c=oneMin[i],h=Number(c[2]),l=Number(c[3]);
     if(entry===null){
       if(direction==='LONG'){
-        if(h>=hi){entry=hi;sl=l;const risk=entry-sl;if(risk<=0)return {status:'⚠️ Invalidated level',result:'⚠️'};target=entry+.4*risk;enteredAt=i;continue}
+        if(h>=hi){
+          entry=hi;
+          sl=l;
+          const risk=entry-sl;
+          if(risk<=0)return {status:'⚠️ Invalidated level',result:'⚠️'};
+          target=entry+.4*risk;
+          // The breakout candle establishes entry and SL. Do not count its earlier range as post-entry movement.
+          continue;
+        }
+        // Before entry, only an opposite ORB-low break invalidates the long setup.
         if(l<=lo)return {status:'⚠️ Invalidated level',result:'⚠️'};
       }else{
-        if(l<=lo){entry=lo;sl=h;const risk=sl-entry;if(risk<=0)return {status:'⚠️ Invalidated level',result:'⚠️'};target=entry-.4*risk;enteredAt=i;continue}
+        if(l<=lo){
+          entry=lo;
+          sl=h;
+          const risk=sl-entry;
+          if(risk<=0)return {status:'⚠️ Invalidated level',result:'⚠️'};
+          target=entry-.4*risk;
+          // The breakout candle establishes entry and SL. Do not count its earlier range as post-entry movement.
+          continue;
+        }
+        // Before entry, only an opposite ORB-high break invalidates the short setup.
         if(h>=hi)return {status:'⚠️ Invalidated level',result:'⚠️'};
       }
     }else{
