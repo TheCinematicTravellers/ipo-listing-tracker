@@ -8,19 +8,20 @@ const orb = [
   ['2026-08-25 09:25:00', 105, 107, 102, 106, 0],
 ];
 
-test('touching ORB low before a long break does not invalidate the level', () => {
+// ORB High = 107, ORB Low = 99, risk = 8, long target = 110.2.
+test('touching ORB low before a long break invalidates the level', () => {
   const oneMin = [
-    ['2026-08-25 09:30:00', 106, 107, 102, 105, 0],
+    ['2026-08-25 09:30:00', 106, 106.5, 98.9, 100, 0],
   ];
   assert.deepEqual(stateFor(orb, oneMin, 'LONG'), {
-    status: '⏳ Pending',
-    result: '⏳',
+    status: '⚠️ Invalidated level',
+    result: '⚠️',
   });
 });
 
-test('a strict ORB-high break that reaches 0.4R on the breakout candle is Target', () => {
+test('a long break that reaches the real 0.4R target is Target', () => {
   const oneMin = [
-    ['2026-08-25 09:30:00', 106, 109, 104, 108, 0],
+    ['2026-08-25 09:30:00', 106, 111, 106, 110, 0],
   ];
   assert.deepEqual(stateFor(orb, oneMin, 'LONG'), {
     status: '🎯 Target',
@@ -28,12 +29,21 @@ test('a strict ORB-high break that reaches 0.4R on the breakout candle is Target
   });
 });
 
-test('a strict ORB-low break invalidates a long setup before entry', () => {
+test('a long break without target or SL remains active', () => {
   const oneMin = [
-    ['2026-08-25 09:30:00', 106, 106.5, 98.9, 100, 0],
+    ['2026-08-25 09:30:00', 106, 109, 106, 108, 0],
   ];
   assert.deepEqual(stateFor(orb, oneMin, 'LONG'), {
-    status: '⚠️ Invalidated level',
-    result: '⚠️',
+    status: '✅ Trade Active',
+    result: '⚖️',
+  });
+});
+
+test('a short break that reaches the 0.4R target is Target', () => {
+  assert.deepEqual(stateFor(orb, [
+    ['2026-08-25 09:30:00', 100, 100, 95, 96, 0],
+  ], 'SHORT'), {
+    status: '🎯 Target',
+    result: '0.4R ✅',
   });
 });
