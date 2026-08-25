@@ -1,64 +1,12 @@
 {
   "date_ist": "25-Aug-2026",
-  "updated_ist": "25-Aug-2026 03:56:12 PM",
+  "updated_ist": "25-Aug-2026 04:00:01 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
+  "eligible_open_low": 5,
+  "eligible_open_high": 17,
   "gainers": [
-    {
-      "symbol": "IDEA",
-      "change_pct": 7.96,
-      "open": 14.09,
-      "high": 15.31,
-      "low": 14.08,
-      "cmp": 15.19,
-      "volume": 1532097430
-    },
-    {
-      "symbol": "PAYTM",
-      "change_pct": 5.82,
-      "open": 1622.7,
-      "high": 1718.0,
-      "low": 1612.0,
-      "cmp": 1718.0,
-      "volume": 10108650
-    },
-    {
-      "symbol": "ANGELONE",
-      "change_pct": 5.21,
-      "open": 286.8,
-      "high": 301.55,
-      "low": 284.0,
-      "cmp": 300.9,
-      "volume": 10819653
-    },
-    {
-      "symbol": "IREDA",
-      "change_pct": 4.51,
-      "open": 115.0,
-      "high": 121.14,
-      "low": 114.4,
-      "cmp": 120.61,
-      "volume": 11092821
-    },
-    {
-      "symbol": "ADANIENT",
-      "change_pct": 3.72,
-      "open": 2998.0,
-      "high": 3110.0,
-      "low": 2962.5,
-      "cmp": 3110.0,
-      "volume": 2022632
-    },
-    {
-      "symbol": "LAURUSLABS",
-      "change_pct": 3.56,
-      "open": 1808.0,
-      "high": 1869.4,
-      "low": 1796.5,
-      "cmp": 1866.2,
-      "volume": 3550471
-    },
     {
       "symbol": "INDUSTOWER",
       "change_pct": 3.47,
@@ -69,43 +17,43 @@
       "volume": 6991234
     },
     {
-      "symbol": "ADANIENSOL",
-      "change_pct": 3.41,
-      "open": 1554.9,
-      "high": 1594.5,
-      "low": 1532.0,
-      "cmp": 1594.5,
-      "volume": 2043619
+      "symbol": "MOTILALOFS",
+      "change_pct": 2.17,
+      "open": 992.0,
+      "high": 1019.9,
+      "low": 992.0,
+      "cmp": 1011.5,
+      "volume": 1834638
     },
     {
-      "symbol": "HDFCAMC",
-      "change_pct": 3.37,
-      "open": 2609.9,
-      "high": 2698.0,
-      "low": 2606.8,
-      "cmp": 2698.0,
-      "volume": 1157332
+      "symbol": "ADANIGREEN",
+      "change_pct": 1.68,
+      "open": 1294.8,
+      "high": 1330.0,
+      "low": 1294.8,
+      "cmp": 1330.0,
+      "volume": 2435530
     },
     {
-      "symbol": "LICHSGFIN",
-      "change_pct": 2.97,
-      "open": 490.0,
-      "high": 506.4,
-      "low": 489.15,
-      "cmp": 506.0,
-      "volume": 3617012
+      "symbol": "AMBER",
+      "change_pct": 0.73,
+      "open": 7307.5,
+      "high": 7445.0,
+      "low": 7307.5,
+      "cmp": 7432.0,
+      "volume": 170264
+    },
+    {
+      "symbol": "ICICIBANK",
+      "change_pct": 0.54,
+      "open": 1408.0,
+      "high": 1424.9,
+      "low": 1408.0,
+      "cmp": 1422.7,
+      "volume": 7973577
     }
   ],
   "losers": [
-    {
-      "symbol": "FEDERALBNK",
-      "change_pct": -3.89,
-      "open": 357.7,
-      "high": 358.7,
-      "low": 342.05,
-      "cmp": 346.95,
-      "volume": 16133447
-    },
     {
       "symbol": "DALBHARAT",
       "change_pct": -2.98,
@@ -125,60 +73,6 @@
       "volume": 1222451
     },
     {
-      "symbol": "HEROMOTOCO",
-      "change_pct": -1.93,
-      "open": 5665.0,
-      "high": 5682.0,
-      "low": 5590.0,
-      "cmp": 5624.5,
-      "volume": 432332
-    },
-    {
-      "symbol": "HINDZINC",
-      "change_pct": -1.89,
-      "open": 600.0,
-      "high": 600.6,
-      "low": 586.85,
-      "cmp": 592.6,
-      "volume": 9502817
-    },
-    {
-      "symbol": "NAM-INDIA",
-      "change_pct": -1.88,
-      "open": 1247.0,
-      "high": 1253.1,
-      "low": 1220.0,
-      "cmp": 1224.4,
-      "volume": 1193172
-    },
-    {
-      "symbol": "POWERINDIA",
-      "change_pct": -1.6,
-      "open": 33680.0,
-      "high": 33695.0,
-      "low": 33005.0,
-      "cmp": 33300.0,
-      "volume": 88339
-    },
-    {
-      "symbol": "MOTHERSON",
-      "change_pct": -1.51,
-      "open": 167.61,
-      "high": 168.28,
-      "low": 164.81,
-      "cmp": 166.45,
-      "volume": 8698221
-    },
-    {
-      "symbol": "RVNL",
-      "change_pct": -1.49,
-      "open": 221.7,
-      "high": 224.1,
-      "low": 217.02,
-      "cmp": 218.4,
-      "volume": 7338806
-    },
-    {
       "symbol": "NATIONALUM",
       "change_pct": -1.36,
       "open": 402.0,
@@ -186,6 +80,69 @@
       "low": 392.05,
       "cmp": 397.8,
       "volume": 3853990
+    },
+    {
+      "symbol": "CIPLA",
+      "change_pct": -1.11,
+      "open": 1435.9,
+      "high": 1435.9,
+      "low": 1411.1,
+      "cmp": 1422.0,
+      "volume": 798787
+    },
+    {
+      "symbol": "MANKIND",
+      "change_pct": -0.8,
+      "open": 2374.4,
+      "high": 2374.4,
+      "low": 2337.6,
+      "cmp": 2365.0,
+      "volume": 415560
+    },
+    {
+      "symbol": "COALINDIA",
+      "change_pct": -0.71,
+      "open": 408.0,
+      "high": 408.0,
+      "low": 401.1,
+      "cmp": 404.0,
+      "volume": 8443204
+    },
+    {
+      "symbol": "PERSISTENT",
+      "change_pct": -0.68,
+      "open": 5687.0,
+      "high": 5687.0,
+      "low": 5570.5,
+      "cmp": 5655.0,
+      "volume": 358181
+    },
+    {
+      "symbol": "WIPRO",
+      "change_pct": -0.67,
+      "open": 181.29,
+      "high": 181.29,
+      "low": 178.39,
+      "cmp": 180.09,
+      "volume": 8324955
+    },
+    {
+      "symbol": "SOLARINDS",
+      "change_pct": -0.63,
+      "open": 19925.0,
+      "high": 19925.0,
+      "low": 19665.0,
+      "cmp": 19800.0,
+      "volume": 57697
+    },
+    {
+      "symbol": "PIDILITIND",
+      "change_pct": -0.54,
+      "open": 1660.0,
+      "high": 1660.0,
+      "low": 1636.6,
+      "cmp": 1651.1,
+      "volume": 456792
     }
   ]
 }
