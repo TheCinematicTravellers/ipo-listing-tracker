@@ -5,11 +5,14 @@ on:
     - cron: '30 10 * * 1-5'
   workflow_dispatch:
 
+env:
+  TZ: Asia/Kolkata
+
 jobs:
   daily-summary:
     runs-on: ubuntu-latest
     steps:
-      - name: Send 4pm IST daily summary
+      - name: Send 4pm IST daily summary (test window 4:00-4:35 PM)
         env:
           MONITOR_URL: https://our-screener.vercel.app/api/telegram-monitor?summary=1
           MONITOR_SECRET: ${{ secrets.MONITOR_SECRET }}
