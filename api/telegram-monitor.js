@@ -5,9 +5,9 @@ function nowParts(d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZon
 function keyFor(date,symbol){return `orb:${date}:${symbol}`}
 function minutes(p){return Number(p.hour)*60+Number(p.minute)}
 function esc(s){return String(s).replace(/[_*\[\]()~`>#+\-=|{}.!]/g,'\\$&')}
-async function redisCommand(command){const base=process.env.UPSTASH_REDIS_REST_URL,token=process.env.UPSTASH_REDIS_REST_TOKEN;if(!base||!token)throw Error('Missing Upstash Redis environment variables');const r=await fetch(base,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(command)});const d=await r.json();if(!r.ok||d.error)throw Error(d.error||`Redis HTTP ${r.status}`);return d.result}
-async function getState(key){return redisCommand(['GET',key])}
-async function setState(key,value){return redisCommand(['SET',key,value,'EX','86400'])}
+async function redisRequest(path,options={}){const base=process.env.UPSTASH_REDIS_REST_URL,token=process.env.UPSTASH_REDIS_REST_TOKEN;if(!base||!token)throw Error('Missing Upstash Redis environment variables');const r=await fetch(`${base.replace(/\/$/,'')}${path}`,{...options,headers:{Authorization:`Bearer ${token}`,...(options.headers||{})}});const d=await r.json();if(!r.ok||d.error)throw Error(d.error||`Redis HTTP ${r.status}`);return d.result}
+async function getState(key){return redisRequest(`/get/${encodeURIComponent(key)}`)}
+async function setState(key,value){return redisRequest(`/set/${encodeURIComponent(key)}?EX=86400`,{method:'POST',headers:{'Content-Type':'text/plain'},body:String(value)})}
 async function telegram(text){const token=process.env.TELEGRAM_BOT_TOKEN,chat=process.env.TELEGRAM_CHAT_ID;if(!token||!chat)throw Error('Missing Telegram environment variables');const r=await fetch(`https://api.telegram.org/bot${token}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text,parse_mode:'MarkdownV2',disable_web_page_preview:true})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.description||`Telegram HTTP ${r.status}`);return d}
 export default async function handler(req,res){
   if(req.method!=='GET')return res.status(405).json({error:'GET only'});
