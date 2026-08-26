@@ -2,7 +2,7 @@ name: ORB 4pm Daily Summary
 
 on:
   schedule:
-    - cron: '5 11 * * 1-5'
+    - cron: '15 11 * * 1-5'
   workflow_dispatch:
 
 env:
@@ -12,7 +12,7 @@ jobs:
   daily-summary:
     runs-on: ubuntu-latest
     steps:
-      - name: Send daily summary at 4:35 PM IST
+      - name: Send daily summary at 4:45 PM IST
         env:
           MONITOR_URL: https://our-screener.vercel.app/api/telegram-monitor?summary=1
           MONITOR_SECRET: ${{ secrets.MONITOR_SECRET }}
