@@ -40,9 +40,10 @@ async function angelCandleRequest(a,token,from,to,interval){
 function num(x){const n=Number(x);return Number.isFinite(n)?n:null}
 function parts(d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:IST,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d),o={};for(const x of p)o[x.type]=x.value;return o}
 function stamp(){return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date())}
+function orderedCandles(arr){return (Array.isArray(arr)?arr:[]).filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])))}
 
 export function stateFor(orbCandles, oneMin, direction){
-  const ord=arr=>arr.filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
+  const ord=orderedCandles;
   const orb=ord(orbCandles).slice(0,3);
   if(orb.length<3)return {status:'⏳ Pending',result:'⏳'};
   const hi=Math.max(...orb.map(c=>Number(c[2]))),lo=Math.min(...orb.map(c=>Number(c[3])));
@@ -96,16 +97,17 @@ export default async function handler(req,res){
   if(req.method==='OPTIONS')return res.status(204).end();if(req.method!=='GET')return res.status(405).json({error:'GET only'});
   try{
     const raw=await fetch('https://raw.githubusercontent.com/TheCinematicTravellers/ipo-listing-tracker/main/fno_universe.json',{cache:'no-store'}).then(r=>r.json()),symbols=Array.isArray(raw)?raw:JSON.parse(raw.content),m=await master(),matched=symbols.map(s=>({symbol:s,token:m.get(norm(s))})).filter(x=>x.token),missing=symbols.filter(s=>!m.get(norm(s))),a=await login(),rows=[];
-    for(let i=0;i<matched.length;i+=50){const batch=matched.slice(i,i+50),f=await quote(a,batch.map(x=>String(x.token))),by=new Map(f.map(x=>[String(x.symbolToken),x]));for(const x of batch){const q=by.get(String(x.token));if(!q)continue;const open=num(q.open),high=num(q.high),low=num(q.low),cmp=num(q.ltp),close=num(q.close);if([open,high,low,cmp,close].some(v=>v===null)||!close)continue;rows.push({symbol:x.symbol,token:x.token,change_pct:(cmp/close-1)*100,open,high,low,cmp})}}
+    for(let i=0;i<matched.length;i+=50){const batch=matched.slice(i,i+50),f=await quote(a,batch.map(x=>String(x.token))),by=new Map(f.map(x=>[String(x.symbolToken),x]));for(const x of batch){const q=by.get(String(x.token));if(!q)continue;const open=num(q.open),high=num(q.high),low=num(q.low),cmp=num(q.ltp),close=num(q.close),volume=num(q.tradeVolume);if([open,high,low,cmp,close].some(v=>v===null)||!close)continue;rows.push({symbol:x.symbol,token:x.token,change_pct:(cmp/close-1)*100,open,high,low,cmp,volume})}}
     const gainers=rows.filter(x=>Math.abs(x.open-x.low)<1e-7).sort((a,b)=>b.change_pct-a.change_pct).slice(0,10),losers=rows.filter(x=>Math.abs(x.open-x.high)<1e-7).sort((a,b)=>a.change_pct-b.change_pct).slice(0,10);
     const p=parts(),start=`${p.year}-${p.month}-${p.day} 09:15`,orbEnd=`${p.year}-${p.month}-${p.day} 09:30`,end=`${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
     const statusErrors=[];
     for(const x of gainers.concat(losers)){
       try{
-        const orb=await angelCandleRequest(a,x.token,start,orbEnd,'FIVE_MINUTE');
-        const one=await angelCandleRequest(a,x.token,orbEnd,end,'ONE_MINUTE');
-        if(!Array.isArray(orb)||orb.length<3||!Array.isArray(one))throw Error(`Insufficient candle data: ORB=${orb?.length||0}, 1m=${one?.length||0}`);
-        const s=stateFor(orb,one,gainers.includes(x)?'LONG':'SHORT');x.status=s.status;x.result=s.result;
+        const combined=orderedCandles(await angelCandleRequest(a,x.token,start,end,'ONE_MINUTE'));
+        const orb=combined.filter(c=>Date.parse(String(c[0]))<Date.parse(`${p.year}-${p.month}-${p.day}T09:30:00+05:30`));
+        const postOrb=combined.filter(c=>Date.parse(String(c[0]))>=Date.parse(`${p.year}-${p.month}-${p.day}T09:30:00+05:30`));
+        if(orb.length<3)throw Error(`Insufficient ORB data: ${orb.length}`);
+        const s=stateFor(orb.slice(0,3),postOrb,gainers.includes(x)?'LONG':'SHORT');x.status=s.status;x.result=s.result;
       }catch(e){
         console.error(`state ${x.symbol}:`,e);statusErrors.push({symbol:x.symbol,error:e.message||String(e)});
         x.status='⏳ Pending';x.result='⏳';
