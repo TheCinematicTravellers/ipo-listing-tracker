@@ -42,6 +42,21 @@ function parts(d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:I
 function stamp(){return new Intl.DateTimeFormat('en-IN',{timeZone:IST,day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).format(new Date())}
 function orderedCandles(arr){return (Array.isArray(arr)?arr:[]).filter(c=>Array.isArray(c)&&c.length>=5&&Number.isFinite(Date.parse(String(c[0])))).slice().sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])))}
 
+function buildOrb5m(oneMin){
+  const groups=new Map();
+  for(const c of orderedCandles(oneMin)){
+    const p=parts(new Date(String(c[0]))),m=Number(p.minute),h=Number(p.hour);
+    if(h!==9||m<15||m>=30)continue;
+    const bucket=15+Math.floor((m-15)/5)*5,key=`${p.year}-${p.month}-${p.day} ${String(h).padStart(2,'0')}:${String(bucket).padStart(2,'0')}`;
+    const o=num(c[1]),hi=num(c[2]),lo=num(c[3]),cl=num(c[4]);
+    if([o,hi,lo,cl].some(v=>v===null))continue;
+    const g=groups.get(key);
+    if(!g)groups.set(key,[c[0],o,hi,lo,cl]);
+    else{g[2]=Math.max(g[2],hi);g[3]=Math.min(g[3],lo);g[4]=cl;}
+  }
+  return [...groups.values()].sort((a,b)=>Date.parse(String(a[0]))-Date.parse(String(b[0])));
+}
+
 export function stateFor(orbCandles, oneMin, direction){
   const ord=orderedCandles;
   const orb=ord(orbCandles).slice(0,3);
@@ -96,18 +111,18 @@ export default async function handler(req,res){
   res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Access-Control-Allow-Methods','GET,OPTIONS');res.setHeader('Access-Control-Allow-Headers','Content-Type');res.setHeader('Cache-Control','no-store,max-age=0');
   if(req.method==='OPTIONS')return res.status(204).end();if(req.method!=='GET')return res.status(405).json({error:'GET only'});
   try{
-    const raw=await fetch('https://raw.githubusercontent.com/TheCinematicTravellers/ipo-listing-tracker/main/fno_universe.json',{cache:'no-store'}).then(r=>r.json()),symbols=Array.isArray(raw)?raw:JSON.parse(raw.content),m=await master(),matched=symbols.map(s=>({symbol:s,token:m.get(norm(s))})).filter(x=>x.token),missing=symbols.filter(s=>!m.get(norm(s))),a=await login(),rows=[];
+    const raw=await fetch('https://raw.githubusercontent.com/TheCinematicTravellers/ipo-listing-tracker/main/fno_universe.json',{cache:'no-store'}),symbolsData=await raw.json(),symbols=Array.isArray(symbolsData)?symbolsData:JSON.parse(symbolsData.content),m=await master(),matched=symbols.map(s=>({symbol:s,token:m.get(norm(s))})).filter(x=>x.token),missing=symbols.filter(s=>!m.get(norm(s))),a=await login(),rows=[];
     for(let i=0;i<matched.length;i+=50){const batch=matched.slice(i,i+50),f=await quote(a,batch.map(x=>String(x.token))),by=new Map(f.map(x=>[String(x.symbolToken),x]));for(const x of batch){const q=by.get(String(x.token));if(!q)continue;const open=num(q.open),high=num(q.high),low=num(q.low),cmp=num(q.ltp),close=num(q.close),volume=num(q.tradeVolume);if([open,high,low,cmp,close].some(v=>v===null)||!close)continue;rows.push({symbol:x.symbol,token:x.token,change_pct:(cmp/close-1)*100,open,high,low,cmp,volume})}}
     const gainers=rows.filter(x=>Math.abs(x.open-x.low)<1e-7).sort((a,b)=>b.change_pct-a.change_pct).slice(0,10),losers=rows.filter(x=>Math.abs(x.open-x.high)<1e-7).sort((a,b)=>a.change_pct-b.change_pct).slice(0,10);
-    const p=parts(),start=`${p.year}-${p.month}-${p.day} 09:15`,orbEnd=`${p.year}-${p.month}-${p.day} 09:30`,end=`${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
+    const p=parts(),start=`${p.year}-${p.month}-${p.day} 09:15`,end=`${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
     const statusErrors=[];
     for(const x of gainers.concat(losers)){
       try{
         const combined=orderedCandles(await angelCandleRequest(a,x.token,start,end,'ONE_MINUTE'));
-        const orb=combined.filter(c=>Date.parse(String(c[0]))<Date.parse(`${p.year}-${p.month}-${p.day}T09:30:00+05:30`));
-        const postOrb=combined.filter(c=>Date.parse(String(c[0]))>=Date.parse(`${p.year}-${p.month}-${p.day}T09:30:00+05:30`));
-        if(orb.length<3)throw Error(`Insufficient ORB data: ${orb.length}`);
-        const s=stateFor(orb.slice(0,3),postOrb,gainers.includes(x)?'LONG':'SHORT');x.status=s.status;x.result=s.result;
+        const orb=buildOrb5m(combined);
+        const postOrb=combined.filter(c=>{const t=Date.parse(String(c[0]));return t>=Date.parse(`${p.year}-${p.month}-${p.day}T09:30:00+05:30`)});
+        if(orb.length<3)throw Error(`Insufficient ORB 5m data: ${orb.length}`);
+        const s=stateFor(orb,postOrb,gainers.includes(x)?'LONG':'SHORT');x.status=s.status;x.result=s.result;
       }catch(e){
         console.error(`state ${x.symbol}:`,e);statusErrors.push({symbol:x.symbol,error:e.message||String(e)});
         x.status='⏳ Pending';x.result='⏳';
