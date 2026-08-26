@@ -17,21 +17,3 @@ jobs:
           curl --fail-with-body --max-time 120 \
             -H "Authorization: Bearer ${MONITOR_SECRET}" \
             "${MONITOR_URL}"
-
-  daily-summary:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send 4pm IST daily summary
-        env:
-          MONITOR_URL: https://our-screener.vercel.app/api/telegram-monitor?summary=1
-          MONITOR_SECRET: ${{ secrets.MONITOR_SECRET }}
-        run: |
-          hour=$(TZ=Asia/Kolkata date +%H)
-          minute=$(TZ=Asia/Kolkata date +%M)
-          if [ "$hour" != "16" ] || [ "$minute" -lt "00" ] || [ "$minute" -gt "04" ]; then
-            echo "Not the 4pm IST summary window; skipping. Current IST: $hour:$minute"
-            exit 0
-          fi
-          curl --fail-with-body --max-time 120 \
-            -H "Authorization: Bearer ${MONITOR_SECRET}" \
-            "${MONITOR_URL}"
