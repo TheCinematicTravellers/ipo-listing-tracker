@@ -21,8 +21,10 @@ export default async function handler(req,res){
     const data=await r.json(),rows=[...(data.gainers||[]),...(data.losers||[])],alerts=[];
     for(const row of rows){
       const status=row.status,date=p.year+p.month+p.day,key=keyFor(date,row.symbol),previous=await getState(key);
+      if(previous===null){await setState(key,status);continue;}
+      if(previous===status){continue;}
       await setState(key,status);
-      if((previous!==null&&previous!=='⏳ Pending')||status==='⏳ Pending')continue;
+      if(previous!=='⏳ Pending'||status==='⏳ Pending')continue;
       let title='ORB ALERT';if(status==='🎯 Target')title='ORB TARGET';else if(status==='❌ SL')title='ORB SL';else if(status==='⚠️ Invalidated level')title='ORB INVALIDATED';else if(status==='✅ Trade Active')title='ORB TRADE ACTIVE';
       const text=`*${esc(title)}*\n*${esc(row.symbol)}*\nStatus: ${esc(status)}\nChange: ${esc(row.change_pct+'%')}\nTime: ${esc(`${p.hour}:${p.minute} IST`)}`;
       await telegram(text);alerts.push({symbol:row.symbol,status});
