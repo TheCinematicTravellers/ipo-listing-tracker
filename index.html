@@ -10,10 +10,11 @@ h1{margin:0 0 6px;font-size:30px}.sub{color:#9aa7b5;margin-bottom:24px}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:#131a22;border:1px solid #27313c;border-radius:12px;padding:18px}
 .num{font-size:28px;font-weight:700}.label{color:#9aa7b5;font-size:13px;margin-top:5px}.panel{background:#111820;border:1px solid #27313c;border-radius:12px;padding:18px;margin-top:18px}
 .movers{display:grid;grid-template-columns:1fr 1fr;gap:18px}.green{color:#54d68b}.red{color:#ff6b6b}.yellow{color:#f4c95d}.muted{color:#8996a5}
+.status-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.status-card{background:#131a22;border:1px solid #27313c;border-radius:10px;padding:14px}.status-num{font-size:24px;font-weight:700}.status-label{color:#9aa7b5;font-size:12px;margin-top:4px}
 input{width:100%;box-sizing:border-box;background:#0b0f14;color:white;border:1px solid #34404d;border-radius:8px;padding:12px;margin-bottom:12px}
 table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;border-bottom:1px solid #252e38;font-size:13px}th{color:#9aa7b5}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
 .stamp{margin-top:14px;font-size:13px;color:#9aa7b5}
-@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.movers{grid-template-columns:1fr}.wrap{padding:14px}}
+@media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr)}.status-summary{grid-template-columns:repeat(2,1fr)}.movers{grid-template-columns:1fr}.wrap{padding:14px}}
 </style>
 </head>
 <body>
@@ -24,6 +25,13 @@ table{width:100%;border-collapse:collapse}th,td{text-align:right;padding:10px;bo
 <div class="panel">
 <h2>📈 NSE F&O Daily Top Movers</h2>
 <div class="sub" id="fnoMeta">Loading daily movers...</div>
+<div class="status-summary">
+<div class="status-card"><div class="status-num" id="sumTarget">-</div><div class="status-label">🎯 Target</div></div>
+<div class="status-card"><div class="status-num" id="sumActive">-</div><div class="status-label">✅ Trade Active</div></div>
+<div class="status-card"><div class="status-num" id="sumSL">-</div><div class="status-label">❌ SL</div></div>
+<div class="status-card"><div class="status-num" id="sumPending">-</div><div class="status-label">⏳ Pending</div></div>
+<div class="status-card"><div class="status-num" id="sumInvalidated">-</div><div class="status-label">⚠️ Invalidated</div></div>
+</div>
 <div class="movers">
 <div><h3 class="green">🟢 Top 10 Gainers</h3><div id="gainers">Loading...</div></div>
 <div><h3 class="red">🔴 Top 10 Losers</h3><div id="losers">Loading...</div></div>
@@ -51,8 +59,8 @@ const vol=x=>x==null||x===""?"-":Number(x).toLocaleString('en-IN');
 const pct=x=>x==null||x===""?"-":(Number(x)>=0?'+':'')+Number(x).toFixed(2)+'%';
 function fnoTable(rows,side){
  if(!rows||!rows.length)return "<span class='muted'>No eligible data published yet.</span>";
- return `<table><thead><tr><th>#</th><th>Stock</th><th>Change %</th><th>Open</th><th>${side==='g'?'Low':'High'}</th><th>CMP</th><th>Daily Volume</th></tr></thead><tbody>`+
- rows.map((x,i)=>`<tr><td>${i+1}</td><td>${x.symbol}</td><td class='${side==='g'?'green':'red'}'>${pct(x.change_pct)}</td><td>${n(x.open)}</td><td>${n(side==='g'?x.low:x.high)}</td><td>${n(x.cmp)}</td><td>${vol(x.volume)}</td></tr>`).join('')+'</tbody></table>';
+ return `<table><thead><tr><th>#</th><th>Stock</th><th>Change %</th><th>Open</th><th>${side==='g'?'Low':'High'}</th><th>CMP</th><th>Daily Volume</th><th>Status</th></tr></thead><tbody>`+
+ rows.map((x,i)=>`<tr><td>${i+1}</td><td>${x.symbol}</td><td class='${side==='g'?'green':'red'}'>${pct(x.change_pct)}</td><td>${n(x.open)}</td><td>${n(side==='g'?x.low:x.high)}</td><td>${n(x.cmp)}</td><td>${vol(x.volume)}</td><td>${x.status||'⏳ Pending'}</td></tr>`).join('')+'</tbody></table>';
 }
 function render(){
  document.getElementById("meta").textContent=`Date: ${DATA.date} · Window: rolling 4 years · Mainboard only · Rule: later HIGH > listing-day HIGH`;
@@ -66,7 +74,13 @@ function render(){
 function draw(q){q=q.toLowerCase();const a=DATA.ipos.filter(x=>(x.symbol+" "+x.company).toLowerCase().includes(q));document.getElementById("rows").innerHTML=a.map(x=>{const broken=x.breakout_date?`<span class="green">BROKEN</span>`:`<span class='muted'>`+(x.listing_high?"Tracking":"Pending level")+`</span>`;return `<tr><td>${x.symbol||"-"}</td><td>${x.company}</td><td>${x.listing_date||"-"}</td><td>${money(x.listing_high)}</td><td>${broken}</td><td>${x.breakout_date||"-"}</td></tr>`}).join("");}
 document.getElementById("search").addEventListener("input",e=>draw(e.target.value));
 fetch("tracker.json?ts="+Date.now()).then(r=>r.json()).then(x=>{DATA=x;render()}).catch(()=>{document.getElementById("meta").textContent="tracker.json not found. Run the updater/export script."});
-fetch("fno_movers.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
+fetch("/api/fno-movers?ts="+Date.now()).then(r=>r.ok?r.json():fetch("fno_movers.json?ts="+Date.now()).then(x=>x.json())).then(d=>{
+ const rows=[...(d.gainers||[]),...(d.losers||[])],count=s=>rows.filter(x=>x.status===s).length;
+ document.getElementById("sumTarget").textContent=count('🎯 Target');
+ document.getElementById("sumActive").textContent=count('✅ Trade Active');
+ document.getElementById("sumSL").textContent=count('❌ SL');
+ document.getElementById("sumInvalidated").textContent=count('⚠️ Invalidated level');
+ document.getElementById("sumPending").textContent=rows.filter(x=>!x.status||x.status==='⏳ Pending').length;
  const stamp=d.updated_ist?`Last updated: ${d.updated_ist} IST`:'Daily F&O data will appear after the first scheduled update.';
  document.getElementById("fnoMeta").textContent=`${d.date_ist||'Waiting for first daily update'} · ${d.available||0}/${d.universe_size} stocks · ${stamp}`;
  document.getElementById("gainers").innerHTML=fnoTable(d.gainers,'g');
