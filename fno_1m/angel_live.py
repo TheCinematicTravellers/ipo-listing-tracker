@@ -1,9 +1,8 @@
 """Angel One live market-data adapter for the F&O 1m forward test.
 
-This module is DATA ONLY. It contains no order-placement call.
-It reuses the same SmartAPI login/WebSocket pattern proven in the existing
-nse_fno_orb project. The local Windows runtime supplies the credentials and
-path to the existing instrument master.
+DATA ONLY: this module never places broker orders.
+It reuses the SmartAPI login/WebSocket pattern already proven in the
+existing C:\\Users\\megha\\nse_fno_orb project.
 """
 import csv
 import json
@@ -45,18 +44,17 @@ def load_master():
 
 
 def load_fno_symbols() -> list[str]:
-    """Read the existing F&O stock list, preserving the project's 208-stock universe."""
     if not os.path.exists(FNO_LIST_FILE):
         raise FileNotFoundError(FNO_LIST_FILE)
     with open(FNO_LIST_FILE, newline="", encoding="utf-8-sig") as f:
         rows = list(csv.DictReader(f))
     if not rows:
         raise RuntimeError("F&O stock list is empty")
-    keys = {k.lower(): k for k in rows[0]}
-    symbol_key = next((keys[k] for k in ("symbol", "tradingsymbol", "stock") if k in keys), None)
+    fields = {str(k).strip().lower(): k for k in rows[0]}
+    symbol_key = next((fields[k] for k in ("symbol", "tradingsymbol", "stock") if k in fields), None)
     if not symbol_key:
-        raise RuntimeError(f"Cannot find symbol column in {FNO_LIST_FILE}")
-    symbols = []
+        raise RuntimeError(f"Cannot find a symbol column in {FNO_LIST_FILE}")
+    symbols: list[str] = []
     for row in rows:
         value = str(row.get(symbol_key, "")).strip().upper()
         if value:
@@ -66,22 +64,18 @@ def load_fno_symbols() -> list[str]:
 
 def underlying_tokens(master: list[dict], symbols: Iterable[str]) -> dict[str, str]:
     wanted = {s.upper() for s in symbols}
-    out = {}
+    out: dict[str, str] = {}
     for row in master:
         if str(row.get("exch_seg", "")).upper() != "NSE":
             continue
         symbol = str(row.get("symbol", "")).upper()
         if symbol.endswith("-EQ") and symbol[:-3] in wanted and row.get("token"):
             out[symbol[:-3]] = str(row["token"])
-    missing = sorted(wanted - set(out))
-    if missing:
-        print(f"[WARN] Missing NSE tokens: {len(missing)}")
-    print(f"[OK] F&O symbols loaded: {len(wanted)} | NSE tokens found: {len(out)}")
+    print(f"[OK] Universe requested: {len(wanted)} | NSE tokens found: {len(out)}")
     return out
 
 
 def run_data_only():
-    """Connect and print live LTP for the existing F&O universe. No orders."""
     obj, feed_token = login()
     master = load_master()
     tokens = underlying_tokens(master, load_fno_symbols())
@@ -92,21 +86,27 @@ def run_data_only():
     sws = SmartWebSocketV2(obj.access_token, API_KEY, CLIENT_ID, feed_token)
 
     def on_data(wsapp, message):
-        data = json.loads(message) if isinstance(message, str) else message
-        token = str(data.get("token", ""))
-        raw = data.get("last_traded_price")
-        symbol = token_to_symbol.get(token)
-        if symbol and raw is not None:
-            print(f"[LTP] {symbol}: {float(raw) / 100.0:.2f}")
+        try:
+            data = json.loads(message) if isinstance(message, str) else message
+            token = str(data.get("token", ""))
+            raw = data.get("last_traded_price")
+            symbol = token_to_symbol.get(token)
+            if symbol and raw is not None:
+                print(f"[LTP] {symbol}: {float(raw) / 100.0:.2f}")
+        except Exception as exc:
+            print(f"[DATA ERROR] {exc}")
 
     def on_open(wsapp):
         print("[OK] WebSocket connected")
-        sws.subscribe(
-            "fno_1m_data_only",
-            LTP,
-            [{"exchangeType": NSE, "tokens": list(tokens.values())}],
-        )
-        print(f"[OK] Subscribed to {len(tokens)} NSE F&O tokens | DATA ONLY | NO ORDERS")
+        token_values = list(tokens.values())
+        # Split into chunks rather than sending one oversized subscription.
+        for i in range(0, len(token_values), 50):
+            sws.subscribe(
+                f"fno_1m_data_only_{i // 50}",
+                LTP,
+                [{"exchangeType": NSE, "tokens": token_values[i:i + 50]}],
+            )
+        print(f"[OK] Subscribed to {len(token_values)} NSE F&O tokens | DATA ONLY | NO ORDERS")
 
     sws.on_data = on_data
     sws.on_open = on_open
