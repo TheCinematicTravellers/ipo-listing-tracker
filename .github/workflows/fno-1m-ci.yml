@@ -1,0 +1,32 @@
+name: FNO 1m CI
+
+on:
+  push:
+    branches:
+      - feature/fno-1m-forward-test
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install test dependency
+        run: python -m pip install --upgrade pip pytest
+
+      - name: Compile Python files
+        run: python -m py_compile fno_1m/*.py
+
+      - name: Run strategy tests
+        working-directory: fno_1m
+        run: pytest -q test_strategy.py
