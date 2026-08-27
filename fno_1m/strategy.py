@@ -1,6 +1,7 @@
-"""Pure 1-minute setup state machine for the F&O scanner.
+"""Pure 1-minute setup state machine for the F&O forward scanner.
 
-Rules are intentionally isolated from the existing 15-minute mover system.
+This module is intentionally isolated from the existing 15-minute mover system.
+It contains no broker/order code.
 """
 from dataclasses import dataclass
 from typing import Literal
@@ -8,18 +9,20 @@ from typing import Literal
 Side = Literal["LONG", "SHORT"]
 Status = Literal["PENDING", "ACTIVE", "TARGET", "SL", "INVALIDATED"]
 
+EPS = 1e-9
+
 
 def body_pct(open_: float, high: float, low: float, close: float) -> float:
     rng = high - low
-    return 0.0 if rng <= 0 else abs(close - open_) / rng * 100.0
+    return 0.0 if rng <= EPS else abs(close - open_) / rng * 100.0
 
 
 def qualify(open_: float, high: float, low: float, close: float, side: Side, min_body_pct: float = 50.0) -> bool:
     if body_pct(open_, high, low, close) < min_body_pct:
         return False
     if side == "LONG":
-        return abs(open_ - low) <= 1e-9
-    return abs(open_ - high) <= 1e-9
+        return abs(open_ - low) <= EPS
+    return abs(open_ - high) <= EPS
 
 
 @dataclass
@@ -47,20 +50,22 @@ class Setup:
         self.target = self.entry + risk * self.target_r if self.side == "LONG" else self.entry - risk * self.target_r
 
     def on_price(self, price: float, timestamp: str) -> Status:
+        if self.status == "ACTIVE":
+            if self.side == "LONG":
+                if price <= self.sl:
+                    self.status = "SL"
+                elif price >= self.target:
+                    self.status = "TARGET"
+            else:
+                if price >= self.sl:
+                    self.status = "SL"
+                elif price <= self.target:
+                    self.status = "TARGET"
+            if self.status in {"TARGET", "SL"}:
+                self.result_time = timestamp
+            return self.status
+
         if self.status != "PENDING":
-            if self.status == "ACTIVE":
-                if self.side == "LONG":
-                    if price <= self.sl:
-                        self.status = "SL"
-                    elif price >= self.target:
-                        self.status = "TARGET"
-                else:
-                    if price >= self.sl:
-                        self.status = "SL"
-                    elif price <= self.target:
-                        self.status = "TARGET"
-                if self.status in {"TARGET", "SL"}:
-                    self.result_time = timestamp
             return self.status
 
         if self.side == "LONG":
