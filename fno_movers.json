@@ -7,178 +7,26 @@
   "eligible_open_low": 12,
   "eligible_open_high": 9,
   "gainers": [
-    {
-      "symbol": "ADANIENT",
-      "change_pct": NaN,
-      "open": 3125.0,
-      "high": 3169.0,
-      "low": 3125.0,
-      "cmp": NaN,
-      "volume": 1793548
-    },
-    {
-      "symbol": "BHARATFORG",
-      "change_pct": NaN,
-      "open": 2006.0,
-      "high": 2050.0,
-      "low": 2006.0,
-      "cmp": NaN,
-      "volume": 1465301
-    },
-    {
-      "symbol": "BHEL",
-      "change_pct": NaN,
-      "open": 416.0,
-      "high": 438.2,
-      "low": 416.0,
-      "cmp": NaN,
-      "volume": 19957824
-    },
-    {
-      "symbol": "BIOCON",
-      "change_pct": NaN,
-      "open": 415.0,
-      "high": 421.6,
-      "low": 415.0,
-      "cmp": NaN,
-      "volume": 1713397
-    },
-    {
-      "symbol": "HYUNDAI",
-      "change_pct": NaN,
-      "open": 2247.0,
-      "high": 2281.0,
-      "low": 2247.0,
-      "cmp": NaN,
-      "volume": 928372
-    },
-    {
-      "symbol": "PAGEIND",
-      "change_pct": NaN,
-      "open": 35160.0,
-      "high": 36215.0,
-      "low": 35160.0,
-      "cmp": NaN,
-      "volume": 28032
-    },
-    {
-      "symbol": "PGEL",
-      "change_pct": NaN,
-      "open": 587.15,
-      "high": 604.7,
-      "low": 587.15,
-      "cmp": NaN,
-      "volume": 1069254
-    },
-    {
-      "symbol": "SIEMENS",
-      "change_pct": NaN,
-      "open": 4050.0,
-      "high": 4128.8,
-      "low": 4050.0,
-      "cmp": NaN,
-      "volume": 455384
-    },
-    {
-      "symbol": "SONACOMS",
-      "change_pct": NaN,
-      "open": 795.0,
-      "high": 819.0,
-      "low": 795.0,
-      "cmp": NaN,
-      "volume": 1914322
-    },
-    {
-      "symbol": "SUPREMEIND",
-      "change_pct": NaN,
-      "open": 3540.0,
-      "high": 3633.5,
-      "low": 3540.0,
-      "cmp": NaN,
-      "volume": 152244
-    }
+    {"symbol":"ADANIENT","change_pct":null,"open":3125.0,"high":3169.0,"low":3125.0,"cmp":null,"volume":1793548},
+    {"symbol":"BHARATFORG","change_pct":null,"open":2006.0,"high":2050.0,"low":2006.0,"cmp":null,"volume":1465301},
+    {"symbol":"BHEL","change_pct":null,"open":416.0,"high":438.2,"low":416.0,"cmp":null,"volume":19957824},
+    {"symbol":"BIOCON","change_pct":null,"open":415.0,"high":421.6,"low":415.0,"cmp":null,"volume":1713397},
+    {"symbol":"HYUNDAI","change_pct":null,"open":2247.0,"high":2281.0,"low":2247.0,"cmp":null,"volume":928372},
+    {"symbol":"PAGEIND","change_pct":null,"open":35160.0,"high":36215.0,"low":35160.0,"cmp":null,"volume":28032},
+    {"symbol":"PGEL","change_pct":null,"open":587.15,"high":604.7,"low":587.15,"cmp":null,"volume":1069254},
+    {"symbol":"SIEMENS","change_pct":null,"open":4050.0,"high":4128.8,"low":4050.0,"cmp":null,"volume":455384},
+    {"symbol":"SONACOMS","change_pct":null,"open":795.0,"high":819.0,"low":795.0,"cmp":null,"volume":1914322},
+    {"symbol":"SUPREMEIND","change_pct":null,"open":3540.0,"high":3633.5,"low":3540.0,"cmp":null,"volume":152244}
   ],
   "losers": [
-    {
-      "symbol": "BHARTIARTL",
-      "change_pct": NaN,
-      "open": 1915.0,
-      "high": 1915.0,
-      "low": 1878.3,
-      "cmp": NaN,
-      "volume": 8739243
-    },
-    {
-      "symbol": "BOSCHLTD",
-      "change_pct": NaN,
-      "open": 48945.0,
-      "high": 48945.0,
-      "low": 48460.0,
-      "cmp": NaN,
-      "volume": 28780
-    },
-    {
-      "symbol": "CANBK",
-      "change_pct": NaN,
-      "open": 131.43,
-      "high": 131.43,
-      "low": 127.7,
-      "cmp": NaN,
-      "volume": 10907953
-    },
-    {
-      "symbol": "GODREJCP",
-      "change_pct": NaN,
-      "open": 930.0,
-      "high": 930.0,
-      "low": 912.0,
-      "cmp": NaN,
-      "volume": 1307752
-    },
-    {
-      "symbol": "HDFCBANK",
-      "change_pct": NaN,
-      "open": 728.15,
-      "high": 728.15,
-      "low": 710.0,
-      "cmp": NaN,
-      "volume": 46496640
-    },
-    {
-      "symbol": "JSWSTEEL",
-      "change_pct": NaN,
-      "open": 1351.0,
-      "high": 1351.0,
-      "low": 1330.0,
-      "cmp": NaN,
-      "volume": 2647787
-    },
-    {
-      "symbol": "POLICYBZR",
-      "change_pct": NaN,
-      "open": 1852.0,
-      "high": 1852.0,
-      "low": 1821.1,
-      "cmp": NaN,
-      "volume": 1734806
-    },
-    {
-      "symbol": "TATAPOWER",
-      "change_pct": NaN,
-      "open": 359.2,
-      "high": 359.2,
-      "low": 348.1,
-      "cmp": NaN,
-      "volume": 16233504
-    },
-    {
-      "symbol": "TVSMOTOR",
-      "change_pct": NaN,
-      "open": 4469.0,
-      "high": 4469.0,
-      "low": 4366.6,
-      "cmp": NaN,
-      "volume": 579863
-    }
+    {"symbol":"BHARTIARTL","change_pct":null,"open":1915.0,"high":1915.0,"low":1878.3,"cmp":null,"volume":8739243},
+    {"symbol":"BOSCHLTD","change_pct":null,"open":48945.0,"high":48945.0,"low":48460.0,"cmp":null,"volume":28780},
+    {"symbol":"CANBK","change_pct":null,"open":131.43,"high":131.43,"low":127.7,"cmp":null,"volume":10907953},
+    {"symbol":"GODREJCP","change_pct":null,"open":930.0,"high":930.0,"low":912.0,"cmp":null,"volume":1307752},
+    {"symbol":"HDFCBANK","change_pct":null,"open":728.15,"high":728.15,"low":710.0,"cmp":null,"volume":46496640},
+    {"symbol":"JSWSTEEL","change_pct":null,"open":1351.0,"high":1351.0,"low":1330.0,"cmp":null,"volume":2647787},
+    {"symbol":"POLICYBZR","change_pct":null,"open":1852.0,"high":1852.0,"low":1821.1,"cmp":null,"volume":1734806},
+    {"symbol":"TATAPOWER","change_pct":null,"open":359.2,"high":359.2,"low":348.1,"cmp":null,"volume":16233504},
+    {"symbol":"TVSMOTOR","change_pct":null,"open":4469.0,"high":4469.0,"low":4366.6,"cmp":null,"volume":579863}
   ]
 }
