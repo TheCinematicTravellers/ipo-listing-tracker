@@ -1,6 +1,6 @@
 """15:09 live forward test using locally collected 15:08 candle."""
 from __future__ import annotations
-import json, os, time as time_mod
+import json, os, time as time_mod, threading
 from datetime import datetime, time
 from zoneinfo import ZoneInfo
 os.environ["FORWARD_TEST_ENABLE_ENTRIES"]="true"
@@ -27,29 +27,43 @@ def collect(api,feed_token,master,symbols):
     sws=SmartWebSocketV2(api.access_token,runner.API_KEY,runner.CLIENT_ID,feed_token)
     def on_open(ws):
         tokens=list(token_map.values())
-        for i in range(0,len(tokens),50): sws.subscribe(f"setup_1509_{i//50}",runner.LTP,[{"exchangeType":runner.NSE,"tokens":tokens[i:i+50]}])
+        for i in range(0,len(tokens),50):
+            sws.subscribe(f"setup_1509_{i//50}",runner.LTP,[{"exchangeType":runner.NSE,"tokens":tokens[i:i+50]}])
         print(f"[LIVE FEED] Subscribed {len(tokens)} NSE stocks for 15:08 candle")
     def on_data(ws,msg):
         try:
-            d=json.loads(msg) if isinstance(msg,str) else msg; tok=str(d.get("token","")); raw=d.get("last_traded_price")
+            d=json.loads(msg) if isinstance(msg,str) else msg
+            tok=str(d.get("token","")); raw=d.get("last_traded_price")
             if tok and raw is not None: c.on_ltp(tok,float(raw)/100,datetime.now(IST))
         except Exception as e: print(f"[SETUP FEED ERROR] {e}")
-    sws.on_open=on_open; sws.on_data=on_data; sws.on_error=lambda ws,e: print(f"[SETUP FEED ERROR] {e}"); sws.on_close=lambda ws: None; sws.connect()
-    while datetime.now(IST).time()<ACTIVATION: time_mod.sleep(.25)
-    try:sws.close_connection()
-    except Exception:pass
+    sws.on_open=on_open
+    sws.on_data=on_data
+    sws.on_error=lambda ws,e: print(f"[SETUP FEED ERROR] {e}")
+    sws.on_close=lambda ws: None
+    # SmartWebSocketV2.connect() blocks, so run it in a background thread.
+    ws_thread=threading.Thread(target=sws.connect,daemon=True)
+    ws_thread.start()
+    while datetime.now(IST).time()<ACTIVATION:
+        time_mod.sleep(.25)
+    try: sws.close_connection()
+    except Exception: pass
+    ws_thread.join(timeout=3)
     print(f"[LOCAL CANDLE] 15:08 complete | stocks with ticks={len(c._bars)}")
     return c
 def main():
     if not os.getenv("ALGO_TEST_WEBHOOK_URL","").strip(): raise RuntimeError("Safety stop: ALGO_TEST_WEBHOOK_URL is not configured")
     wait_until_setup(); api,feed=runner.login(); master=runner.load_master(); symbols=runner.load_symbols()
-    print(f"[OK] Real F&O universe: {len(runner.nse_tokens(master,symbols))}"); print("[TEST] Setup=15:08-15:09 | Activation=15:09 | Candle source=LIVE WEBSOCKET | Historical candle API=DISABLED"); print("[OK] AlgoTest forward-only webhook configured")
+    print(f"[OK] Real F&O universe: {len(runner.nse_tokens(master,symbols))}")
+    print("[TEST] Setup=15:08-15:09 | Activation=15:09 | Candle source=LIVE WEBSOCKET | Historical candle API=DISABLED")
+    print("[OK] AlgoTest forward-only webhook configured")
     collector=collect(api,feed,master,symbols)
     def local_candle(_api,token,_day):
         v=collector.candle(token)
         if v is None: raise RuntimeError(f"No live 15:08 candle collected for token {token}")
         return v
-    runner.candle_0915=local_candle; runner.run_historical_catchup=lambda *_a,**_k: print("[FORWARD 15:09] Historical catch-up disabled")
+    runner.candle_0915=local_candle
+    runner.run_historical_catchup=lambda *_a,**_k: print("[FORWARD 15:09] Historical catch-up disabled")
     runner.ENTRY_TIME=ACTIVATION
-    print(f"[LOCK] Activation reached: {datetime.now(IST):%H:%M:%S} IST"); runner.main()
+    print(f"[LOCK] Activation reached: {datetime.now(IST):%H:%M:%S} IST")
+    runner.main()
 if __name__=="__main__": main()
