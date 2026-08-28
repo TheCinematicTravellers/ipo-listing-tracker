@@ -35,6 +35,10 @@ export function shouldAlertOnStatusChange(previous,status){
   return previous !== null && previous !== undefined && previous !== status;
 }
 
+export function isWithinSummaryWindow(mins){
+  return mins >= SUMMARY_START_MIN && mins <= SUMMARY_END_MIN;
+}
+
 function counts(rows){
   const out={target:0,active:0,sl:0,pending:0,invalidated:0};
   for(const row of rows){
@@ -61,7 +65,7 @@ export default async function handler(req,res){
   if(!process.env.MONITOR_SECRET||supplied!==process.env.MONITOR_SECRET)return res.status(401).json({error:'Unauthorized'});
 
   const p=nowParts(),mins=minutes(p),summary=req.url?.includes('summary=1');
-  if(summary && (mins<SUMMARY_START_MIN || mins>SUMMARY_END_MIN)){
+  if(summary && !isWithinSummaryWindow(mins)){
     return res.status(200).json({ok:true,summary:false,monitoring:false,reason:'Outside daily summary window (IST)',time_ist:`${p.hour}:${p.minute}`});
   }
   if(!summary&&(mins<MONITOR_START_MIN||mins>MONITOR_END_MIN)){
