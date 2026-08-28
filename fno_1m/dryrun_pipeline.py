@@ -29,10 +29,10 @@ def main() -> None:
         symbol = f"TEST{i:03d}"
         if i < 7:
             start = 102.0 + i * 0.01
-            ticks = [start, start + 0.5, start, start + 0.4]
+            ticks = [start, start + 0.5, start, start + 0.6]
         elif i < 14:
             start = 98.0 - i * 0.01
-            ticks = [start, start, start - 0.5, start - 0.4]
+            ticks = [start, start, start - 0.5, start - 0.6]
         else:
             start = 100.0
             ticks = [start, start + 0.05, start - 0.05, start]
@@ -59,7 +59,6 @@ def main() -> None:
     assert len(setups) == 14, f"expected 14 setups, got {len(setups)}"
     t_lock = perf_counter()
 
-    # Exercise the representative post-lock path without network calls.
     setup = setups[0]
     stock_trigger = setup.entry_level + 0.01
     assert stock_trigger >= setup.entry_level
