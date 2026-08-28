@@ -155,6 +155,7 @@ class LiveState:
     entry_sent: bool = False
     invalidated: bool = False
     entered: bool = False
+    option_subscribed: bool = False
     target: float | None = None
     target_reported: bool = False
     sl_reported: bool = False
@@ -215,7 +216,6 @@ def main():
                 print(f"  {row['symbol']:<14} {side:<5} REJECTED 09:15 candle")
                 continue
 
-            # The option contract is frozen from the stock LTP captured at 09:16.
             locked_option = lock_option_contract(master, row["symbol"], row["ltp"], now.date())
             states[row["symbol"]] = LiveState(setup=setup, locked_option=locked_option)
             wanted_side = "CE" if side == "LONG" else "PE"
@@ -243,12 +243,16 @@ def main():
     at = AlgoTestForward()
 
     def subscribe_options(selection, symbol):
+        state = states[symbol]
+        if state.option_subscribed:
+            return
         tokens = []
         for side_key in ("ce", "pe"):
             leg = selection[side_key]
             option_tokens[str(leg["token"])] = (symbol, side_key.upper())
             tokens.append(str(leg["token"]))
         sws.subscribe(f"options_{symbol}", LTP, [{"exchangeType": NFO, "tokens": tokens}])
+        state.option_subscribed = True
 
     def print_pending(symbol: str, state: LiveState, ltp: float):
         option = state.locked_option
