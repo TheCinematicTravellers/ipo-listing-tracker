@@ -20,6 +20,8 @@ def test_option_ltp_prints_only_on_change():
 
 def test_option_contract_is_locked_from_0916_ltp_not_later_entry_ltp():
     master = [
+        {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264550CE", "expiry": "30SEP2026", "strike": "455000", "token": "0", "lotsize": "100"},
+        {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264550PE", "expiry": "30SEP2026", "strike": "455000", "token": "7", "lotsize": "100"},
         {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264600CE", "expiry": "30SEP2026", "strike": "460000", "token": "1", "lotsize": "100"},
         {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264600PE", "expiry": "30SEP2026", "strike": "460000", "token": "2", "lotsize": "100"},
         {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264650CE", "expiry": "30SEP2026", "strike": "465000", "token": "3", "lotsize": "100"},
