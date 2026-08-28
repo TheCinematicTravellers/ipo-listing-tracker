@@ -37,8 +37,6 @@ TOP_N = 7
 DUMMY_MARKER = "NSETEST"
 ENTRY_TIME = time(9, 16)
 TIME_EXIT = time(15, 5)
-# Angel historical-data requests are rate-limited. Keep a deliberate gap
-# between per-symbol candle requests instead of firing all 14 at once.
 CANDLE_REQUEST_GAP_SECONDS = 1.1
 RATE_LIMIT_RETRIES = 3
 OPTION_PRINT_MIN_CHANGE = 0.01
@@ -61,7 +59,7 @@ class RateLimitError(RuntimeError):
 
 
 def should_print_option_ltp(previous: float | None, current: float) -> bool:
-    """Print an option tick only when it is the first tick or price changed."""
+    """Print only the first option LTP or a meaningful price change."""
     return previous is None or abs(current - previous) >= OPTION_PRINT_MIN_CHANGE
 
 
@@ -176,7 +174,8 @@ def main():
     all_tokens = list(token_map.values())
     for i in range(0, len(all_tokens), 50):
         quotes.extend(market_quote(api, all_tokens[i:i + 50]))
-        time_mod.sleep(0.5)
+        if i + 50 < len(all_tokens):
+            time_mod.sleep(0.5)
 
     token_to_symbol = {token: symbol for symbol, token in token_map.items()}
     rows = []
@@ -255,14 +254,14 @@ def main():
                     return
                 previous = state.option_ltp
                 state.option_ltp = ltp
+                contract = state.option[wanted_side.lower()]
                 if state.entered:
                     if state.target and ltp >= state.target and not state.target_reported:
                         state.target_reported = True
-                        print(f"[TARGET] {symbol} ATM-1={state.option['strike']:.2f} option={state.option[wanted_side.lower()]['symbol']} LTP={ltp:.2f} target={state.target:.2f}")
+                        print(f"[TARGET] {symbol} ATM-1={state.option['strike']:.2f} option={contract['symbol']} LTP={ltp:.2f} target={state.target:.2f}")
                     return
                 if not should_print_option_ltp(previous, ltp):
                     return
-                contract = state.option[wanted_side.lower()]
                 print(f"[OPTION LTP] {symbol} ATM={state.option['atm']:.2f} ATM-1={state.option['strike']:.2f} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
                 if not ENABLE_ENTRIES:
                     return
