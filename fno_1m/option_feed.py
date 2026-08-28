@@ -26,9 +26,9 @@ def _strike(row: dict) -> float | None:
     """Return strike in rupees from Angel's master value.
 
     Angel NFO masters commonly store strikes scaled by 100, including values
-    such as 43000 for a Rs 430 strike and 130000 for Rs 1300.  We normalize
-    that representation, but the strike itself must always come from a row in
-    the Angel master, never from a guessed interval.
+    such as 43000 for a Rs 430 strike and 130000 for a Rs 1300 strike. We
+    normalize that representation, but the strike itself must always come
+    from a row in the Angel master, never from a guessed interval.
     """
     raw = row.get("strike")
     try:
@@ -49,8 +49,15 @@ def find_atm_contracts(
     """Resolve Angel's nearest-expiry ATM and ATM-1 CE/PE contracts.
 
     ATM is the closest strike in Angel's actual strike ladder. ATM-1 is the
-    immediately lower strike in that same Angel-provided ladder. No fixed
-    strike step is assumed. Both CE and PE must exist for the selected strike.
+    immediately lower strike in that same Angel-provided ladder when one
+    exists. No fixed strike step is assumed. Both CE and PE must exist for the
+    selected strike.
+
+    If ATM is the lowest available paired Angel strike, there is no lower
+    Angel strike to use as ATM-1. In that edge case the selected tradable
+    ``strike`` remains the actual ATM strike and ``atm_minus_1`` is the same
+    strike. This keeps contract locking deterministic without inventing a
+    strike that Angel did not provide.
     """
     if ltp <= 0:
         raise ValueError("ltp must be positive")
@@ -97,9 +104,7 @@ def find_atm_contracts(
 
     atm_index = min(range(len(paired_strikes)), key=lambda i: abs(paired_strikes[i] - ltp))
     atm = paired_strikes[atm_index]
-    if atm_index == 0:
-        raise RuntimeError(f"No lower Angel-provided strike exists below ATM {atm} for {name}")
-    atm_minus_1 = paired_strikes[atm_index - 1]
+    atm_minus_1 = paired_strikes[atm_index - 1] if atm_index > 0 else atm
 
     out: dict[str, object] = {
         "underlying": name,
