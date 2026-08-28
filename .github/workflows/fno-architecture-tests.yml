@@ -16,5 +16,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install pytest requests pyotp smartapi-python
+      - run: pip install pytest requests pyotp smartapi-python logzero websocket-client
+      - run: python -m py_compile forward_runner.py algotest.py strategy.py option_feed.py
       - run: pytest -q test_forward_runner_architecture.py test_forward_runner.py
