@@ -1,0 +1,20 @@
+name: FNO architecture tests
+
+on:
+  push:
+    branches: [fno-1m-forward-test]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fno_1m
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest requests pyotp smartapi-python
+      - run: pytest -q test_forward_runner_architecture.py test_forward_runner.py
