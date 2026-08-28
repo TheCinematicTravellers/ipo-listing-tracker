@@ -4,7 +4,8 @@ Safety-first live market-data path:
 - Angel One supplies NSE/NFO market data only.
 - Top 7 gainers/losers are frozen at 09:16 IST.
 - The 09:15 candle is evaluated against the existing strategy rules.
-- On stock entry, nearest-expiry ATM CE/PE is resolved and subscribed.
+- On stock entry, Angel's nearest-expiry strike ladder is used to resolve
+  ATM and the immediately lower ATM-1 CE/PE; no strike interval is guessed.
 - AlgoTest entry is disabled unless FORWARD_TEST_ENABLE_ENTRIES=true.
 - AlgoTest exits remain intentionally disabled because the documented exit
   webhook contract has not been supplied. Do not enable entries until exits
@@ -221,12 +222,12 @@ def main():
                 state.option_ltp = ltp
                 if state.entered:
                     if state.target and ltp >= state.target:
-                        print(f"[TARGET] {symbol} {state.option['strike']} option LTP={ltp:.2f} target={state.target:.2f}")
+                        print(f"[TARGET] {symbol} ATM-1={state.option['strike']} option={state.option[wanted_side.lower()]['symbol']} LTP={ltp:.2f} target={state.target:.2f}")
                     return
                 if state.entry_sent:
                     return
                 contract = state.option[wanted_side.lower()]
-                print(f"[OPTION LTP] {symbol} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
+                print(f"[OPTION LTP] {symbol} ATM={state.option['atm']:.2f} ATM-1={state.option['strike']:.2f} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
                 if not ENABLE_ENTRIES:
                     return
                 at.send_entry(contract["symbol"], state.setup.side, contract["lot_size"])
@@ -256,7 +257,7 @@ def main():
                     selection = find_atm_contracts(master, symbol, stock_ltp, now_ist.date())
                     state.option = selection
                     subscribe_options(selection, symbol)
-                    print(f"[STOCK ENTRY] {symbol} {setup.side} stock={stock_ltp:.2f} -> ATM {selection['strike']} CE/PE")
+                    print(f"[STOCK ENTRY] {symbol} {setup.side} stock={stock_ltp:.2f} -> Angel ATM={selection['atm']:.2f} | ATM-1={selection['strike']:.2f} CE/PE")
             else:
                 hit_sl = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 if hit_sl:
