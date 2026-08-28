@@ -4,8 +4,8 @@ Safety-first live market-data path:
 - Angel One supplies NSE/NFO market data only.
 - Top 7 gainers/losers are frozen at 09:16 IST.
 - The 09:15 candle is evaluated against the existing strategy rules.
-- On stock entry, Angel's nearest-expiry strike ladder is used to resolve
-  ATM and the immediately lower ATM-1 CE/PE; no strike interval is guessed.
+- The option contract is locked from the 09:16 stock LTP and never
+  recalculated when the stock later crosses the trigger.
 - AlgoTest entry is disabled unless FORWARD_TEST_ENABLE_ENTRIES=true.
 - AlgoTest exits remain intentionally disabled because the documented exit
   webhook contract has not been supplied.
@@ -61,6 +61,11 @@ class RateLimitError(RuntimeError):
 def should_print_option_ltp(previous: float | None, current: float) -> bool:
     """Print only the first option LTP or a meaningful price change."""
     return previous is None or abs(current - previous) >= OPTION_PRINT_MIN_CHANGE
+
+
+def lock_option_contract(master, symbol: str, stock_ltp: float, today):
+    """Lock the exact Angel option contract from the 09:16 stock LTP."""
+    return find_atm_contracts(master, symbol, stock_ltp, today)
 
 
 def login():
@@ -143,7 +148,7 @@ def candle_0915(api, token, day):
 @dataclass
 class LiveState:
     setup: Setup
-    option: dict | None = None
+    locked_option: dict | None = None
     option_ltp: float | None = None
     entry_sent: bool = False
     invalidated: bool = False
@@ -151,6 +156,7 @@ class LiveState:
     target: float | None = None
     target_reported: bool = False
     sl_reported: bool = False
+    time_exit_reported: bool = False
 
 
 def main():
@@ -206,8 +212,24 @@ def main():
             if setup is None:
                 print(f"  {row['symbol']:<14} {side:<5} REJECTED 09:15 candle")
                 continue
-            states[row["symbol"]] = LiveState(setup=setup)
-            print(f"  {row['symbol']:<14} {side:<5} READY entry={setup.entry_level:.2f} sl={setup.stock_sl:.2f}")
+
+            # IMPORTANT: option contract is frozen from the stock LTP at 09:16,
+            # not from a later breakout-trigger LTP.
+            locked_option = lock_option_contract(master, row["symbol"], row["ltp"], now.date())
+            states[row["symbol"]] = LiveState(setup=setup, locked_option=locked_option)
+            wanted_side = "CE" if side == "LONG" else "PE"
+            contract = locked_option[wanted_side.lower()]
+            print(
+                f"  {row['symbol']:<14} {side:<5} READY "
+                f"stock_ltp_0916={row['ltp']:.2f} "
+                f"stock_entry={setup.entry_level:.2f} stock_sl={setup.stock_sl:.2f} "
+                f"ATM={locked_option['atm']:.2f} ATM-1={locked_option['strike']:.2f} "
+                f"option={contract['symbol']}"
+            )
+            print(
+                f"    STATUS=PENDING | OPTION ENTRY=WAIT | "
+                f"TARGET=WAIT | EXIT=WAIT | RESULT=WAIT"
+            )
         except Exception as exc:
             print(f"  {row['symbol']:<14} {side:<5} ERROR {exc}")
 
@@ -227,6 +249,20 @@ def main():
             tokens.append(str(leg["token"]))
         sws.subscribe(f"options_{symbol}", LTP, [{"exchangeType": NFO, "tokens": tokens}])
 
+    def close_state(symbol: str, state: LiveState, reason: str, exit_ltp: float | None):
+        state.entered = False
+        state.entry_sent = True
+        option = state.locked_option
+        side = "CE" if state.setup.side == "LONG" else "PE"
+        contract = option[side.lower()] if option else None
+        entry = state.option_ltp if state.option_ltp is not None else 0.0
+        print(
+            f"[RESULT] {symbol} {state.setup.side} | "
+            f"OPTION={contract['symbol'] if contract else '-'} | "
+            f"ENTRY={entry:.2f} | EXIT={exit_ltp if exit_ltp is not None else 0.0:.2f} | "
+            f"RESULT={reason} | STATUS={reason}"
+        )
+
     def on_data(wsapp, message):
         try:
             data = json.loads(message) if isinstance(message, str) else message
@@ -237,7 +273,13 @@ def main():
             ltp = float(raw) / 100.0
             now_ist = datetime.now(IST)
             if now_ist.time() >= TIME_EXIT:
-                print("[TIME EXIT] 15:05 IST reached. No broker exit is sent.")
+                for symbol, state in states.items():
+                    if not state.time_exit_reported:
+                        state.time_exit_reported = True
+                        if state.option_ltp is not None:
+                            close_state(symbol, state, "TIME_EXIT_15_05", state.option_ltp)
+                        else:
+                            print(f"[RESULT] {symbol} {state.setup.side} | STATUS=TIME_EXIT_15_05 | OPTION ENTRY=NOT TRIGGERED")
                 try:
                     sws.close_connection()
                 except Exception:
@@ -247,29 +289,36 @@ def main():
             if token in option_tokens:
                 symbol, option_side = option_tokens[token]
                 state = states.get(symbol)
-                if not state or not state.option:
+                if not state or not state.locked_option:
                     return
                 wanted_side = "CE" if state.setup.side == "LONG" else "PE"
                 if option_side != wanted_side:
                     return
                 previous = state.option_ltp
-                state.option_ltp = ltp
-                contract = state.option[wanted_side.lower()]
-                if state.entered:
-                    if state.target and ltp >= state.target and not state.target_reported:
-                        state.target_reported = True
-                        print(f"[TARGET] {symbol} ATM-1={state.option['strike']:.2f} option={contract['symbol']} LTP={ltp:.2f} target={state.target:.2f}")
+                if state.entered and state.target is not None and ltp >= state.target and not state.target_reported:
+                    state.option_ltp = ltp
+                    state.target_reported = True
+                    close_state(symbol, state, "TARGET_9_5PCT", ltp)
                     return
+                state.option_ltp = ltp
+                contract = state.locked_option[wanted_side.lower()]
                 if not should_print_option_ltp(previous, ltp):
                     return
-                print(f"[OPTION LTP] {symbol} ATM={state.option['atm']:.2f} ATM-1={state.option['strike']:.2f} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
-                if not ENABLE_ENTRIES:
-                    return
-                at.send_entry(contract["symbol"], state.setup.side, contract["lot_size"])
-                state.entry_sent = True
-                state.entered = True
-                state.target = option_target(ltp, 9.5)
-                print(f"[ALGOTEST ENTRY SENT] {contract['symbol']} qty={contract['lot_size']} target={state.target:.2f}")
+                if not state.entered:
+                    print(
+                        f"[OPTION QUOTE] {symbol} | OPTION={contract['symbol']} | "
+                        f"LTP={ltp:.2f} | LIMIT BUY={ltp:.2f} | STATUS=PENDING"
+                    )
+                    if not ENABLE_ENTRIES:
+                        return
+                    at.send_entry(contract["symbol"], state.setup.side, contract["lot_size"])
+                    state.entry_sent = True
+                    state.entered = True
+                    state.target = option_target(ltp, 9.5)
+                    print(
+                        f"[ACTIVE] {symbol} {state.setup.side} | OPTION={contract['symbol']} | "
+                        f"ENTRY={ltp:.2f} | TARGET={state.target:.2f}"
+                    )
                 return
 
             symbol = token_to_symbol.get(token)
@@ -279,25 +328,29 @@ def main():
             setup = state.setup
             stock_ltp = ltp
 
-            if state.invalidated:
+            if state.invalidated or state.time_exit_reported:
                 return
             if not state.entered:
                 crossed_invalid = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 crossed_entry = (setup.side == "LONG" and stock_ltp >= setup.entry_level) or (setup.side == "SHORT" and stock_ltp <= setup.entry_level)
                 if crossed_invalid and not crossed_entry:
                     state.invalidated = True
-                    print(f"[INVALIDATED] {symbol} {setup.side} stock={stock_ltp:.2f}")
+                    print(f"[INVALIDATED] {symbol} {setup.side} | STATUS=INVALIDATED | EXIT=NONE | RESULT=INVALIDATED")
                     return
-                if crossed_entry and state.option is None:
-                    selection = find_atm_contracts(master, symbol, stock_ltp, now_ist.date())
-                    state.option = selection
-                    subscribe_options(selection, symbol)
-                    print(f"[STOCK ENTRY] {symbol} {setup.side} stock={stock_ltp:.2f} -> Angel ATM={selection['atm']:.2f} | ATM-1={selection['strike']:.2f} CE/PE")
+                if crossed_entry and state.locked_option:
+                    wanted_side = "CE" if setup.side == "LONG" else "PE"
+                    contract = state.locked_option[wanted_side.lower()]
+                    subscribe_options(state.locked_option, symbol)
+                    print(
+                        f"[STOCK ACTIVE] {symbol} {setup.side} | stock={stock_ltp:.2f} | "
+                        f"LOCKED OPTION={contract['symbol']} | ATM={state.locked_option['atm']:.2f} | "
+                        f"ATM-1={state.locked_option['strike']:.2f} | STATUS=WAITING_OPTION_ENTRY"
+                    )
             else:
                 hit_sl = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 if hit_sl and not state.sl_reported:
                     state.sl_reported = True
-                    print(f"[STOCK SL] {symbol} stock={stock_ltp:.2f} | AlgoTest exit intentionally not sent")
+                    close_state(symbol, state, "STOCK_SL", state.option_ltp)
         except Exception as exc:
             print(f"[DATA ERROR] {exc}")
 
