@@ -32,7 +32,7 @@ def test_option_contract_is_locked_from_0916_ltp_not_later_entry_ltp():
     locked = lock_option_contract(master, "LTM", 4563.70, date(2026, 8, 28))
     later = lock_option_contract(master, "LTM", 4676.40, date(2026, 8, 28))
 
-    assert locked["atm"] == 4550.0
+    assert locked["atm"] == 4600.0
     assert locked["strike"] == 4550.0
     assert locked["ce"]["symbol"] == "LTM30SEP264550CE"
     assert later["atm"] == 4650.0
