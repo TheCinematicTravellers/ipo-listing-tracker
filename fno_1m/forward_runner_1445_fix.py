@@ -1,7 +1,10 @@
 """Safe intraday dry-run harness for the 14:40 candle.
 
-Uses the existing forward_runner rules unchanged, but starts the live test at
-14:45 IST instead of exiting when launched early.
+Uses the existing forward_runner rules unchanged:
+- 14:40 IST is the setup candle.
+- 14:41 IST is the activation/start gate.
+- Historical catch-up is disabled for this live dry-run.
+- AlgoTest receives only forward-test dummy entries.
 """
 from __future__ import annotations
 
@@ -21,24 +24,25 @@ if not os.getenv("ALGO_TEST_WEBHOOK_URL", "").strip():
 import forward_runner as runner
 
 IST = ZoneInfo("Asia/Kolkata")
-runner.ENTRY_TIME = time(14, 45)
+# 14:40 candle is complete at 14:41. Monitoring/activation begins at 14:41.
+runner.ENTRY_TIME = time(14, 41)
 
 
-def wait_until_1445():
-    """Wait, rather than exit, if the script is started before 14:45 IST."""
+def wait_until_1441():
+    """Wait until 14:41 IST rather than exiting when launched early."""
     while True:
         now = datetime.now(IST)
         if now.time() >= runner.ENTRY_TIME:
-            print(f"[14:45 TEST] Start gate reached: {now.strftime('%H:%M:%S')} IST")
+            print(f"[14:41 TEST] Activation gate reached: {now:%H:%M:%S} IST")
             return
         remaining = (
             datetime.combine(now.date(), runner.ENTRY_TIME, tzinfo=IST) - now
         ).total_seconds()
         print(
-            f"[WAIT] Start at/after 14:45 IST. Current: {now.strftime('%H:%M:%S')} IST | "
+            f"[WAIT] Activation starts at 14:41 IST. Current: {now:%H:%M:%S} IST | "
             f"remaining={max(0, int(remaining))}s"
         )
-        time_mod.sleep(min(15, max(1, remaining)))
+        time_mod.sleep(min(10, max(1, remaining)))
 
 
 def candle_1440(api, token, day):
@@ -81,7 +85,7 @@ runner.candle_0915 = candle_1440
 
 
 def no_historical_catchup(*_args, **_kwargs):
-    print("[FORWARD 14:45] Historical catch-up disabled for this intraday test")
+    print("[FORWARD 14:41] Historical catch-up disabled for this intraday test")
 
 
 runner.run_historical_catchup = no_historical_catchup
@@ -89,8 +93,8 @@ runner.run_historical_catchup = no_historical_catchup
 
 if __name__ == "__main__":
     print(
-        "[14:45 TEST] Setup candle = 14:40 | "
+        "[14:41 TEST] Setup candle = 14:40 | Activation = 14:41 | "
         "AlgoTest entries = ENABLED | FORWARD_TEST_ONLY = true"
     )
-    wait_until_1445()
+    wait_until_1441()
     runner.main()
