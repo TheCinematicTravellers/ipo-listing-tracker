@@ -211,9 +211,12 @@ def main():
                 return
 
             if token in option_tokens:
-                symbol, _ = option_tokens[token]
+                symbol, option_side = option_tokens[token]
                 state = states.get(symbol)
                 if not state or not state.option:
+                    return
+                wanted_side = "CE" if state.setup.side == "LONG" else "PE"
+                if option_side != wanted_side:
                     return
                 state.option_ltp = ltp
                 if state.entered:
@@ -222,8 +225,7 @@ def main():
                     return
                 if state.entry_sent:
                     return
-                option_leg = "CE" if state.setup.side == "LONG" else "PE"
-                contract = state.option[option_leg.lower()]
+                contract = state.option[wanted_side.lower()]
                 print(f"[OPTION LTP] {symbol} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
                 if not ENABLE_ENTRIES:
                     return
@@ -234,7 +236,6 @@ def main():
                 print(f"[ALGOTEST ENTRY SENT] {contract['symbol']} qty={contract['lot_size']} target={state.target:.2f}")
                 return
 
-            token_to_symbol = {row["token"]: row["symbol"] for row, _ in ranked}
             symbol = token_to_symbol.get(token)
             if not symbol or symbol not in states:
                 return
@@ -256,7 +257,7 @@ def main():
                     state.option = selection
                     subscribe_options(selection, symbol)
                     print(f"[STOCK ENTRY] {symbol} {setup.side} stock={stock_ltp:.2f} -> ATM {selection['strike']} CE/PE")
-            elif state.entered:
+            else:
                 hit_sl = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 if hit_sl:
                     print(f"[STOCK SL] {symbol} stock={stock_ltp:.2f} | AlgoTest exit intentionally not sent")
