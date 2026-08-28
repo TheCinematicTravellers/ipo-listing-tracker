@@ -1,8 +1,8 @@
 export function buildLockedSet(gainers, losers, existing = null) {
   if (existing?.length) return existing;
   return [
-    ...gainers.slice(0, 10).map(x => ({ ...x, direction: 'LONG' })),
-    ...losers.slice(0, 10).map(x => ({ ...x, direction: 'SHORT' }))
+    ...gainers.slice(0, 7).map(x => ({ ...x, direction: 'LONG' })),
+    ...losers.slice(0, 7).map(x => ({ ...x, direction: 'SHORT' }))
   ];
 }
 
