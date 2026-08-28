@@ -39,10 +39,7 @@ DUMMY_MARKER = "NSETEST"
 ENTRY_TIME = time(9, 16)
 TIME_EXIT = time(15, 5)
 CANDLE_REQUEST_GAP_SECONDS = 1.1
-CANDLE_MIN_INTERVAL_SECONDS = 1.5
 RATE_LIMIT_RETRIES = 3
-CANDLE_RATE_LIMIT_COOLDOWN_SECONDS = 15.0
-_last_candle_request_at = 0.0
 OPTION_PRINT_MIN_CHANGE = 0.01
 
 TRADE_LEDGER_FILE = os.path.join(
@@ -124,177 +121,10 @@ def market_quote(api, tokens):
     return response.get("data", {}).get("fetched", [])
 
 
-def _pace_candle_request():
-    """Globally pace Angel One historical-candle requests."""
-    global _last_candle_request_at
-    now = time_mod.monotonic()
-    wait = CANDLE_MIN_INTERVAL_SECONDS - (now - _last_candle_request_at)
-    if wait > 0:
-        time_mod.sleep(wait)
-    _last_candle_request_at = time_mod.monotonic()
-
-
-def historical_candles(api, exchange: str, token: str, day, start_time: str, end_time: str):
-    """Fetch 1-minute OHLC candles for a late-start historical catch-up."""
-    last_error = None
-    for attempt in range(1, RATE_LIMIT_RETRIES + 1):
-        try:
-            _pace_candle_request()
-            response = api.getCandleData({
-                "exchange": exchange,
-                "symboltoken": str(token),
-                "interval": "ONE_MINUTE",
-                "fromdate": f"{day} {start_time}",
-                "todate": f"{day} {end_time}",
-            })
-            if not response or not response.get("status", True):
-                message = str(response)
-                if RateLimitError.is_rate_limit(message):
-                    raise RateLimitError(message)
-                raise RuntimeError(f"Historical candles failed for {token}: {response}")
-            return response.get("data") or []
-        except Exception as exc:
-            last_error = exc
-            if not RateLimitError.is_rate_limit(str(exc)) or attempt >= RATE_LIMIT_RETRIES:
-                raise
-            wait = CANDLE_RATE_LIMIT_COOLDOWN_SECONDS * attempt
-            print(f"[RATE LIMIT] token={token} retry {attempt}/{RATE_LIMIT_RETRIES} after {wait:.0f}s")
-            time_mod.sleep(wait)
-    raise RuntimeError(str(last_error))
-
-
-def _bar_time(bar) -> datetime:
-    text = str(bar[0]).replace("Z", "+00:00")
-    value = datetime.fromisoformat(text)
-    if value.tzinfo is None:
-        value = value.replace(tzinfo=IST)
-    return value.astimezone(IST)
-
-
-def historical_result(stock_bars, option_bars, setup, entry_start_time):
-    """Reconstruct a late-start trade using 1-minute OHLC data.
-
-    The stock trigger is the first 1-minute bar after 09:16 whose range crosses
-    the setup entry. The option entry uses the NEXT option 1-minute bar open,
-    which avoids pretending that a historical candle contains an exact tick
-    entry. Target is evaluated from option highs; stock SL from stock lows/highs.
-    If target and SL are both touched in the same minute, the result is marked
-    AMBIGUOUS rather than inventing an intrabar order.
-    """
-    stock_bars = sorted(stock_bars, key=_bar_time)
-    option_bars = sorted(option_bars, key=_bar_time)
-    trigger = None
-    for bar in stock_bars:
-        t = _bar_time(bar)
-        if t.time() < entry_start_time:
-            continue
-        high = float(bar[2])
-        low = float(bar[3])
-        if setup.side == "LONG" and high >= setup.entry_level:
-            trigger = bar
-            break
-        if setup.side == "SHORT" and low <= setup.entry_level:
-            trigger = bar
-            break
-    if trigger is None:
-        return None
-
-    trigger_time = _bar_time(trigger)
-    post_trigger_options = [b for b in option_bars if _bar_time(b) > trigger_time]
-    if not post_trigger_options:
-        return {"status": "TRIGGERED_NO_OPTION_DATA", "trigger_time": trigger_time}
-
-    entry_bar = post_trigger_options[0]
-    entry_time = _bar_time(entry_bar)
-    entry = float(entry_bar[1])
-    if entry <= 0:
-        return {"status": "INVALID_OPTION_ENTRY", "trigger_time": trigger_time}
-    target = option_target(entry, 9.5)
-
-    stock_after = [b for b in stock_bars if _bar_time(b) >= entry_time]
-    option_after = [b for b in option_bars if _bar_time(b) >= entry_time]
-
-    for ob in option_after:
-        ot = _bar_time(ob)
-        option_high = float(ob[2])
-        stock_match = next((b for b in stock_after if _bar_time(b) == ot), None)
-        stock_hit_sl = False
-        if stock_match is not None:
-            sh = float(stock_match[2])
-            sl = float(stock_match[3])
-            stock_hit_sl = (setup.side == "LONG" and sl <= setup.stock_sl) or (setup.side == "SHORT" and sh >= setup.stock_sl)
-        target_hit = option_high >= target
-        if target_hit and stock_hit_sl:
-            return {"status": "AMBIGUOUS_SAME_CANDLE", "trigger_time": trigger_time, "entry_time": entry_time, "entry": entry, "target": target, "exit_time": ot, "exit": float(ob[4]), "reason": "HISTORICAL_AMBIGUOUS"}
-        if target_hit:
-            return {"status": "COMPLETED", "trigger_time": trigger_time, "entry_time": entry_time, "entry": entry, "target": target, "exit_time": ot, "exit": target, "reason": "HISTORICAL_TARGET_9_5PCT"}
-        if stock_hit_sl:
-            return {"status": "COMPLETED", "trigger_time": trigger_time, "entry_time": entry_time, "entry": entry, "target": target, "exit_time": ot, "exit": float(ob[4]), "reason": "HISTORICAL_STOCK_SL"}
-
-    last = option_after[-1]
-    return {"status": "OPEN", "trigger_time": trigger_time, "entry_time": entry_time, "entry": entry, "target": target, "last_time": _bar_time(last), "last": float(last[4])}
-
-
-def run_historical_catchup(api, states, token_to_symbol, master, day, current_time):
-    """Catch up trades when the runner is started after 09:16."""
-    print(f"\n[HISTORICAL CATCH-UP] Runner started at {current_time:%H:%M:%S} IST")
-    print("[HISTORICAL] Reconstructing missed 1-minute triggers and option results...")
-
-    for symbol, state in states.items():
-        try:
-            stock_token = next(token for token, name in token_to_symbol.items() if name == symbol)
-            stock_bars = historical_candles(api, "NSE", stock_token, day, "09:16", current_time.strftime("%H:%M"))
-            result = None
-            wanted_side = "CE" if state.setup.side == "LONG" else "PE"
-            option = state.locked_option[wanted_side.lower()]
-
-            # We only fetch option history after confirming the stock actually
-            # triggered, keeping the historical API load small.
-            stock_triggered = any(
-                (state.setup.side == "LONG" and float(b[2]) >= state.setup.entry_level) or
-                (state.setup.side == "SHORT" and float(b[3]) <= state.setup.entry_level)
-                for b in stock_bars
-            )
-            if not stock_triggered:
-                print(f"[HISTORICAL WAIT] {symbol} {state.setup.side} | stock trigger not crossed yet")
-                continue
-
-            option_bars = historical_candles(api, "NFO", option["token"], day, "09:16", current_time.strftime("%H:%M"))
-            result = historical_result(stock_bars, option_bars, state.setup, time(9, 16))
-            if not result:
-                continue
-
-            if result["status"] == "TRIGGERED_NO_OPTION_DATA":
-                print(f"[HISTORICAL ERROR] {symbol} {state.setup.side} | stock triggered at {result['trigger_time']:%H:%M} but no option bar followed")
-                continue
-            if result["status"] == "INVALID_OPTION_ENTRY":
-                print(f"[HISTORICAL ERROR] {symbol} {state.setup.side} | invalid option entry")
-                continue
-
-            state.option_entry_ltp = result["entry"]
-            state.option_entry_time = result["entry_time"].isoformat(timespec="seconds")
-            state.target = result["target"]
-
-            if result["status"] == "COMPLETED" or result["status"] == "AMBIGUOUS_SAME_CANDLE":
-                state.option_exit_ltp = result["exit"]
-                state.option_exit_time = result["exit_time"].isoformat(timespec="seconds")
-                state.exit_reason = result["reason"]
-                state.entered = False
-                print(f"[HISTORICAL RESULT] {symbol} {state.setup.side} | OPTION={option['symbol']} | ENTRY={state.option_entry_ltp:.2f} @ {state.option_entry_time} | TARGET={state.target:.2f} | EXIT={state.option_exit_ltp:.2f} @ {state.option_exit_time} | RESULT={state.exit_reason}")
-                write_trade_ledger(symbol, state)
-            elif result["status"] == "OPEN":
-                state.entered = True
-                state.option_ltp = result["last"]
-                print(f"[HISTORICAL OPEN] {symbol} {state.setup.side} | OPTION={option['symbol']} | ENTRY={state.option_entry_ltp:.2f} @ {state.option_entry_time} | TARGET={state.target:.2f} | CURRENT={state.option_ltp:.2f} @ {result['last_time']:%H:%M} | STATUS=ACTIVE")
-        except Exception as exc:
-            print(f"[HISTORICAL ERROR] {symbol} {state.setup.side} | {exc}")
-
-
 def candle_0915(api, token, day):
     last_error = None
     for attempt in range(1, RATE_LIMIT_RETRIES + 1):
         try:
-            _pace_candle_request()
             response = api.getCandleData({
                 "exchange": "NSE",
                 "symboltoken": str(token),
@@ -316,7 +146,7 @@ def candle_0915(api, token, day):
             last_error = exc
             if not RateLimitError.is_rate_limit(str(exc)) or attempt >= RATE_LIMIT_RETRIES:
                 raise
-            wait = CANDLE_RATE_LIMIT_COOLDOWN_SECONDS * attempt
+            wait = float(2 ** attempt)
             print(f"[RATE LIMIT] token={token} retry {attempt}/{RATE_LIMIT_RETRIES} after {wait:.0f}s")
             time_mod.sleep(wait)
     raise RuntimeError(str(last_error))
@@ -418,11 +248,7 @@ def write_trade_ledger(symbol: str, state: LiveState):
             "option_exit_time": state.option_exit_time or "",
             "option_exit": f"{exit_ltp:.2f}",
             "exit_reason": state.exit_reason or "",
-            "result": (
-                "AMBIGUOUS"
-                if "AMBIGUOUS" in (state.exit_reason or "")
-                else ("WIN" if exit_ltp > entry else "LOSS")
-            ),
+            "result": "WIN" if exit_ltp > entry else "LOSS",
             "pnl": f"{pnl:.2f}",
             "pnl_pct": f"{pnl_pct:.2f}",
         })
@@ -552,11 +378,6 @@ def main():
     if not states:
         print("[STOP] No qualifying setups among the locked 14")
         return
-
-    # A late start must reconstruct everything that happened before startup.
-    # Never treat the first current option tick as a retroactive entry.
-    if now.time() > ENTRY_TIME:
-        run_historical_catchup(api, states, token_to_symbol, master, now.date(), now)
 
     sws = SmartWebSocketV2(api.access_token, API_KEY, CLIENT_ID, feed_token)
     option_tokens: dict[str, tuple[str, str]] = {}
@@ -721,12 +542,6 @@ def on_data(wsapp, message):
             if state.invalidated or state.time_exit_reported:
                 return
 
-            # A completed historical trade must never be re-entered from the
-            # current live tick stream. Historical OPEN trades remain entered
-            # and continue through the normal live exit logic.
-            if state.entry_sent and not state.entered:
-                return
-
             if not state.entered:
                 crossed_invalid = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 crossed_entry = (setup.side == "LONG" and stock_ltp >= setup.entry_level) or (setup.side == "SHORT" and stock_ltp <= setup.entry_level)
@@ -755,13 +570,6 @@ def on_data(wsapp, message):
         token_values = [row["token"] for row, _ in ranked if row["symbol"] in states]
         for i in range(0, len(token_values), 50):
             sws.subscribe(f"underlying_{i // 50}", LTP, [{"exchangeType": NSE, "tokens": token_values[i:i + 50]}])
-
-        # Historical OPEN trades already have an option entry, so subscribe
-        # their locked option immediately and continue monitoring from now.
-        for symbol, state in states.items():
-            if state.entered and state.locked_option:
-                subscribe_options(state.locked_option, symbol)
-
         print(f"[OK] WebSocket connected | subscribed {len(token_values)} locked stocks")
 
     sws.on_data = on_data

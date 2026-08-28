@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Literal
 
+import math
+
 Side = Literal["LONG", "SHORT"]
 
 @dataclass(frozen=True)
@@ -32,7 +34,9 @@ def make_setup(symbol: str, open_: float, high: float, low: float, close: float,
 
 
 def option_target(entry_ltp: float, target_pct: float = 9.5) -> float:
-    return entry_ltp * (1.0 + target_pct / 100.0)
+    raw_target = entry_ltp * (1.0 + target_pct / 100.0)
+    rounded_target = math.floor((raw_target + 1e-9) / 0.05) * 0.05
+    return round(rounded_target, 2)
 
 
 def option_symbol(underlying: str, side: Side, atm_strike: float, expiry: str) -> str:
