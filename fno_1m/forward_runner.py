@@ -1,17 +1,14 @@
 """Live F&O 1-minute forward-test runner.
 
-This runner is deliberately safety-first:
-- Angel One is market-data only.
+Safety-first live market-data path:
+- Angel One supplies NSE/NFO market data only.
 - Top 7 gainers/losers are frozen at 09:16 IST.
 - The 09:15 candle is evaluated against the existing strategy rules.
-- When stock entry is crossed, the nearest-expiry ATM CE/PE is resolved and
-  its NFO LTP feed is subscribed dynamically.
+- On stock entry, nearest-expiry ATM CE/PE is resolved and subscribed.
 - AlgoTest entry is disabled unless FORWARD_TEST_ENABLE_ENTRIES=true.
-- AlgoTest exits are NOT guessed or implemented.  Therefore entries should
-  remain disabled until the documented exit signal contract is wired.
-
-Run from fno_1m after loading the same Angel environment variables used by
-angel_live.py.
+- AlgoTest exits remain intentionally disabled because the documented exit
+  webhook contract has not been supplied. Do not enable entries until exits
+  are wired and tested end-to-end.
 """
 from __future__ import annotations
 
@@ -44,7 +41,6 @@ TIME_EXIT = time(15, 5)
 BASE_DIR = os.getenv("NSE_FNO_ORB_DIR", r"C:\Users\megha\nse_fno_orb")
 MASTER_FILE = os.getenv("ANGEL_MASTER_FILE", os.path.join(BASE_DIR, "OpenAPIScripMaster.json"))
 FNO_LIST_FILE = os.getenv("FNO_STOCK_LIST", os.path.join(BASE_DIR, "fno_stock_list.csv"))
-
 API_KEY = os.getenv("ANGEL_API_KEY")
 CLIENT_ID = os.getenv("ANGEL_CLIENT_ID")
 PIN = os.getenv("ANGEL_PIN")
@@ -149,11 +145,12 @@ def main():
         quotes.extend(market_quote(api, all_tokens[i:i + 50]))
         time_mod.sleep(0.5)
 
+    token_to_symbol = {token: symbol for symbol, token in token_map.items()}
     rows = []
     for q in quotes:
         try:
             token = str(q["symbolToken"])
-            symbol = next((s for s, t in token_map.items() if t == token), None)
+            symbol = token_to_symbol.get(token)
             ltp = float(q["ltp"])
             close = float(q["close"])
             if not symbol or DUMMY_MARKER in symbol or ltp <= 0 or ltp > MAX_STOCK_PRICE or close <= 0:
@@ -168,8 +165,6 @@ def main():
     print("\n[LOCKED 09:16] Top 7 gainers + Top 7 losers")
 
     states: dict[str, LiveState] = {}
-    option_tokens: dict[str, str] = {}
-    token_to_key: dict[str, tuple[str, str]] = {}
     for row, side in ranked:
         try:
             o, h, l, c = candle_0915(api, row["token"], now.date())
@@ -187,19 +182,16 @@ def main():
         return
 
     sws = SmartWebSocketV2(api.access_token, API_KEY, CLIENT_ID, feed_token)
-    token_to_symbol = {row["token"]: row["symbol"] for row, _ in ranked}
+    option_tokens: dict[str, tuple[str, str]] = {}
     at = AlgoTestForward()
 
     def subscribe_options(selection, symbol):
+        tokens = []
         for side_key in ("ce", "pe"):
             leg = selection[side_key]
-            option_tokens[str(leg["token"])] = f"{symbol}:{side_key.upper()}"
-            token_to_key[str(leg["token"])] = (symbol, side_key.upper())
-        sws.subscribe(
-            f"options_{symbol}",
-            LTP,
-            [{"exchangeType": NFO, "tokens": [str(selection["ce"]["token"]), str(selection["pe"]["token"])]}],
-        )
+            option_tokens[str(leg["token"])] = (symbol, side_key.upper())
+            tokens.append(str(leg["token"]))
+        sws.subscribe(f"options_{symbol}", LTP, [{"exchangeType": NFO, "tokens": tokens}])
 
     def on_data(wsapp, message):
         try:
@@ -211,7 +203,7 @@ def main():
             ltp = float(raw) / 100.0
             now_ist = datetime.now(IST)
             if now_ist.time() >= TIME_EXIT:
-                print("[TIME EXIT] 15:05 IST reached. Runner stopping; no broker exits are sent.")
+                print("[TIME EXIT] 15:05 IST reached. No broker exit is sent.")
                 try:
                     sws.close_connection()
                 except Exception:
@@ -219,14 +211,30 @@ def main():
                 return
 
             if token in option_tokens:
-                symbol, _ = token_to_key[token]
+                symbol, _ = option_tokens[token]
                 state = states.get(symbol)
-                if state and state.entered:
-                    state.option_ltp = ltp
+                if not state or not state.option:
+                    return
+                state.option_ltp = ltp
+                if state.entered:
                     if state.target and ltp >= state.target:
-                        print(f"[TARGET] {symbol} option LTP={ltp:.2f} target={state.target:.2f}")
+                        print(f"[TARGET] {symbol} {state.option['strike']} option LTP={ltp:.2f} target={state.target:.2f}")
+                    return
+                if state.entry_sent:
+                    return
+                option_leg = "CE" if state.setup.side == "LONG" else "PE"
+                contract = state.option[option_leg.lower()]
+                print(f"[OPTION LTP] {symbol} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
+                if not ENABLE_ENTRIES:
+                    return
+                at.send_entry(contract["symbol"], state.setup.side, contract["lot_size"])
+                state.entry_sent = True
+                state.entered = True
+                state.target = option_target(ltp, 9.5)
+                print(f"[ALGOTEST ENTRY SENT] {contract['symbol']} qty={contract['lot_size']} target={state.target:.2f}")
                 return
 
+            token_to_symbol = {row["token"]: row["symbol"] for row, _ in ranked}
             symbol = token_to_symbol.get(token)
             if not symbol or symbol not in states:
                 return
@@ -243,13 +251,12 @@ def main():
                     state.invalidated = True
                     print(f"[INVALIDATED] {symbol} {setup.side} stock={stock_ltp:.2f}")
                     return
-                if crossed_entry:
+                if crossed_entry and state.option is None:
                     selection = find_atm_contracts(master, symbol, stock_ltp, now_ist.date())
                     state.option = selection
                     subscribe_options(selection, symbol)
                     print(f"[STOCK ENTRY] {symbol} {setup.side} stock={stock_ltp:.2f} -> ATM {selection['strike']} CE/PE")
-                    return
-            else:
+            elif state.entered:
                 hit_sl = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 if hit_sl:
                     print(f"[STOCK SL] {symbol} stock={stock_ltp:.2f} | AlgoTest exit intentionally not sent")
