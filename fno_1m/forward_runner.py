@@ -6,9 +6,10 @@ Safety-first live market-data path:
 - The 09:15 candle is evaluated against the existing strategy rules.
 - The option contract is locked from the 09:16 stock LTP and never
   recalculated when the stock later crosses the trigger.
-- AlgoTest entry is disabled unless FORWARD_TEST_ENABLE_ENTRIES=true.
-- AlgoTest exits remain intentionally disabled because the documented exit
-  webhook contract has not been supplied.
+- Forward-test option entries are paper-tracked from the first live option
+  LTP after the stock trigger. AlgoTest can additionally receive the entry
+  when FORWARD_TEST_ENABLE_ENTRIES=true.
+- Exits are tracked locally from option target, stock SL, or 15:05 time exit.
 """
 from __future__ import annotations
 
@@ -150,6 +151,7 @@ class LiveState:
     setup: Setup
     locked_option: dict | None = None
     option_ltp: float | None = None
+    option_entry_ltp: float | None = None
     entry_sent: bool = False
     invalidated: bool = False
     entered: bool = False
@@ -174,7 +176,7 @@ def main():
     token_map = nse_tokens(master, symbols)
     print(f"[OK] Real F&O universe: {len(token_map)}")
     print(f"[OK] Max stock price: Rs {MAX_STOCK_PRICE:.0f}")
-    print(f"[OK] AlgoTest entries: {'ENABLED' if ENABLE_ENTRIES else 'DISABLED (safe)'}")
+    print(f"[OK] AlgoTest entries: {'ENABLED' if ENABLE_ENTRIES else 'DISABLED (paper forward-test)'}")
 
     quotes = []
     all_tokens = list(token_map.values())
@@ -213,8 +215,7 @@ def main():
                 print(f"  {row['symbol']:<14} {side:<5} REJECTED 09:15 candle")
                 continue
 
-            # IMPORTANT: option contract is frozen from the stock LTP at 09:16,
-            # not from a later breakout-trigger LTP.
+            # The option contract is frozen from the stock LTP captured at 09:16.
             locked_option = lock_option_contract(master, row["symbol"], row["ltp"], now.date())
             states[row["symbol"]] = LiveState(setup=setup, locked_option=locked_option)
             wanted_side = "CE" if side == "LONG" else "PE"
@@ -249,17 +250,30 @@ def main():
             tokens.append(str(leg["token"]))
         sws.subscribe(f"options_{symbol}", LTP, [{"exchangeType": NFO, "tokens": tokens}])
 
+    def print_pending(symbol: str, state: LiveState, ltp: float):
+        option = state.locked_option
+        side = "CE" if state.setup.side == "LONG" else "PE"
+        contract = option[side.lower()]
+        target = option_target(ltp, 9.5)
+        print(
+            f"[OPTION ENTRY] {symbol} {state.setup.side} | OPTION={contract['symbol']} | "
+            f"ENTRY={ltp:.2f} | TARGET={target:.2f} | EXIT=WAIT | "
+            f"RESULT=WAIT | STATUS={'ACTIVE' if state.entered else 'PENDING'}"
+        )
+
     def close_state(symbol: str, state: LiveState, reason: str, exit_ltp: float | None):
         state.entered = False
         state.entry_sent = True
         option = state.locked_option
         side = "CE" if state.setup.side == "LONG" else "PE"
         contract = option[side.lower()] if option else None
-        entry = state.option_ltp if state.option_ltp is not None else 0.0
+        entry = state.option_entry_ltp
         print(
             f"[RESULT] {symbol} {state.setup.side} | "
             f"OPTION={contract['symbol'] if contract else '-'} | "
-            f"ENTRY={entry:.2f} | EXIT={exit_ltp if exit_ltp is not None else 0.0:.2f} | "
+            f"ENTRY={entry if entry is not None else 0.0:.2f} | "
+            f"EXIT={exit_ltp if exit_ltp is not None else 0.0:.2f} | "
+            f"TARGET={state.target if state.target is not None else 0.0:.2f} | "
             f"RESULT={reason} | STATUS={reason}"
         )
 
@@ -272,14 +286,19 @@ def main():
                 return
             ltp = float(raw) / 100.0
             now_ist = datetime.now(IST)
+
             if now_ist.time() >= TIME_EXIT:
                 for symbol, state in states.items():
-                    if not state.time_exit_reported:
-                        state.time_exit_reported = True
-                        if state.option_ltp is not None:
-                            close_state(symbol, state, "TIME_EXIT_15_05", state.option_ltp)
-                        else:
-                            print(f"[RESULT] {symbol} {state.setup.side} | STATUS=TIME_EXIT_15_05 | OPTION ENTRY=NOT TRIGGERED")
+                    if state.time_exit_reported:
+                        continue
+                    state.time_exit_reported = True
+                    if state.entered:
+                        close_state(symbol, state, "TIME_EXIT_15_05", state.option_ltp)
+                    else:
+                        print(
+                            f"[RESULT] {symbol} {state.setup.side} | "
+                            f"OPTION ENTRY=NOT TRIGGERED | EXIT=NONE | RESULT=TIME_EXIT_15_05 | STATUS=EXPIRED"
+                        )
                 try:
                     sws.close_connection()
                 except Exception:
@@ -294,31 +313,38 @@ def main():
                 wanted_side = "CE" if state.setup.side == "LONG" else "PE"
                 if option_side != wanted_side:
                     return
+
                 previous = state.option_ltp
-                if state.entered and state.target is not None and ltp >= state.target and not state.target_reported:
-                    state.option_ltp = ltp
-                    state.target_reported = True
-                    close_state(symbol, state, "TARGET_9_5PCT", ltp)
-                    return
                 state.option_ltp = ltp
                 contract = state.locked_option[wanted_side.lower()]
+
+                if state.entered:
+                    if state.target is not None and ltp >= state.target and not state.target_reported:
+                        state.target_reported = True
+                        close_state(symbol, state, "TARGET_9_5PCT", ltp)
+                        return
+                    if should_print_option_ltp(previous, ltp):
+                        print(
+                            f"[OPTION ACTIVE] {symbol} | OPTION={contract['symbol']} | "
+                            f"ENTRY={state.option_entry_ltp:.2f} | CURRENT={ltp:.2f} | "
+                            f"TARGET={state.target:.2f} | SL=STOCK_{state.setup.stock_sl:.2f} | STATUS=ACTIVE"
+                        )
+                    return
+
                 if not should_print_option_ltp(previous, ltp):
                     return
-                if not state.entered:
-                    print(
-                        f"[OPTION QUOTE] {symbol} | OPTION={contract['symbol']} | "
-                        f"LTP={ltp:.2f} | LIMIT BUY={ltp:.2f} | STATUS=PENDING"
-                    )
-                    if not ENABLE_ENTRIES:
-                        return
+
+                # First option tick after the stock trigger is the forward-test entry.
+                state.option_entry_ltp = ltp
+                state.target = option_target(ltp, 9.5)
+                state.entry_sent = True
+                state.entered = True
+                print_pending(symbol, state, ltp)
+                if ENABLE_ENTRIES:
                     at.send_entry(contract["symbol"], state.setup.side, contract["lot_size"])
-                    state.entry_sent = True
-                    state.entered = True
-                    state.target = option_target(ltp, 9.5)
-                    print(
-                        f"[ACTIVE] {symbol} {state.setup.side} | OPTION={contract['symbol']} | "
-                        f"ENTRY={ltp:.2f} | TARGET={state.target:.2f}"
-                    )
+                    print(f"[ALGOTEST] ENTRY SENT {symbol} {contract['symbol']} qty={contract['lot_size']}")
+                else:
+                    print(f"[PAPER] ENTRY RECORDED {symbol} {contract['symbol']} at {ltp:.2f}")
                 return
 
             symbol = token_to_symbol.get(token)
@@ -330,6 +356,7 @@ def main():
 
             if state.invalidated or state.time_exit_reported:
                 return
+
             if not state.entered:
                 crossed_invalid = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
                 crossed_entry = (setup.side == "LONG" and stock_ltp >= setup.entry_level) or (setup.side == "SHORT" and stock_ltp <= setup.entry_level)
