@@ -8,7 +8,7 @@ os.environ["FORWARD_TEST_ONLY"]="true"
 import forward_runner as runner
 from SmartApi.smartWebSocketV2 import SmartWebSocketV2
 IST=ZoneInfo("Asia/Kolkata")
-SETUP_START=time(15,14); ACTIVATION=time(15,15)
+SETUP_START=time(15,14); ACTIVATION=time(15,15); TEST_STOP=time(15,30)
 class MinuteCandleCollector:
     def __init__(self, minute): self.minute=minute; self._bars={}
     def on_ltp(self, token, ltp, when):
@@ -39,19 +39,19 @@ def collect(api,feed_token,master,symbols):
     while datetime.now(IST).time()<ACTIVATION: time_mod.sleep(.25)
     try:sws.close_connection()
     except Exception:pass
-    ws_thread.join(timeout=3)
-    print(f"[LOCAL CANDLE] 15:14 complete | stocks with ticks={len(c._bars)}")
-    return c
-
+    ws_thread.join(timeout=3); print(f"[LOCAL CANDLE] 15:14 complete | stocks with ticks={len(c._bars)}"); return c
 def main():
     if not os.getenv("ALGO_TEST_WEBHOOK_URL","").strip(): raise RuntimeError("Safety stop: ALGO_TEST_WEBHOOK_URL is not configured")
     wait_until_setup(); api,feed=runner.login(); master=runner.load_master(); symbols=runner.load_symbols()
-    print(f"[OK] Real F&O universe: {len(runner.nse_tokens(master,symbols))}"); print("[TEST] Setup=15:14-15:15 | Activation=15:15 | Candle source=LIVE WEBSOCKET | Historical candle API=DISABLED"); print("[OK] AlgoTest forward-only webhook configured")
+    print(f"[OK] Real F&O universe: {len(runner.nse_tokens(master,symbols))}"); print("[TEST] Setup=15:14-15:15 | Activation=15:15 | Candle source=LIVE WEBSOCKET | Historical candle API=DISABLED | Test stop=15:30"); print("[OK] AlgoTest forward-only webhook configured")
     collector=collect(api,feed,master,symbols)
     def local_candle(_api,token,_day):
         v=collector.candle(token)
         if v is None: raise RuntimeError(f"No live 15:14 candle collected for token {token}")
         return v
     runner.candle_0915=local_candle; runner.run_historical_catchup=lambda *_a,**_k: print("[FORWARD 15:15] Historical catch-up disabled"); runner.ENTRY_TIME=ACTIVATION
-    print(f"[LOCK] Activation reached: {datetime.now(IST):%H:%M:%S} IST"); runner.main()
+    print(f"[LOCK] Activation reached: {datetime.now(IST):%H:%M:%S} IST")
+    # Bypass the production main() clock gate by invoking its setup/evaluation path with the test clock.
+    runner.STOP_TIME=TEST_STOP
+    runner.main()
 if __name__=="__main__": main()
