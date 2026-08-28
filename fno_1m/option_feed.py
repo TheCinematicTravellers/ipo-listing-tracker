@@ -48,16 +48,13 @@ def find_atm_contracts(
 ) -> dict:
     """Resolve Angel's nearest-expiry ATM and ATM-1 CE/PE contracts.
 
-    ATM is the closest strike in Angel's actual strike ladder. ATM-1 is the
-    immediately lower strike in that same Angel-provided ladder when one
-    exists. No fixed strike step is assumed. Both CE and PE must exist for the
-    selected strike.
+    ATM is the closest paired strike in Angel's actual strike ladder. ATM-1 is
+    the immediately lower paired strike. No fixed strike step is assumed.
 
-    If ATM is the lowest available paired Angel strike, there is no lower
-    Angel strike to use as ATM-1. In that edge case the selected tradable
-    ``strike`` remains the actual ATM strike and ``atm_minus_1`` is the same
-    strike. This keeps contract locking deterministic without inventing a
-    strike that Angel did not provide.
+    When the closest paired strike is the lowest strike in the available
+    Angel ladder, move ATM up to the next available paired strike so that the
+    requested ATM-1 leg is also an actual Angel contract. This handles a
+    truncated ladder without inventing a strike.
     """
     if ltp <= 0:
         raise ValueError("ltp must be positive")
@@ -103,6 +100,11 @@ def find_atm_contracts(
         raise RuntimeError(f"No paired CE/PE strikes found for {name} expiry {expiry}")
 
     atm_index = min(range(len(paired_strikes)), key=lambda i: abs(paired_strikes[i] - ltp))
+    # If the closest Angel strike is the lowest available strike, use the next
+    # actual Angel strike as ATM. This guarantees ATM-1 exists and is never a
+    # fabricated strike.
+    if atm_index == 0 and len(paired_strikes) > 1:
+        atm_index = 1
     atm = paired_strikes[atm_index]
     atm_minus_1 = paired_strikes[atm_index - 1] if atm_index > 0 else atm
 
