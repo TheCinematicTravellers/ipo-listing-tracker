@@ -7,17 +7,14 @@ forward-only entry path are reused unchanged from forward_runner.py.
 """
 from __future__ import annotations
 
+import json
 import os
-import threading
 import time as time_mod
 from datetime import datetime, time
 from zoneinfo import ZoneInfo
 
 os.environ["FORWARD_TEST_ENABLE_ENTRIES"] = "true"
 os.environ["FORWARD_TEST_ONLY"] = "true"
-
-if not os.getenv("ALGO_TEST_WEBHOOK_URL", "").strip():
-    raise RuntimeError("Safety stop: ALGO_TEST_WEBHOOK_URL is not configured")
 
 import forward_runner as runner
 from SmartApi.smartWebSocketV2 import SmartWebSocketV2
@@ -71,7 +68,6 @@ def collect_setup_candles(api, feed_token, api_key, client_id, master, symbols):
     """Subscribe to all NSE stocks and build the 14:52 candle locally."""
     token_map = runner.nse_tokens(master, symbols)
     collector = MinuteCandleCollector("14:52")
-    done = threading.Event()
     sws = SmartWebSocketV2(api.access_token, api_key, client_id, feed_token)
 
     def on_open(wsapp):
@@ -86,10 +82,7 @@ def collect_setup_candles(api, feed_token, api_key, client_id, master, symbols):
 
     def on_data(wsapp, message):
         try:
-            data = message
-            if isinstance(message, str):
-                import json
-                data = json.loads(message)
+            data = json.loads(message) if isinstance(message, str) else message
             token = str(data.get("token", ""))
             raw = data.get("last_traded_price")
             if not token or raw is None:
@@ -97,8 +90,6 @@ def collect_setup_candles(api, feed_token, api_key, client_id, master, symbols):
             now = datetime.now(IST)
             if should_collect_minute(now):
                 collector.on_ltp(token, float(raw) / 100.0, now)
-            elif now.time() >= ACTIVATION:
-                done.set()
         except Exception as exc:
             print(f"[SETUP FEED ERROR] {exc}")
 
@@ -139,6 +130,9 @@ def install_local_candle_path(collector: MinuteCandleCollector):
 
 
 def main():
+    if not os.getenv("ALGO_TEST_WEBHOOK_URL", "").strip():
+        raise RuntimeError("Safety stop: ALGO_TEST_WEBHOOK_URL is not configured")
+
     wait_until_setup()
 
     api, feed_token = runner.login()
@@ -158,10 +152,6 @@ def main():
         symbols,
     )
     install_local_candle_path(collector)
-
-    now = datetime.now(IST)
-    if now.time() < ACTIVATION:
-        time_mod.sleep(max(0, (datetime.combine(now.date(), ACTIVATION, tzinfo=IST) - now).total_seconds()))
 
     print(f"[LOCK] Activation reached: {datetime.now(IST):%H:%M:%S} IST")
     runner.main()
