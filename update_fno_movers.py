@@ -1,4 +1,4 @@
-import json, time
+import json, math, time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import yfinance as yf
@@ -14,6 +14,9 @@ rows = []
 
 def same_price(a, b):
     return round(float(a), 2) == round(float(b), 2)
+
+def finite(*values):
+    return all(math.isfinite(float(v)) for v in values)
 
 for start in range(0, len(symbols), 25):
     batch = symbols[start:start+25]
@@ -45,6 +48,10 @@ for start in range(0, len(symbols), 25):
             opn = float(row["Open"])
             high = float(row["High"])
             low = float(row["Low"])
+            volume = float(row["Volume"])
+            if not finite(prev, close, opn, high, low, volume):
+                print(f"{s}: skipped non-finite market data")
+                continue
             change = (close / prev - 1) * 100 if prev else 0.0
 
             rows.append({
@@ -54,7 +61,7 @@ for start in range(0, len(symbols), 25):
                 "high": round(high, 2),
                 "low": round(low, 2),
                 "cmp": round(close, 2),
-                "volume": int(row["Volume"]),
+                "volume": int(volume),
                 "open_eq_low": same_price(opn, low),
                 "open_eq_high": same_price(opn, high),
             })
@@ -88,7 +95,7 @@ out = {
     "losers": losers,
 }
 with open(OUT, "w", encoding="utf-8") as f:
-    json.dump(out, f, indent=2)
+    json.dump(out, f, indent=2, allow_nan=False)
 
 print(
     f"Published {len(rows)}/{len(symbols)} stocks at {out['updated_ist']} IST | "
