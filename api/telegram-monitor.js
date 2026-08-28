@@ -1,36 +1,112 @@
-import crypto from 'node:crypto';
 const IST='Asia/Kolkata';
 const MONITOR_START_MIN=9*60+30;
 const MONITOR_END_MIN=15*60+30;
-const MASTER_URL='https://margincalculator.angelbroking.com/OpenAPI_File/files/OpenAPIScripMaster.json';
-const LOGIN_URL='https://apiconnect.angelone.in/rest/auth/angelbroking/user/v1/loginByPassword';
-const QUOTE_URL='https://apiconnect.angelone.in/rest/secure/angelbroking/market/v1/quote/';
-const ORDER_URL='https://apiconnect.angelone.in/rest/secure/angelbroking/order/v1/placeOrder';
-let cachedMaster=null,cachedMasterAt=0,nextAngelRequestAt=0;
-function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
-async function paceAngel(minGap=400){const wait=Math.max(0,nextAngelRequestAt-Date.now());if(wait)await sleep(wait);nextAngelRequestAt=Date.now()+minGap}
-function nowParts(d=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:IST,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d),o={};for(const x of p)o[x.type]=x.value;return o}
-function keyFor(date,symbol){return `orb:${date}:${symbol}`}
-function orderKey(date,symbol){return `orb:order:${date}:${symbol}`}
+const SUMMARY_START_MIN=16*60+30;
+const SUMMARY_END_MIN=18*60;
+
+function nowParts(d=new Date()){
+  const p=new Intl.DateTimeFormat('en-CA',{timeZone:IST,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).formatToParts(d),o={};
+  for(const x of p)o[x.type]=x.value;
+  return o;
+}
 function minutes(p){return Number(p.hour)*60+Number(p.minute)}
+function keyFor(date,symbol){return `orb:${date}:${symbol}`}
 function esc(s){return String(s).replace(/[_*\[\]()~`>#+\-=|{}.!]/g,'\\$&')}
-async function redisCommand(command){const base=process.env.UPSTASH_REDIS_REST_URL,token=process.env.UPSTASH_REDIS_REST_TOKEN;if(!base||!token)throw Error('Missing Upstash Redis environment variables');const r=await fetch(base,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(command)});const d=await r.json();if(!r.ok||d.error)throw Error(d.error||`Redis HTTP ${r.status}`);return d.result}
+async function redisCommand(command){
+  const base=process.env.UPSTASH_REDIS_REST_URL,token=process.env.UPSTASH_REDIS_REST_TOKEN;
+  if(!base||!token)throw Error('Missing Upstash Redis environment variables');
+  const r=await fetch(base,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify(command)});
+  const d=await r.json();
+  if(!r.ok||d.error)throw Error(d.error||`Redis HTTP ${r.status}`);
+  return d.result;
+}
 async function getState(key){return redisCommand(['GET',key])}
 async function setState(key,value){return redisCommand(['SET',key,value,'EX','86400'])}
-async function claimOrder(key){return redisCommand(['SET',key,'PLACING','EX','86400','NX'])}
-async function telegram(text){const token=process.env.TELEGRAM_BOT_TOKEN,chat=process.env.TELEGRAM_CHAT_ID;if(!token||!chat)throw Error('Missing Telegram environment variables');const r=await fetch(`https://api.telegram.org/bot${token}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text,parse_mode:'MarkdownV2',disable_web_page_preview:true})});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.description||`Telegram HTTP ${r.status}`);return d}
-function counts(rows){const out={target:0,active:0,sl:0,pending:0,invalidated:0};for(const row of rows){const s=String(row.status||'');if(s==='🎯 Target')out.target++;else if(s==='✅ Trade Active')out.active++;else if(s==='❌ SL')out.sl++;else if(s==='⚠️ Invalidated level')out.invalidated++;else out.pending++;}return out}
+async function telegram(text){
+  const token=process.env.TELEGRAM_BOT_TOKEN,chat=process.env.TELEGRAM_CHAT_ID;
+  if(!token||!chat)throw Error('Missing Telegram environment variables');
+  const r=await fetch(`https://api.telegram.org/bot${token}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text,parse_mode:'MarkdownV2',disable_web_page_preview:true})});
+  const d=await r.json();
+  if(!r.ok||!d.ok)throw Error(d.description||`Telegram HTTP ${r.status}`);
+  return d;
+}
+
+export function shouldAlertOnStatusChange(previous,status){
+  return previous !== null && previous !== undefined && previous !== status;
+}
+
+function counts(rows){
+  const out={target:0,active:0,sl:0,pending:0,invalidated:0};
+  for(const row of rows){
+    const s=String(row.status||'');
+    if(s==='🎯 Target')out.target++;
+    else if(s==='✅ Trade Active')out.active++;
+    else if(s==='❌ SL')out.sl++;
+    else if(s==='⚠️ Invalidated level')out.invalidated++;
+    else out.pending++;
+  }
+  return out;
+}
 export function summaryMessage(c){return `*📊 ORB DAILY SUMMARY*\n\n🎯 Target: ${c.target}\n✅ Trade Active: ${c.active}\n❌ SL: ${c.sl}\n⏳ Pending: ${c.pending}\n⚠️ Invalidated: ${c.invalidated}`}
-async function fetchScanner(){const base=process.env.SCANNER_BASE_URL||'https://our-screener.vercel.app';const r=await fetch(`${base}/api/fno-movers`,{cache:'no-store'});if(!r.ok)throw Error(`Scanner HTTP ${r.status}`);return r.json()}
-function b32(s){const a='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567',c=s.replace(/=+$/,'').replace(/\s/g,'').toUpperCase();let bits='';for(const ch of c){const v=a.indexOf(ch);if(v<0)throw Error('Invalid TOTP secret');bits+=v.toString(2).padStart(5,'0')}const out=[];for(let i=0;i+8<=bits.length;i+=8)out.push(parseInt(bits.slice(i,i+8),2));return Buffer.from(out)}
-function totp(secret,now=Date.now()){const b=Buffer.alloc(8);b.writeBigUInt64BE(BigInt(Math.floor(now/1000/30)));const h=crypto.createHmac('sha1',b32(secret)).update(b).digest(),o=h[h.length-1]&15;const n=((h[o]&127)<<24)|((h[o+1]&255)<<16)|((h[o+2]&255)<<8)|(h[o+3]&255);return String(n%1000000).padStart(6,'0')}
-function angelHeaders(apiKey,jwt,mac){const h={'Content-Type':'application/json','Accept':'application/json','X-UserType':'USER','X-SourceID':'WEB','X-ClientLocalIP':'127.0.0.1','X-ClientPublicIP':process.env.ANGEL_CLIENT_PUBLIC_IP||'127.0.0.1','X-MACAddress':mac,'X-PrivateKey':apiKey};if(jwt)h.Authorization=`Bearer ${jwt}`;return h}
-async function angelLogin(){const apiKey=process.env.ANGEL_API_KEY,client=process.env.ANGEL_CLIENT_ID,pin=process.env.ANGEL_PIN,secret=process.env.ANGEL_TOTP_SECRET,mac=process.env.ANGEL_MAC_ADDRESS||'00:00:00:00:00:00';if(!apiKey||!client||!pin||!secret)throw Error('Missing Angel One environment variables');await paceAngel(1000);const r=await fetch(LOGIN_URL,{method:'POST',headers:angelHeaders(apiKey,null,mac),body:JSON.stringify({clientcode:client,password:pin,totp:totp(secret)})}),d=await r.json();if(!r.ok||!d?.data?.jwtToken)throw Error(`Angel login failed: ${d?.message||r.status}`);return {apiKey,jwt:d.data.jwtToken,mac}}
-async function loadMaster(){if(cachedMaster&&Date.now()-cachedMasterAt<600000)return cachedMaster;const r=await fetch(MASTER_URL,{headers:{Accept:'application/json'},cache:'no-store'});if(!r.ok)throw Error(`Instrument master HTTP ${r.status}`);cachedMaster=await r.json();cachedMasterAt=Date.now();return cachedMaster}
-function expiryDate(s){const m=String(s||'').match(/^(\d{2})([A-Z]{3})(\d{4})$/);if(!m)return null;const months={JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};if(months[m[2]]===undefined)return null;return new Date(Date.UTC(Number(m[3]),months[m[2]],Number(m[1])))}
-function optionStrike(x){const n=Number(x);return Number.isFinite(n)?n/100:null}
-async function nfoQuote(a,token){await paceAngel(400);const r=await fetch(QUOTE_URL,{method:'POST',headers:angelHeaders(a.apiKey,a.jwt,a.mac),body:JSON.stringify({mode:'LTP',exchangeTokens:{NFO:[String(token)]}})}),d=await r.json();if(!r.ok||d?.status===false)throw Error(`Option LTP failed: ${d?.message||r.status}`);const q=d?.data?.fetched?.[0]||d?.data?.[0];const ltp=Number(q?.ltp);if(!Number.isFinite(ltp)||ltp<=0)throw Error('Invalid option LTP');return ltp}
-async function placeTestOrder(a,underlying,direction){const all=await loadMaster(),now=new Date(),eligible=all.filter(x=>String(x.exch_seg).toUpperCase()==='NFO'&&String(x.instrumenttype).toUpperCase()==='OPTSTK'&&String(x.name).toUpperCase()===String(underlying).toUpperCase());const expiries=[...new Set(eligible.map(x=>x.expiry).filter(Boolean))].map(e=>({raw:e,date:expiryDate(e)})).filter(x=>x.date&&x.date>=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate()))).sort((a,b)=>a.date-b.date);if(!expiries.length)throw Error(`No active NFO stock-option expiry for ${underlying}`);const expiry=expiries[0].raw,opts=eligible.filter(x=>x.expiry===expiry),underlyingLtp=Number(underlyingLtpCache.get(underlying));if(!Number.isFinite(underlyingLtp))throw Error(`Missing underlying LTP for ${underlying}`);const strikes=[...new Set(opts.map(x=>optionStrike(x.strike)).filter(Number.isFinite))].sort((a,b)=>a-b);if(!strikes.length)throw Error(`No strikes for ${underlying}`);let atmIndex=0;for(let i=1;i<strikes.length;i++)if(Math.abs(strikes[i]-underlyingLtp)<Math.abs(strikes[atmIndex]-underlyingLtp))atmIndex=i;const targetIndex=direction==='LONG'?atmIndex-1:atmIndex+1;if(targetIndex<0||targetIndex>=strikes.length)throw Error(`ATM adjacent strike unavailable for ${underlying}`);const targetStrike=strikes[targetIndex],optType=direction==='LONG'?'CE':'PE',contract=opts.find(x=>String(x.symbol).endsWith(optType)&&Math.abs(optionStrike(x.strike)-targetStrike)<1e-9);if(!contract)throw Error(`Option contract not found for ${underlying} ${targetStrike} ${optType}`);const ltp=await nfoQuote(a,contract.token),tickRaw=Number(contract.tick_size),tick=Number.isFinite(tickRaw)&&tickRaw>0?tickRaw:0.05,rawBid=ltp*0.70,bid=Math.floor((rawBid+1e-9)/tick)*tick,price=Number(bid.toFixed(4)),qty=Math.max(1,Number(contract.lotsize)||1);await paceAngel(150);const payload={variety:'NORMAL',tradingsymbol:contract.symbol,symboltoken:String(contract.token),transactiontype:'BUY',exchange:'NFO',ordertype:'LIMIT',producttype:'NRML',duration:'DAY',price:String(price),quantity:String(qty),ordertag:'ORBTEST'};const r=await fetch(ORDER_URL,{method:'POST',headers:angelHeaders(a.apiKey,a.jwt,a.mac),body:JSON.stringify(payload)}),d=await r.json();if(!r.ok||!d?.status)throw Error(`Angel order failed: ${d?.message||d?.errorcode||r.status}`);return {underlying,direction,underlying_ltp:underlyingLtp,expiry,option:contract.symbol,option_token:String(contract.token),strike:targetStrike,option_type:optType,option_ltp:ltp,test_bid:price,quantity:qty,tick_size:tick,order_id:d?.data?.orderid||d?.data?.order_id||null}}
-const underlyingLtpCache=new Map();
-async function testOrderForAlert(row,direction,date){const key=orderKey(date,row.symbol),claimed=await claimOrder(key);if(claimed!=='OK')return {skipped:true,reason:'Order already attempted'};try{const a=await angelLogin();underlyingLtpCache.set(row.symbol,Number(row.cmp));const result=await placeTestOrder(a,row.symbol,direction);await setState(key,JSON.stringify({status:'PLACED',...result}));return result}catch(e){await setState(key,JSON.stringify({status:'FAILED',error:e.message||String(e)}));throw e}}
-export default async function handler(req,res){if(req.method!=='GET')return res.status(405).json({error:'GET only'});const supplied=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');if(!process.env.MONITOR_SECRET||supplied!==process.env.MONITOR_SECRET)return res.status(401).json({error:'Unauthorized'});const p=nowParts(),mins=minutes(p),summary=req.url?.includes('summary=1');if(!summary&&(mins<MONITOR_START_MIN||mins>MONITOR_END_MIN))return res.status(200).json({ok:true,monitoring:false,reason:'Outside market monitoring window',time_ist:`${p.hour}:${p.minute}`});try{const data=await fetchScanner(),rows=[...(data.gainers||[]),...(data.losers||[])];if(summary){const c=counts(rows);await telegram(summaryMessage(c));return res.status(200).json({ok:true,summary:true,counts:c,rows:rows.length,time_ist:`${p.hour}:${p.minute}`})}const alerts=[],orders=[];for(const row of rows){const status=row.status,date=p.year+p.month+p.day,key=keyFor(date,row.symbol),previous=await getState(key);if(previous===null){await setState(key,status);continue}if(previous===status)continue;const isPendingTransition=previous==='⏳ Pending'&&status!=='⏳ Pending';if(!isPendingTransition){await setState(key,status);continue}let title='ORB ALERT';if(status==='🎯 Target')title='ORB TARGET';else if(status==='❌ SL')title='ORB SL';else if(status==='⚠️ Invalidated level')title='ORB INVALIDATED';else if(status==='✅ Trade Active')title='ORB TRADE ACTIVE';let orderText='';if(status==='✅ Trade Active'){try{const result=await testOrderForAlert(row,row.direction,date);if(result.skipped)orderText='\nOrder test already attempted';else{orders.push(result);orderText=`\n*TEST ORDER*\nBUY ${result.option}\nOption LTP: ${result.option_ltp}\nTest bid: ${result.test_bid}\nQty: ${result.quantity}\nOrder ID: ${result.order_id||'accepted'}`}}catch(e){orderText=`\n*TEST ORDER FAILED*\n${esc(e.message||String(e))}`}}const text=`*${esc(title)}*\n*${esc(row.symbol)}*\nStatus: ${esc(status)}\nChange: ${esc(row.change_pct+'%')}\nTime: ${esc(`${p.hour}:${p.minute} IST`)}${orderText}`;await telegram(text);await setState(key,status);alerts.push({symbol:row.symbol,status})}return res.status(200).json({ok:true,monitoring:true,checked:rows.length,alerts,orders})}catch(e){console.error(e);return res.status(500).json({ok:false,error:e.message||'Monitor failed'})}}
+async function fetchScanner(){
+  const base=process.env.SCANNER_BASE_URL||'https://our-screener.vercel.app';
+  const r=await fetch(`${base}/api/fno-movers`,{cache:'no-store'});
+  if(!r.ok)throw Error(`Scanner HTTP ${r.status}`);
+  return r.json();
+}
+
+export default async function handler(req,res){
+  if(req.method!=='GET')return res.status(405).json({error:'GET only'});
+  const supplied=String(req.headers.authorization||'').replace(/^Bearer\s+/i,'');
+  if(!process.env.MONITOR_SECRET||supplied!==process.env.MONITOR_SECRET)return res.status(401).json({error:'Unauthorized'});
+
+  const p=nowParts(),mins=minutes(p),summary=req.url?.includes('summary=1');
+  if(summary && (mins<SUMMARY_START_MIN || mins>SUMMARY_END_MIN)){
+    return res.status(200).json({ok:true,summary:false,monitoring:false,reason:'Outside daily summary window (IST)',time_ist:`${p.hour}:${p.minute}`});
+  }
+  if(!summary&&(mins<MONITOR_START_MIN||mins>MONITOR_END_MIN)){
+    return res.status(200).json({ok:true,monitoring:false,reason:'Outside market monitoring window',time_ist:`${p.hour}:${p.minute}`});
+  }
+
+  try{
+    const data=await fetchScanner();
+    const gainers=[...(data.gainers||[])].slice(0,7);
+    const losers=[...(data.losers||[])].slice(0,7);
+    const rows=[...gainers,...losers];
+
+    if(summary){
+      const c=counts(rows);
+      await telegram(summaryMessage(c));
+      return res.status(200).json({ok:true,summary:true,counts:c,rows:rows.length,time_ist:`${p.hour}:${p.minute}`});
+    }
+
+    const alerts=[];
+    for(const row of rows){
+      const status=String(row.status||'⏳ Pending');
+      const date=p.year+p.month+p.day;
+      const key=keyFor(date,row.symbol);
+      const previous=await getState(key);
+      if(previous===null){
+        await setState(key,status);
+        continue;
+      }
+      if(!shouldAlertOnStatusChange(previous,status))continue;
+
+      let title='ORB ALERT';
+      if(status==='🎯 Target')title='ORB TARGET';
+      else if(status==='❌ SL')title='ORB SL';
+      else if(status==='⚠️ Invalidated level')title='ORB INVALIDATED';
+      else if(status==='✅ Trade Active')title='ORB TRADE ACTIVE';
+
+      const text=`*${esc(title)}*\n*${esc(row.symbol)}*\nStatus: ${esc(status)}\nChange: ${esc(row.change_pct+'%')}\nTime: ${esc(`${p.hour}:${p.minute} IST`)}\nPrevious: ${esc(previous)}`;
+      await telegram(text);
+      await setState(key,status);
+      alerts.push({symbol:row.symbol,previous,status});
+    }
+
+    return res.status(200).json({ok:true,monitoring:true,checked:rows.length,alerts,orders:[]});
+  }catch(e){
+    console.error(e);
+    return res.status(500).json({ok:false,error:e.message||'Monitor failed'});
+  }
+}
