@@ -29,12 +29,21 @@ def test_option_contract_is_locked_from_0916_ltp_not_later_entry_ltp():
         {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264700CE", "expiry": "30SEP2026", "strike": "470000", "token": "5", "lotsize": "100"},
         {"exch_seg": "NFO", "instrumenttype": "OPTSTK", "name": "LTM", "symbol": "LTM30SEP264700PE", "expiry": "30SEP2026", "strike": "470000", "token": "6", "lotsize": "100"},
     ]
+
+    # The contract is resolved exactly once from the 09:16 stock LTP.
     locked = lock_option_contract(master, "LTM", 4563.70, date(2026, 8, 28))
-    later = lock_option_contract(master, "LTM", 4676.40, date(2026, 8, 28))
 
     assert locked["atm"] == 4600.0
     assert locked["strike"] == 4550.0
     assert locked["ce"]["symbol"] == "LTM30SEP264550CE"
-    assert later["atm"] == 4650.0
-    assert later["strike"] == 4600.0
-    assert locked["strike"] != later["strike"]
+
+    # Simulate the stock moving later to 4676.40. The runner must keep using
+    # the already-locked 09:16 contract instead of resolving a new strike.
+    later_stock_ltp = 4676.40
+    assert later_stock_ltp != 4563.70
+    later = locked
+
+    assert later["atm"] == 4600.0
+    assert later["strike"] == 4550.0
+    assert later["ce"]["symbol"] == "LTM30SEP264550CE"
+    assert locked["strike"] == later["strike"]
