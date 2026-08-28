@@ -8,8 +8,7 @@ Safety-first live market-data path:
   ATM and the immediately lower ATM-1 CE/PE; no strike interval is guessed.
 - AlgoTest entry is disabled unless FORWARD_TEST_ENABLE_ENTRIES=true.
 - AlgoTest exits remain intentionally disabled because the documented exit
-  webhook contract has not been supplied. Do not enable entries until exits
-  are wired and tested end-to-end.
+  webhook contract has not been supplied.
 """
 from __future__ import annotations
 
@@ -38,6 +37,11 @@ TOP_N = 7
 DUMMY_MARKER = "NSETEST"
 ENTRY_TIME = time(9, 16)
 TIME_EXIT = time(15, 5)
+# Angel historical-data requests are rate-limited. Keep a deliberate gap
+# between per-symbol candle requests instead of firing all 14 at once.
+CANDLE_REQUEST_GAP_SECONDS = 1.1
+RATE_LIMIT_RETRIES = 3
+OPTION_PRINT_MIN_CHANGE = 0.01
 
 BASE_DIR = os.getenv("NSE_FNO_ORB_DIR", r"C:\Users\megha\nse_fno_orb")
 MASTER_FILE = os.getenv("ANGEL_MASTER_FILE", os.path.join(BASE_DIR, "OpenAPIScripMaster.json"))
@@ -47,6 +51,18 @@ CLIENT_ID = os.getenv("ANGEL_CLIENT_ID")
 PIN = os.getenv("ANGEL_PIN")
 TOTP_SECRET = os.getenv("ANGEL_TOTP_SECRET")
 ENABLE_ENTRIES = os.getenv("FORWARD_TEST_ENABLE_ENTRIES", "false").lower() == "true"
+
+
+class RateLimitError(RuntimeError):
+    @staticmethod
+    def is_rate_limit(message: str) -> bool:
+        text = str(message).lower()
+        return "exceeding access rate" in text or "access denied because of exceeding access rate" in text
+
+
+def should_print_option_ltp(previous: float | None, current: float) -> bool:
+    """Print an option tick only when it is the first tick or price changed."""
+    return previous is None or abs(current - previous) >= OPTION_PRINT_MIN_CHANGE
 
 
 def login():
@@ -96,20 +112,34 @@ def market_quote(api, tokens):
 
 
 def candle_0915(api, token, day):
-    response = api.getCandleData({
-        "exchange": "NSE",
-        "symboltoken": str(token),
-        "interval": "ONE_MINUTE",
-        "fromdate": f"{day} 09:15",
-        "todate": f"{day} 09:16",
-    })
-    if not response or not response.get("status", True):
-        raise RuntimeError(f"09:15 candle failed for {token}: {response}")
-    data = response.get("data") or []
-    if not data:
-        raise RuntimeError(f"No 09:15 candle for token {token}")
-    c = data[0]
-    return float(c[1]), float(c[2]), float(c[3]), float(c[4])
+    last_error = None
+    for attempt in range(1, RATE_LIMIT_RETRIES + 1):
+        try:
+            response = api.getCandleData({
+                "exchange": "NSE",
+                "symboltoken": str(token),
+                "interval": "ONE_MINUTE",
+                "fromdate": f"{day} 09:15",
+                "todate": f"{day} 09:16",
+            })
+            if not response or not response.get("status", True):
+                message = str(response)
+                if RateLimitError.is_rate_limit(message):
+                    raise RateLimitError(message)
+                raise RuntimeError(f"09:15 candle failed for {token}: {response}")
+            data = response.get("data") or []
+            if not data:
+                raise RuntimeError(f"No 09:15 candle for token {token}")
+            c = data[0]
+            return float(c[1]), float(c[2]), float(c[3]), float(c[4])
+        except Exception as exc:
+            last_error = exc
+            if not RateLimitError.is_rate_limit(str(exc)) or attempt >= RATE_LIMIT_RETRIES:
+                raise
+            wait = float(2 ** attempt)
+            print(f"[RATE LIMIT] token={token} retry {attempt}/{RATE_LIMIT_RETRIES} after {wait:.0f}s")
+            time_mod.sleep(wait)
+    raise RuntimeError(str(last_error))
 
 
 @dataclass
@@ -121,6 +151,8 @@ class LiveState:
     invalidated: bool = False
     entered: bool = False
     target: float | None = None
+    target_reported: bool = False
+    sl_reported: bool = False
 
 
 def main():
@@ -166,7 +198,9 @@ def main():
     print("\n[LOCKED 09:16] Top 7 gainers + Top 7 losers")
 
     states: dict[str, LiveState] = {}
-    for row, side in ranked:
+    for index, (row, side) in enumerate(ranked):
+        if index:
+            time_mod.sleep(CANDLE_REQUEST_GAP_SECONDS)
         try:
             o, h, l, c = candle_0915(api, row["token"], now.date())
             setup = make_setup(row["symbol"], o, h, l, c, side)
@@ -219,12 +253,14 @@ def main():
                 wanted_side = "CE" if state.setup.side == "LONG" else "PE"
                 if option_side != wanted_side:
                     return
+                previous = state.option_ltp
                 state.option_ltp = ltp
                 if state.entered:
-                    if state.target and ltp >= state.target:
-                        print(f"[TARGET] {symbol} ATM-1={state.option['strike']} option={state.option[wanted_side.lower()]['symbol']} LTP={ltp:.2f} target={state.target:.2f}")
+                    if state.target and ltp >= state.target and not state.target_reported:
+                        state.target_reported = True
+                        print(f"[TARGET] {symbol} ATM-1={state.option['strike']:.2f} option={state.option[wanted_side.lower()]['symbol']} LTP={ltp:.2f} target={state.target:.2f}")
                     return
-                if state.entry_sent:
+                if not should_print_option_ltp(previous, ltp):
                     return
                 contract = state.option[wanted_side.lower()]
                 print(f"[OPTION LTP] {symbol} ATM={state.option['atm']:.2f} ATM-1={state.option['strike']:.2f} {contract['symbol']} LTP={ltp:.2f} | LIMIT BUY={ltp:.2f}")
@@ -260,7 +296,8 @@ def main():
                     print(f"[STOCK ENTRY] {symbol} {setup.side} stock={stock_ltp:.2f} -> Angel ATM={selection['atm']:.2f} | ATM-1={selection['strike']:.2f} CE/PE")
             else:
                 hit_sl = (setup.side == "LONG" and stock_ltp <= setup.stock_sl) or (setup.side == "SHORT" and stock_ltp >= setup.stock_sl)
-                if hit_sl:
+                if hit_sl and not state.sl_reported:
+                    state.sl_reported = True
                     print(f"[STOCK SL] {symbol} stock={stock_ltp:.2f} | AlgoTest exit intentionally not sent")
         except Exception as exc:
             print(f"[DATA ERROR] {exc}")
