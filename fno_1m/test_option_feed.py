@@ -33,8 +33,9 @@ def test_nearest_expiry_atm_ce_pe():
 
 def test_scaled_strike_and_eq_symbol_are_supported():
     master = [
-        row("POWERGRID28AUG261300CE", "POWERGRID", "28AUG2026", "130000", "CE", "10"),
-        row("POWERGRID28AUG261300PE", "POWERGRID", "28AUG2026", "130000", "PE", "11"),
+        row("POWERGRID28AUG261300CE", "POWERGRID", "28Aug2026", "130000", "CE", "10"),
+        row("POWERGRID28AUG261300PE", "POWERGRID", "28Aug2026", "130000", "PE", "11"),
     ]
     out = find_atm_contracts(master, "POWERGRID-EQ", 1298.0, date(2026, 8, 28))
+    assert out["expiry"] == "28AUG2026"
     assert out["strike"] == 1300.0
