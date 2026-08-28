@@ -2,7 +2,8 @@ name: ORB 4pm Daily Summary
 
 on:
   schedule:
-    - cron: '15 11 * * 1-5'
+    - cron: '45 16 * * 1-5'
+      timezone: 'Asia/Kolkata'
   workflow_dispatch:
 
 env:
@@ -11,12 +12,15 @@ env:
 jobs:
   daily-summary:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     steps:
       - name: Send daily summary at 4:45 PM IST
         env:
           MONITOR_URL: https://our-screener.vercel.app/api/telegram-monitor?summary=1
           MONITOR_SECRET: ${{ secrets.MONITOR_SECRET }}
         run: |
+          test -n "$MONITOR_SECRET" || { echo 'MONITOR_SECRET is not configured'; exit 1; }
+          echo "Calling ORB summary at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           curl --fail-with-body --max-time 120 \
             -H "Authorization: Bearer ${MONITOR_SECRET}" \
             "${MONITOR_URL}"
