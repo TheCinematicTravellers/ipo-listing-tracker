@@ -35,6 +35,10 @@ export function shouldAlertOnStatusChange(previous,status){
   return previous !== null && previous !== undefined && previous !== status;
 }
 
+export function isWithinSummaryWindow(mins){
+  return mins >= SUMMARY_START_MIN && mins <= SUMMARY_END_MIN;
+}
+
 function counts(rows){
   const out={target:0,active:0,sl:0,pending:0,invalidated:0};
   for(const row of rows){
@@ -61,10 +65,7 @@ export default async function handler(req,res){
   if(!process.env.MONITOR_SECRET||supplied!==process.env.MONITOR_SECRET)return res.status(401).json({error:'Unauthorized'});
 
   const p=nowParts(),mins=minutes(p),summary=req.url?.includes('summary=1');
-
-  // The summary endpoint is intentionally time-gated in IST. This prevents an
-  // old/manual workflow invocation from sending a daily summary overnight.
-  if(summary && (mins<SUMMARY_START_MIN || mins>SUMMARY_END_MIN)){
+  if(summary && !isWithinSummaryWindow(mins)){
     return res.status(200).json({ok:true,summary:false,monitoring:false,reason:'Outside daily summary window (IST)',time_ist:`${p.hour}:${p.minute}`});
   }
   if(!summary&&(mins<MONITOR_START_MIN||mins>MONITOR_END_MIN)){
@@ -73,8 +74,6 @@ export default async function handler(req,res){
 
   try{
     const data=await fetchScanner();
-    // The strategy locks Top-7 gainers and Top-7 losers. fno-movers may expose
-    // more rows, so the monitor must never alert outside the frozen Top-7 set.
     const gainers=[...(data.gainers||[])].slice(0,7);
     const losers=[...(data.losers||[])].slice(0,7);
     const rows=[...gainers,...losers];
@@ -91,8 +90,6 @@ export default async function handler(req,res){
       const date=p.year+p.month+p.day;
       const key=keyFor(date,row.symbol);
       const previous=await getState(key);
-
-      // First observation establishes today's baseline silently.
       if(previous===null){
         await setState(key,status);
         continue;
