@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import csv
 import json
 from datetime import date, datetime
 from pathlib import Path
@@ -29,34 +28,14 @@ def strike_rupees(row: dict) -> float | None:
     return raw / 100.0 if raw > 0 else None
 
 
-def load_monthly_contracts(master_path: Path, underlying: str) -> dict[date, dict[float, dict[str, dict]]]:
-    rows = json.loads(master_path.read_text(encoding="utf-8"))
-    name = underlying.upper().removesuffix("-EQ")
-    out: dict[date, dict[float, dict[str, dict]]] = {}
-    for row in rows:
-        if str(row.get("exch_seg", "")).upper() != "NFO":
-            continue
-        if str(row.get("instrumenttype", "")).upper() not in {"OPTSTK", "OPTIDX"}:
-            continue
-        if str(row.get("name", "")).upper() != name:
-            continue
-        expiry = parse_expiry(row.get("expiry"))
-        strike = strike_rupees(row)
-        symbol = str(row.get("symbol", "")).upper()
-        option_type = symbol[-2:]
-        if not expiry or not strike or option_type not in {"CE", "PE"} or not row.get("token"):
-            continue
-        out.setdefault(expiry, {}).setdefault(strike, {})[option_type] = row
-    return out
-
-
-def signal_rows(stock_csv: Path) -> list[dict]:
+def signal_rows(stock_csv: Path) -> tuple[list[dict], list[date]]:
     df = pd.read_csv(stock_csv)
     df.columns = [str(c).strip().lower() for c in df.columns]
     df["datetime"] = pd.to_datetime(df["datetime"])
     df = df.sort_values("datetime").reset_index(drop=True)
     df["date"] = df["datetime"].dt.date
     df["time"] = df["datetime"].dt.strftime("%H:%M")
+    trading_dates = sorted(df["date"].dropna().unique().tolist())
     out: list[dict] = []
     for day, sub in df.groupby("date", sort=True):
         if not is_policybazar_s1_day(day):
@@ -75,12 +54,11 @@ def signal_rows(stock_csv: Path) -> list[dict]:
                 break
             if not (up or down):
                 continue
+            if str(bar.time) >= "10:00":
+                break
             side = "LONG" if up else "SHORT"
             breakout = float(c1.high) if up else float(c1.low)
             stock_sl = float(c1.low) if up else float(c1.high)
-            target = breakout + rng if up else breakout - rng
-            if str(bar.time) >= "10:00":
-                break
             out.append({
                 "date": day.isoformat(),
                 "weekday": day.strftime("%A"),
@@ -89,16 +67,14 @@ def signal_rows(stock_csv: Path) -> list[dict]:
                 "stock_breakout_time": str(bar.time),
                 "stock_entry": breakout,
                 "stock_sl": stock_sl,
-                "stock_target_1r": target,
+                "stock_target_1r": breakout + rng if up else breakout - rng,
                 "stock_range_1r": rng,
             })
             break
-    return out
+    return out, trading_dates
 
 
-def build(stock_csv: Path, master_path: Path, output: Path) -> int:
-    signals = signal_rows(stock_csv)
-    # All stock-option expiries in the Angel master are monthly contracts for stock options.
+def load_contracts(master_path: Path) -> dict[date, dict[float, dict[str, dict]]]:
     master = json.loads(master_path.read_text(encoding="utf-8"))
     grouped: dict[date, dict[float, dict[str, dict]]] = {}
     for row in master:
@@ -106,21 +82,26 @@ def build(stock_csv: Path, master_path: Path, output: Path) -> int:
             continue
         if str(row.get("instrumenttype", "")).upper() != "OPTSTK":
             continue
-        if str(row.get("name", "")).upper() != "POLICYBAZAAR":
+        # NSE symbol is POLICYBZR. Do not broaden this to similar names.
+        if str(row.get("name", "")).upper() != "POLICYBZR":
             continue
         expiry = parse_expiry(row.get("expiry"))
         strike = strike_rupees(row)
         symbol = str(row.get("symbol", "")).upper()
-        opt = symbol[-2:]
-        if not expiry or strike is None or opt not in {"CE", "PE"} or not row.get("token"):
+        option_type = symbol[-2:]
+        if not expiry or strike is None or option_type not in {"CE", "PE"} or not row.get("token"):
             continue
-        grouped.setdefault(expiry, {}).setdefault(strike, {})[opt] = row
+        grouped.setdefault(expiry, {}).setdefault(strike, {})[option_type] = row
+    return grouped
 
+
+def build(stock_csv: Path, master_path: Path, output: Path) -> int:
+    signals, trading_dates = signal_rows(stock_csv)
+    grouped = load_contracts(master_path)
     expiries = sorted(grouped)
     if not expiries:
-        raise RuntimeError("No POLICYBAZAAR OPTSTK contracts found in Angel master")
+        raise RuntimeError("No POLICYBZR OPTSTK contracts found in Angel master")
 
-    trading_dates = sorted({date.fromisoformat(x["date"]) for x in signals})
     records=[]
     for sig in signals:
         day=date.fromisoformat(sig["date"])
