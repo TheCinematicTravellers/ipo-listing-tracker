@@ -134,11 +134,8 @@ def resolve_expiry(signal_date: date, provider: Callable[[date], list[dict]]) ->
         if contracts:
             return candidate, contracts
     year, month = next_month(signal_date.year, signal_date.month)
-    if (year, month) == (2025, 8):
-        candidates = [date(2025, 8, 28)]
-    else:
-        candidate = last_tuesday(year, month)
-        candidates = [candidate - timedelta(days=i) for i in range(5)]
+    candidate = last_tuesday(year, month)
+    candidates = [candidate - timedelta(days=i) for i in range(5)]
     for candidate in candidates:
         contracts = provider(candidate)
         if contracts:
@@ -157,24 +154,32 @@ def resolve_manifest(signals: list[dict], trading_dates: list[date], contract_pr
                 cache[expiry] = contract_provider(expiry)
             return cache[expiry]
 
-        expiry, contracts = resolve_expiry(signal_date, provider)
-        pair = choose_contract_pair(contracts, float(signal["stock_entry"]))
-        selected = pair["ce"] if signal["side"] == "LONG" else pair["pe"]
-        rows.append({
-            **signal,
-            "expiry": expiry.isoformat(),
-            "expiry_week": expiry_week_label(signal_date, expiry, trading_dates),
-            "atm_strike": pair["strike"],
-            "option_type": selected["instrument_type"],
-            "option_instrument_key": selected["instrument_key"],
-            "option_symbol": selected.get("trading_symbol", ""),
-            "option_exchange_token": selected.get("exchange_token", ""),
-            "option_lot_size": selected.get("lot_size", selected.get("minimum_lot", "")),
-            "ce_instrument_key": pair["ce"]["instrument_key"],
-            "ce_symbol": pair["ce"].get("trading_symbol", ""),
-            "pe_instrument_key": pair["pe"]["instrument_key"],
-            "pe_symbol": pair["pe"].get("trading_symbol", ""),
-        })
+        try:
+            expiry, contracts = resolve_expiry(signal_date, provider)
+            pair = choose_contract_pair(contracts, float(signal["stock_entry"]))
+            selected = pair["ce"] if signal["side"] == "LONG" else pair["pe"]
+            rows.append({
+                **signal,
+                "manifest_status": "OK",
+                "expiry": expiry.isoformat(),
+                "expiry_week": expiry_week_label(signal_date, expiry),
+                "atm_strike": pair["strike"],
+                "option_type": selected["instrument_type"],
+                "option_instrument_key": selected["instrument_key"],
+                "option_symbol": selected.get("trading_symbol", ""),
+                "option_exchange_token": selected.get("exchange_token", ""),
+                "option_lot_size": selected.get("lot_size", selected.get("minimum_lot", "")),
+                "ce_instrument_key": pair["ce"]["instrument_key"],
+                "ce_symbol": pair["ce"].get("trading_symbol", ""),
+                "pe_instrument_key": pair["pe"]["instrument_key"],
+                "pe_symbol": pair["pe"].get("trading_symbol", ""),
+            })
+        except RuntimeError as exc:
+            rows.append({
+                **signal,
+                "manifest_status": "MISSING_HISTORICAL_CONTRACT",
+                "manifest_error": str(exc),
+            })
     return rows
 
 
@@ -192,13 +197,11 @@ def build(locked_csv: Path, calendar_csv: Path, output: Path) -> int:
 
     def provider(expiry: date) -> list[dict]:
         path = cache_dir / f"{expiry.isoformat()}.json"
-        if path.exists() and path.stat().st_size > 2:
+        if path.exists() and path.stat().st_size > 0:
             print(f"[CACHE] contracts {expiry}")
             return json.loads(path.read_text(encoding="utf-8"))
         print(f"[API] expired contracts {expiry}")
         data = fetch_expired_contracts(session, UNDERLYING_KEY, expiry)
-        if not data:
-            return []
         path.write_text(json.dumps(data, indent=2), encoding="utf-8")
         return data
 
@@ -207,6 +210,9 @@ def build(locked_csv: Path, calendar_csv: Path, output: Path) -> int:
         raise RuntimeError(f"Manifest incomplete: signals={len(signals)} rows={len(rows)}")
     output.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(rows).to_csv(output, index=False)
+    ok = sum(row.get("manifest_status") == "OK" for row in rows)
+    missing = len(rows) - ok
+    print(f"[OK] manifest rows={len(rows)} historical_contracts={ok} unavailable={missing}")
     return len(rows)
 
 
@@ -216,4 +222,4 @@ if __name__ == "__main__":
     parser.add_argument("--calendar-csv", required=True)
     parser.add_argument("--output", default="data/policybazar_options/upstox_manifest.csv")
     args = parser.parse_args()
-    print(f"[OK] Upstox manifest rows={build(Path(args.stock_csv), Path(args.calendar_csv), Path(args.output))}")
+    print(f"[DONE] manifest rows={build(Path(args.stock_csv), Path(args.calendar_csv), Path(args.output))}")
