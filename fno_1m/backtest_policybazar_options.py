@@ -49,7 +49,6 @@ def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: f
         else:
             hit_t=float(b.low)<=target; hit_s=float(b.high)>=sl
         if hit_t and hit_s:
-            # Intrabar ambiguity is not guessed. Continue to the 15:05 EOD exit.
             break
         if hit_t:
             return b.datetime,target,"STOCK_1R"
@@ -72,7 +71,7 @@ def option_driven_exit(opt: pd.DataFrame, entry_dt: pd.Timestamp, entry: float, 
     for _,b in bars.iterrows():
         ht=float(b.high)>=target; hs=float(b.low)<=stop
         if ht and hs:
-            continue
+            break
         if ht:
             return b.datetime,target,"OPTION_1R"
         if hs:
