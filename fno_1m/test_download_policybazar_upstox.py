@@ -1,5 +1,3 @@
-import pandas as pd
-
 from download_policybazar_upstox import cache_path, parse_candles
 
 
@@ -29,5 +27,5 @@ def test_parse_candles_returns_sorted_deduplicated_rows():
     assert out.iloc[1]["open"] == 12
 
 
-def test_cache_path_uses_expired_instrument_key(tmp_path):
-    assert cache_path(tmp_path, "NSE_FO|139523|25-08-2026") == tmp_path / "NSE_FO|139523|25-08-2026" / "candles.csv"
+def test_cache_path_is_windows_safe(tmp_path):
+    assert cache_path(tmp_path, "NSE_FO|139523|25-08-2026") == tmp_path / "NSE_FO__139523__25-08-2026" / "candles.csv"
