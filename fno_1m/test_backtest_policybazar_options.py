@@ -1,6 +1,6 @@
 import pandas as pd
 
-from backtest_policybazar_options import first_option_entry, option_close_at, stock_based_option_exit
+from backtest_policybazar_options import first_option_entry, option_close_at, stock_based_option_exit, stock_target_at_r
 
 
 def test_option_entry_uses_first_candle_strictly_after_signal():
@@ -68,3 +68,10 @@ def test_stock_based_option_exit_has_no_premium_target():
     assert exit_dt == pd.Timestamp("2026-08-12 09:40:00+05:30")
     assert exit_px == 59.0
     assert reason == "STOCK_EXIT"
+
+
+def test_stock_target_at_r_scales_original_stock_risk():
+    assert stock_target_at_r("LONG", 100.0, 95.0, 0.5) == 102.5
+    assert stock_target_at_r("LONG", 100.0, 95.0, 1.0) == 105.0
+    assert stock_target_at_r("SHORT", 100.0, 105.0, 0.5) == 97.5
+    assert stock_target_at_r("SHORT", 100.0, 105.0, 1.0) == 95.0
