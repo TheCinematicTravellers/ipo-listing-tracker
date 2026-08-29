@@ -5,7 +5,7 @@ from datetime import date, time
 
 LIVE_ENTRY_START = time(9, 15)
 BREAKOUT_CUTOFF = time(10, 0)
-TIME_EXIT = time(15, 5)
+TIME_EXIT = time(15, 13)
 
 
 def is_trading_day(day: date) -> bool:
