@@ -32,12 +32,12 @@ The pipeline also reports an explicitly secondary option-driven sensitivity usin
 
 ## Expiry-week buckets
 
-Buckets are based on trading days remaining, including the signal day and expiry day:
+Buckets are based on **calendar days remaining** until the selected monthly expiry, because the stock calendar file may end before the option expiry date:
 
-- `WEEK_1`: more than 15 trading days remaining.
-- `WEEK_2`: 11-15 trading days remaining.
-- `WEEK_3`: 6-10 trading days remaining.
-- `EXPIRY_WEEK`: 1-5 trading days remaining.
+- `WEEK_1`: more than 21 calendar days remaining.
+- `WEEK_2`: 15-21 calendar days remaining.
+- `WEEK_3`: 8-14 calendar days remaining.
+- `EXPIRY_WEEK`: 0-7 calendar days remaining.
 
 This is deliberately a time-to-expiry classification rather than a calendar-week label because the study is specifically testing option premium decay.
 
