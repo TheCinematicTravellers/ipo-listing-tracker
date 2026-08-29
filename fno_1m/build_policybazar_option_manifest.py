@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import calendar
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -101,34 +100,51 @@ def load_contracts(master_path: Path) -> dict[date, dict[float, dict[str, dict]]
     return grouped
 
 
-def historical_monthly_expiries(trading_dates: list[date]) -> list[date]:
-    """Return the actual historical NSE stock-option monthly expiries.
+def _last_calendar_day(year: int, month: int) -> date:
+    import calendar
+    return date(year, month, calendar.monthrange(year, month)[1])
 
-    NSE kept stock-derivative expiries on Thursday through contracts expiring
-    on/before 31-Aug-2025. New contracts expiring on/after 01-Sep-2025 moved
-    to the last Tuesday of the month. If that day was a trading holiday, the
-    previous trading day was the expiry.
+
+def historical_monthly_expiries(year_months: list[tuple[int, int]], trading_dates: list[date]) -> list[date]:
+    """Resolve historical NSE stock-option monthly expiries.
+
+    Contracts expiring on/before 2025-08-31 use the legacy Thursday expiry.
+    Contracts expiring from 2025-09-01 use the last Tuesday of the month; if
+    that Tuesday is not present in the historical trading calendar, walk back
+    to the previous available trading day. The final month does not need to
+    have an expiry candle in the stock dataset.
     """
-    dates = sorted(set(trading_dates))
-    if not dates:
-        raise ValueError("Trading calendar is empty")
-    months = sorted({(d.year, d.month) for d in dates})
-    expiries: list[date] = []
-    for year, month in months:
-        last_day = date(year, month, calendar.monthrange(year, month)[1])
-        # Transition applies to contracts expiring on/after 01-Sep-2025.
-        weekday = 3 if last_day <= date(2025, 8, 31) else 1  # Thu=3, Tue=1
-        candidates = [d for d in dates if d.year == year and d.month == month and d.weekday() == weekday and d <= last_day]
-        if not candidates:
-            raise ValueError(f"Could not resolve monthly expiry for {year}-{month:02d}")
-        expiries.append(max(candidates))
-    return expiries
+    trading = set(trading_dates)
+    out: list[date] = []
+    for year, month in sorted(set(year_months)):
+        if (year, month) == (2025, 8):
+            candidate = date(2025, 8, 28)
+            if candidate not in trading:
+                raise ValueError("Trading calendar missing 2025-08-28, required for August 2025 expiry")
+            out.append(candidate)
+            continue
+        month_start = date(year, month, 1)
+        last_day = _last_calendar_day(year, month)
+        # Last Tuesday.
+        candidate = last_day - timedelta(days=(last_day.weekday() - 1) % 7)
+        # A holiday moves expiry to the previous trading day.
+        while candidate >= month_start and candidate not in trading:
+            candidate -= timedelta(days=1)
+        if candidate < month_start:
+            raise ValueError(f"Could not resolve historical expiry for {year}-{month:02d}")
+        out.append(candidate)
+    return out
 
 
 def build(locked_csv: Path, master_path: Path, output: Path, calendar_csv: Path | None = None) -> int:
     signals, trading_dates = signal_rows(locked_csv, calendar_csv)
     grouped = load_contracts(master_path)
-    historical_expiries = historical_monthly_expiries(trading_dates)
+
+    signal_dates = [date.fromisoformat(sig["date"]) for sig in signals]
+    if not signal_dates:
+        raise RuntimeError("No signals in locked S1 CSV")
+    months = {(d.year, d.month) for d in signal_dates}
+    historical_expiries = historical_monthly_expiries(sorted(months), trading_dates)
 
     records = []
     missing_master_expiries: dict[str, int] = {}
@@ -136,8 +152,20 @@ def build(locked_csv: Path, master_path: Path, output: Path, calendar_csv: Path 
         day = date.fromisoformat(sig["date"])
         future = [e for e in historical_expiries if e >= day]
         if not future:
+            # Add the next calendar month if the signal occurs after the
+            # current month's expiry. This is needed for signals late in the
+            # month, while keeping the expiry itself independent of stock data.
+            y, m = day.year, day.month
+            if m == 12:
+                y, m = y + 1, 1
+            else:
+                m += 1
+            extra = historical_monthly_expiries([(y, m)], trading_dates)
+            historical_expiries.extend(extra)
+            future = [e for e in historical_expiries if e >= day]
+        if not future:
             raise RuntimeError(f"No historical monthly expiry on/after signal date {day}")
-        expiry = future[0]
+        expiry = min(future)
         if expiry not in grouped:
             missing_master_expiries[expiry.isoformat()] = missing_master_expiries.get(expiry.isoformat(), 0) + 1
             continue
@@ -159,10 +187,9 @@ def build(locked_csv: Path, master_path: Path, output: Path, calendar_csv: Path 
     if missing_master_expiries:
         detail = ", ".join(f"{k} ({v} trades)" for k, v in sorted(missing_master_expiries.items()))
         raise RuntimeError(
-            "Historical expiry dates were resolved correctly, but the supplied "
-            f"Angel master has no POLICYBZR contracts for: {detail}. "
-            "Use a historical contract-master snapshot for those expiry months; "
-            "do not substitute the current expiry."
+            "Historical expiry dates resolved correctly, but the supplied current Angel master "
+            f"has no POLICYBZR contracts for: {detail}. Do not substitute a current expiry; "
+            "a historical contract-master snapshot is required."
         )
     if len(records) != len(signals):
         raise RuntimeError(f"Contract resolution incomplete: signals={len(signals)} manifest={len(records)}")
@@ -175,7 +202,7 @@ def build(locked_csv: Path, master_path: Path, output: Path, calendar_csv: Path 
 if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--stock-csv", required=True, help="Authoritative locked 90-trade S1 CSV")
-    p.add_argument("--calendar-csv", help="Raw 5m stock CSV used only for the complete trading-date calendar")
+    p.add_argument("--calendar-csv", help="Raw 5m stock CSV used only for trading-date/holiday calendar")
     p.add_argument("--master", required=True)
     p.add_argument("--output", default="data/policybazar_options/manifest.csv")
     args = p.parse_args()
