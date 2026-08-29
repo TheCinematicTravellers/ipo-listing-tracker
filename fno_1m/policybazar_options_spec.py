@@ -23,25 +23,25 @@ def select_atm_strike(paired_strikes: Iterable[float], stock_price: float) -> fl
     return min(strikes, key=lambda strike: (abs(strike - stock_price), strike))
 
 
-def expiry_week(signal_date: date, expiry_date: date, trading_dates: Iterable[date]) -> int:
-    """Return time-to-expiry bucket: 1 farthest, 4 expiry week."""
-    dates = sorted({d for d in trading_dates if signal_date <= d <= expiry_date})
-    if signal_date not in dates:
-        raise ValueError("signal_date must be a trading date")
-    if expiry_date not in dates:
-        dates.append(expiry_date)
-        dates.sort()
-    remaining = len(dates)
-    if remaining <= 5:
+def expiry_week(signal_date: date, expiry_date: date, trading_dates: Iterable[date] | None = None) -> int:
+    """Return a time-to-expiry bucket using calendar days remaining.
+
+    The stock calendar may end before the option expiry date, so expiry-week
+    classification deliberately does not depend on that file being complete.
+    """
+    if signal_date > expiry_date:
+        raise ValueError("signal_date cannot be after expiry_date")
+    remaining_days = (expiry_date - signal_date).days
+    if remaining_days <= 7:
         return 4
-    if remaining <= 10:
+    if remaining_days <= 14:
         return 3
-    if remaining <= 15:
+    if remaining_days <= 21:
         return 2
     return 1
 
 
-def expiry_week_label(signal_date: date, expiry_date: date, trading_dates: Iterable[date]) -> str:
+def expiry_week_label(signal_date: date, expiry_date: date, trading_dates: Iterable[date] | None = None) -> str:
     week = expiry_week(signal_date, expiry_date, trading_dates)
     return "EXPIRY_WEEK" if week == 4 else f"WEEK_{week}"
 
