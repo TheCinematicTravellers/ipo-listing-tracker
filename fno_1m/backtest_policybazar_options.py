@@ -39,6 +39,23 @@ def option_close_at(opt: pd.DataFrame, dt: pd.Timestamp) -> tuple[pd.Timestamp, 
     return row.datetime, float(row.close)
 
 
+def stock_based_option_exit(
+    opt: pd.DataFrame,
+    entry_dt: pd.Timestamp,
+    stock_exit_dt: pd.Timestamp,
+) -> tuple[pd.Timestamp, float, str]:
+    """Exit the option when the underlying stock strategy exits.
+
+    No option-premium target or option-premium stop is applied. The option
+    exit is the latest available option close at or before the stock exit.
+    """
+    x = opt[(opt.datetime >= entry_dt) & (opt.datetime <= stock_exit_dt)]
+    if x.empty:
+        return stock_exit_dt, float("nan"), "NO_OPTION_PRICE"
+    row = x.iloc[-1]
+    return row.datetime, float(row.close), "STOCK_EXIT"
+
+
 def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: float, sl: float, target: float) -> tuple[pd.Timestamp, float, str]:
     bars = stock[stock.datetime >= signal_dt].sort_values("datetime")
     for _, bar in bars.iterrows():
@@ -84,7 +101,7 @@ def target_only_exit(
     return stock_exit_dt, entry, "NO_OPTION_PRICE"
 
 
-def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, target_pct: float) -> int:
+def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, target_pct: float | None = None, exit_mode: str = "stock") -> int:
     manifest = pd.read_csv(manifest_path)
     stock = pd.read_csv(stock_csv)
     if manifest.empty:
@@ -146,9 +163,17 @@ def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, targ
         if lot_size <= 0:
             raise RuntimeError(f"Invalid POLICYBZR option lot size for {instrument_key}")
 
-        exit_dt, exit_px, exit_reason = target_only_exit(
-            option, option_entry_dt, option_entry, target_pct, stock_exit_dt
-        )
+        if exit_mode == "stock":
+            exit_dt, exit_px, exit_reason = stock_based_option_exit(
+                option, option_entry_dt, stock_exit_dt
+            )
+        else:
+            if target_pct is None:
+                raise ValueError("target_pct is required when exit_mode='target'")
+            exit_dt, exit_px, exit_reason = target_only_exit(
+                option, option_entry_dt, option_entry, target_pct, stock_exit_dt
+            )
+
         pnl = (exit_px - option_entry) * lot_size
         rows.append({
             **base,
@@ -160,7 +185,8 @@ def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, targ
             "stock_exit_dt": stock_exit_dt,
             "stock_exit_reason": stock_exit_reason,
             "stock_exit_px": stock_exit_px,
-            "option_target_pct": target_pct,
+            "option_target_pct": target_pct if exit_mode == "target" else None,
+            "option_exit_mode": exit_mode,
             "option_exit_dt": exit_dt,
             "option_exit_reason": exit_reason,
             "option_exit": exit_px,
@@ -180,6 +206,7 @@ if __name__ == "__main__":
     parser.add_argument("--stock-csv", required=True)
     parser.add_argument("--raw", default="data/policybazar_options/raw_upstox")
     parser.add_argument("--output", default="data/policybazar_options/trades_target.csv")
-    parser.add_argument("--target-pct", type=float, required=True)
+    parser.add_argument("--target-pct", type=float, default=None)
+    parser.add_argument("--exit-mode", choices=["stock", "target"], default="stock")
     args = parser.parse_args()
-    print(f"[OK] option trades={run(Path(args.manifest), Path(args.stock_csv), Path(args.raw), Path(args.output), args.target_pct)}")
+    print(f"[OK] option trades={run(Path(args.manifest), Path(args.stock_csv), Path(args.raw), Path(args.output), args.target_pct, args.exit_mode)}")
