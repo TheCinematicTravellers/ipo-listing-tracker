@@ -45,6 +45,7 @@ def test_resolve_manifest_maps_long_to_ce_and_uses_august_2026_expiry():
         ]
 
     out = resolve_manifest(signals, calendar, provider)
+    assert out[0]["manifest_status"] == "OK"
     assert out[0]["option_instrument_key"] == "NSE_FO|ce|25-08-2026"
     assert out[0]["option_type"] == "CE"
     assert out[0]["expiry"] == "2026-08-25"
@@ -65,3 +66,16 @@ def test_resolve_manifest_maps_short_to_pe():
     out = resolve_manifest(signals, calendar, provider)
     assert out[0]["option_instrument_key"] == "pe"
     assert out[0]["option_type"] == "PE"
+
+
+def test_resolve_manifest_keeps_missing_history_as_a_data_quality_row():
+    signals = [{
+        "date": "2025-08-12", "side": "LONG", "stock_entry": 1733,
+        "stock_breakout_time": "09:35", "weekday": "Tuesday", "body_pct": 0.40,
+        "stock_sl": 1700, "stock_target_1r": 1766, "stock_range_1r": 33,
+    }]
+    calendar = [date(2025, 8, d) for d in range(1, 20) if date(2025, 8, d).weekday() < 5]
+    out = resolve_manifest(signals, calendar, lambda expiry: [])
+    assert len(out) == 1
+    assert out[0]["manifest_status"] == "MISSING_HISTORICAL_CONTRACT"
+    assert "No historical POLICYBZR monthly option expiry" in out[0]["manifest_error"]
