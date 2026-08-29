@@ -1,0 +1,21 @@
+name: Policybazaar options tests
+
+on:
+  push:
+    branches: [feature/policybazar-options-upstox-final]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fno_1m
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest pandas requests
+      - run: python -m py_compile policybazar_options_spec.py build_policybazar_upstox_manifest.py download_policybazar_upstox.py backtest_policybazar_options.py report_policybazar_options.py
+      - run: pytest -q test_policybazar_options_spec.py test_build_policybazar_upstox_manifest.py test_download_policybazar_upstox.py test_backtest_policybazar_options.py test_report_policybazar_options.py
