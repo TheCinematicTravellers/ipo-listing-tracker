@@ -28,50 +28,57 @@ def strike_rupees(row: dict) -> float | None:
     return raw / 100.0 if raw > 0 else None
 
 
-def signal_rows(stock_csv: Path) -> tuple[list[dict], list[date]]:
-    df = pd.read_csv(stock_csv)
+def load_trading_calendar(calendar_csv: Path | None, fallback_dates: list[date]) -> list[date]:
+    if calendar_csv is None:
+        return sorted(set(fallback_dates))
+    df = pd.read_csv(calendar_csv)
     df.columns = [str(c).strip().lower() for c in df.columns]
-    df["datetime"] = pd.to_datetime(df["datetime"])
-    df = df.sort_values("datetime").reset_index(drop=True)
-    df["date"] = df["datetime"].dt.date
-    df["time"] = df["datetime"].dt.strftime("%H:%M")
-    trading_dates = sorted(df["date"].dropna().unique().tolist())
-    out: list[dict] = []
-    for day, sub in df.groupby("date", sort=True):
-        if not is_policybazar_s1_day(day):
-            continue
-        first = sub[sub.time == "09:15"]
-        if first.empty:
-            continue
-        c1 = first.iloc[0]
-        rng = float(c1.high) - float(c1.low)
-        if rng <= 0:
-            continue
-        for _, bar in sub[sub.time > "09:15"].iterrows():
-            up = float(bar.high) > float(c1.high)
-            down = float(bar.low) < float(c1.low)
-            if up and down:
-                break
-            if not (up or down):
-                continue
-            if str(bar.time) >= "10:00":
-                break
-            side = "LONG" if up else "SHORT"
-            breakout = float(c1.high) if up else float(c1.low)
-            stock_sl = float(c1.low) if up else float(c1.high)
-            out.append({
-                "date": day.isoformat(),
-                "weekday": day.strftime("%A"),
-                "stock": "POLICYBZR",
-                "side": side,
-                "stock_breakout_time": str(bar.time),
-                "stock_entry": breakout,
-                "stock_sl": stock_sl,
-                "stock_target_1r": breakout + rng if up else breakout - rng,
-                "stock_range_1r": rng,
-            })
-            break
-    return out, trading_dates
+    if "datetime" not in df.columns:
+        raise ValueError("calendar CSV must contain datetime column")
+    dt = pd.to_datetime(df["datetime"], errors="coerce").dropna()
+    return sorted(set(dt.dt.date.tolist()))
+
+
+def signal_rows(locked_csv: Path, calendar_csv: Path | None = None) -> tuple[list[dict], list[date]]:
+    df = pd.read_csv(locked_csv)
+    df.columns = [str(c).strip().lower() for c in df.columns]
+    required = {"date", "weekday", "side", "entry_time", "entry", "sl", "target_1r", "risk_per_share", "body_pct"}
+    missing = required - set(df.columns)
+    if missing:
+        raise ValueError(f"Locked S1 CSV missing columns: {sorted(missing)}")
+    df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.date
+    df["entry_time"] = df["entry_time"].astype(str)
+    df["side"] = df["side"].astype(str).str.upper()
+    if df["date"].isna().any():
+        raise ValueError("Locked S1 CSV contains invalid dates")
+    if len(df) != 90:
+        raise ValueError(f"Expected authoritative 90-trade POLICYBZR S1 dataset, found {len(df)} rows")
+    if not df["body_pct"].astype(float).gt(0.20).all():
+        raise ValueError("Locked S1 dataset contains body_pct <= 20% trade")
+    if not df["date"].map(is_policybazar_s1_day).all():
+        raise ValueError("Locked S1 dataset contains a Monday/Friday/non-Tue-Thu trade")
+    if not df["entry_time"].lt("10:00").all():
+        raise ValueError("Locked S1 dataset contains entry at/after 10:00")
+    if not df["side"].isin({"LONG", "SHORT"}).all():
+        raise ValueError("Locked S1 dataset contains invalid side")
+
+    out=[]
+    for _, row in df.sort_values(["date", "entry_time"]).iterrows():
+        side=row["side"]
+        out.append({
+            "date": row["date"].isoformat(),
+            "weekday": str(row["weekday"]),
+            "stock": "POLICYBZR",
+            "side": side,
+            "stock_breakout_time": str(row["entry_time"]),
+            "stock_entry": float(row["entry"]),
+            "stock_sl": float(row["sl"]),
+            "stock_target_1r": float(row["target_1r"]),
+            "stock_range_1r": float(row["risk_per_share"]),
+            "body_pct": float(row["body_pct"]),
+        })
+    fallback=sorted(df["date"].tolist())
+    return out, load_trading_calendar(calendar_csv, fallback)
 
 
 def load_contracts(master_path: Path) -> dict[date, dict[float, dict[str, dict]]]:
@@ -82,7 +89,6 @@ def load_contracts(master_path: Path) -> dict[date, dict[float, dict[str, dict]]
             continue
         if str(row.get("instrumenttype", "")).upper() != "OPTSTK":
             continue
-        # NSE symbol is POLICYBZR. Do not broaden this to similar names.
         if str(row.get("name", "")).upper() != "POLICYBZR":
             continue
         expiry = parse_expiry(row.get("expiry"))
@@ -95,8 +101,8 @@ def load_contracts(master_path: Path) -> dict[date, dict[float, dict[str, dict]]
     return grouped
 
 
-def build(stock_csv: Path, master_path: Path, output: Path) -> int:
-    signals, trading_dates = signal_rows(stock_csv)
+def build(locked_csv: Path, master_path: Path, output: Path, calendar_csv: Path | None = None) -> int:
+    signals, trading_dates = signal_rows(locked_csv, calendar_csv)
     grouped = load_contracts(master_path)
     expiries = sorted(grouped)
     if not expiries:
@@ -113,7 +119,8 @@ def build(stock_csv: Path, master_path: Path, output: Path) -> int:
         if not paired:
             continue
         atm=select_atm_strike(paired, float(sig["stock_entry"]))
-        ce=grouped[expiry][atm]["CE"]; pe=grouped[expiry][atm]["PE"]
+        ce=grouped[expiry][atm]["CE"]
+        pe=grouped[expiry][atm]["PE"]
         records.append({
             **sig,
             "expiry": expiry.isoformat(),
@@ -122,6 +129,8 @@ def build(stock_csv: Path, master_path: Path, output: Path) -> int:
             "ce_symbol": ce["symbol"], "ce_token": ce["token"], "ce_lot_size": ce.get("lotsize", ""),
             "pe_symbol": pe["symbol"], "pe_token": pe["token"], "pe_lot_size": pe.get("lotsize", ""),
         })
+    if len(records) != len(signals):
+        raise RuntimeError(f"Contract resolution incomplete: signals={len(signals)} manifest={len(records)}")
     output.parent.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(records).to_csv(output, index=False)
     return len(records)
@@ -129,8 +138,9 @@ def build(stock_csv: Path, master_path: Path, output: Path) -> int:
 
 if __name__ == "__main__":
     p=argparse.ArgumentParser()
-    p.add_argument("--stock-csv", required=True)
+    p.add_argument("--stock-csv", required=True, help="Authoritative locked 90-trade S1 CSV")
+    p.add_argument("--calendar-csv", help="Raw 5m stock CSV used only for the complete trading-date calendar")
     p.add_argument("--master", required=True)
     p.add_argument("--output", default="data/policybazar_options/manifest.csv")
     args=p.parse_args()
-    print(f"[OK] manifest rows={build(Path(args.stock_csv), Path(args.master), Path(args.output))}")
+    print(f"[OK] manifest rows={build(Path(args.stock_csv), Path(args.master), Path(args.output), Path(args.calendar_csv) if args.calendar_csv else None)}")
