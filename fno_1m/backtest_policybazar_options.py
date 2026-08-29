@@ -56,7 +56,22 @@ def stock_based_option_exit(
     return row.datetime, float(row.close), "STOCK_EXIT"
 
 
-def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: float, sl: float, target: float) -> tuple[pd.Timestamp, float, str]:
+def stock_target_at_r(side: str, entry: float, sl: float, target_r: float) -> float:
+    """Return the stock target at the requested multiple of original S1 risk."""
+    if target_r <= 0:
+        raise ValueError("target_r must be positive")
+    side = side.upper()
+    risk = abs(entry - sl)
+    if risk <= 0:
+        raise ValueError("Stock entry and stop must define positive risk")
+    if side == "LONG":
+        return entry + risk * target_r
+    if side == "SHORT":
+        return entry - risk * target_r
+    raise ValueError(f"Unsupported side: {side}")
+
+
+def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: float, sl: float, target: float, target_r: float = 1.0) -> tuple[pd.Timestamp, float, str]:
     bars = stock[stock.datetime >= signal_dt].sort_values("datetime")
     for _, bar in bars.iterrows():
         if side == "LONG":
@@ -68,7 +83,7 @@ def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: f
         if hit_target and hit_sl:
             continue
         if hit_target:
-            return bar.datetime, target, "STOCK_1R"
+            return bar.datetime, target, f"STOCK_{target_r:g}R"
         if hit_sl:
             return bar.datetime, sl, "STOCK_SL"
     eod = stock[stock.datetime.dt.strftime("%H:%M") == "15:05"]
@@ -101,7 +116,7 @@ def target_only_exit(
     return stock_exit_dt, entry, "NO_OPTION_PRICE"
 
 
-def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, target_pct: float | None = None, exit_mode: str = "stock") -> int:
+def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, target_pct: float | None = None, exit_mode: str = "stock", stock_target_r: float = 1.0) -> int:
     manifest = pd.read_csv(manifest_path)
     stock = pd.read_csv(stock_csv)
     if manifest.empty:
@@ -139,13 +154,17 @@ def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, targ
             continue
         option_entry_dt, option_entry = entry
 
+        stock_entry = float(manifest_row["stock_entry"])
+        stock_sl = float(manifest_row["stock_sl"])
+        stock_target = stock_target_at_r(side, stock_entry, stock_sl, stock_target_r)
         stock_exit_dt, stock_exit_px, stock_exit_reason = stock_exit(
             stock_day,
             signal_dt,
             side,
-            float(manifest_row["stock_entry"]),
-            float(manifest_row["stock_sl"]),
-            float(manifest_row["stock_target_1r"]),
+            stock_entry,
+            stock_sl,
+            stock_target,
+            stock_target_r,
         )
         if stock_exit_dt < option_entry_dt:
             rows.append({
@@ -154,6 +173,8 @@ def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, targ
                 "stock_exit_dt": stock_exit_dt,
                 "stock_exit_reason": stock_exit_reason,
                 "stock_exit_px": stock_exit_px,
+                "stock_target_r": stock_target_r,
+                "stock_target_px": stock_target,
                 "option_entry_dt": option_entry_dt,
                 "option_entry": option_entry,
             })
@@ -182,6 +203,8 @@ def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, targ
             "option_entry_dt": option_entry_dt,
             "option_entry": option_entry,
             "option_lot_size": lot_size,
+            "stock_target_r": stock_target_r,
+            "stock_target_px": stock_target,
             "stock_exit_dt": stock_exit_dt,
             "stock_exit_reason": stock_exit_reason,
             "stock_exit_px": stock_exit_px,
@@ -208,5 +231,6 @@ if __name__ == "__main__":
     parser.add_argument("--output", default="data/policybazar_options/trades_target.csv")
     parser.add_argument("--target-pct", type=float, default=None)
     parser.add_argument("--exit-mode", choices=["stock", "target"], default="stock")
+    parser.add_argument("--stock-target-r", type=float, default=1.0)
     args = parser.parse_args()
-    print(f"[OK] option trades={run(Path(args.manifest), Path(args.stock_csv), Path(args.raw), Path(args.output), args.target_pct, args.exit_mode)}")
+    print(f"[OK] option trades={run(Path(args.manifest), Path(args.stock_csv), Path(args.raw), Path(args.output), args.target_pct, args.exit_mode, args.stock_target_r)}")
