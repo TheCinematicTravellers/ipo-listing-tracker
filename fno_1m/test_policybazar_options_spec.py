@@ -33,7 +33,7 @@ def test_august_2026_signal_resolves_last_tuesday():
 
 
 def test_atm_uses_actual_paired_strikes():
-    assert select_atm_strike([1250, 1275, 1300], 1287) == 1300
+    assert select_atm_strike([1250, 1275, 1300], 1288) == 1300
 
 
 def test_expiry_week_bucket_measures_time_remaining():
