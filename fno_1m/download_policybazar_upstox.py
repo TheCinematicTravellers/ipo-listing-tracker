@@ -71,12 +71,20 @@ def cache_option_candles(manifest: pd.DataFrame, raw_root: Path) -> int:
     if missing:
         raise ValueError(f"Manifest missing columns: {sorted(missing)}")
 
+    valid = manifest.copy()
+    if "manifest_status" in valid.columns:
+        valid = valid[valid["manifest_status"].eq("OK")].copy()
+    valid = valid[valid["option_instrument_key"].notna()]
+    if valid.empty:
+        print("[OK] no historical option contracts available to download")
+        return 0
+
     session = requests.Session()
     session.headers.update({"Authorization": f"Bearer {token}", "Accept": "application/json"})
     raw_root.mkdir(parents=True, exist_ok=True)
 
     count = 0
-    for instrument_key, group in manifest.groupby("option_instrument_key", sort=True):
+    for instrument_key, group in valid.groupby("option_instrument_key", sort=True):
         path = cache_path(raw_root, str(instrument_key))
         if path.exists() and path.stat().st_size > 0:
             print(f"[CACHE] {path}")
