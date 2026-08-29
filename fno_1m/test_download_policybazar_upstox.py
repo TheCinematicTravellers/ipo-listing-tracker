@@ -28,4 +28,4 @@ def test_parse_candles_returns_sorted_deduplicated_rows():
 
 
 def test_cache_path_is_windows_safe(tmp_path):
-    assert cache_path(tmp_path, "NSE_FO|139523|25-08-2026") == tmp_path / "NSE_FO__139523__25-08-2026" / "candles.csv"
+    assert cache_path(tmp_path, "NSE_FO|139523|25-08-2026") == tmp_path / "NSE_FO_139523_25-08-2026" / "candles.csv"
