@@ -1,6 +1,6 @@
 from datetime import date
 
-from build_policybazar_upstox_manifest import choose_contract_pair, resolve_manifest
+from build_policybazar_upstox_manifest import choose_contract_pair, resolve_expiry, resolve_manifest
 
 
 def test_choose_contract_pair_selects_nearest_paired_strike():
@@ -14,6 +14,19 @@ def test_choose_contract_pair_selects_nearest_paired_strike():
     assert pair["strike"] == 1740
     assert pair["ce"]["instrument_key"] == "ce1740"
     assert pair["pe"]["instrument_key"] == "pe1740"
+
+
+def test_resolve_expiry_moves_back_when_last_tuesday_has_no_contracts():
+    calls = []
+
+    def provider(expiry):
+        calls.append(expiry)
+        return [{"instrument_key": "historical"}] if expiry == date(2026, 3, 30) else []
+
+    expiry, contracts = resolve_expiry(date(2026, 3, 20), provider)
+    assert expiry == date(2026, 3, 30)
+    assert contracts == [{"instrument_key": "historical"}]
+    assert calls[:2] == [date(2026, 3, 31), date(2026, 3, 30)]
 
 
 def test_resolve_manifest_maps_long_to_ce_and_uses_august_2026_expiry():
@@ -35,7 +48,7 @@ def test_resolve_manifest_maps_long_to_ce_and_uses_august_2026_expiry():
     assert out[0]["option_instrument_key"] == "NSE_FO|ce|25-08-2026"
     assert out[0]["option_type"] == "CE"
     assert out[0]["expiry"] == "2026-08-25"
-    assert out[0]["expiry_week"] == "WEEK_2"
+    assert out[0]["expiry_week"] == "WEEK_3"
 
 
 def test_resolve_manifest_maps_short_to_pe():
