@@ -36,12 +36,12 @@ def test_atm_uses_actual_paired_strikes():
     assert select_atm_strike([1250, 1275, 1300], 1288) == 1300
 
 
-def test_expiry_week_bucket_measures_time_remaining():
-    days = [date(2026, 9, d) for d in range(1, 30) if date(2026, 9, d).weekday() < 5]
-    assert expiry_week_label(date(2026, 9, 1), date(2026, 9, 29), days) == "WEEK_1"
-    assert expiry_week_label(date(2026, 9, 14), date(2026, 9, 29), days) == "WEEK_2"
-    assert expiry_week_label(date(2026, 9, 21), date(2026, 9, 29), days) == "WEEK_3"
-    assert expiry_week_label(date(2026, 9, 25), date(2026, 9, 29), days) == "EXPIRY_WEEK"
+def test_expiry_week_bucket_measures_calendar_time_remaining():
+    assert expiry_week_label(date(2026, 9, 1), date(2026, 9, 29)) == "WEEK_1"
+    assert expiry_week_label(date(2026, 9, 14), date(2026, 9, 29)) == "WEEK_2"
+    assert expiry_week_label(date(2026, 9, 21), date(2026, 9, 29)) == "WEEK_3"
+    assert expiry_week_label(date(2026, 9, 25), date(2026, 9, 29)) == "EXPIRY_WEEK"
+    assert expiry_week_label(date(2026, 8, 12), date(2026, 8, 25)) == "WEEK_3"
 
 
 def test_no_future_expiry_raises():
