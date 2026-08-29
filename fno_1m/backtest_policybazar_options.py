@@ -49,8 +49,6 @@ def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: f
             hit_target = float(bar.low) <= target
             hit_sl = float(bar.high) >= sl
         if hit_target and hit_sl:
-            # Preserve the frozen stock-side ambiguity treatment: unresolved
-            # same-bar collision is not guessed and continues to the next bar.
             continue
         if hit_target:
             return bar.datetime, target, "STOCK_1R"
@@ -109,6 +107,9 @@ def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, opti
         base = manifest_row.to_dict()
         if stock_day.empty:
             rows.append({**base, "status": "MISSING_STOCK_DATA"})
+            continue
+        if str(manifest_row.get("manifest_status", "OK")) != "OK":
+            rows.append({**base, "status": str(manifest_row.get("manifest_status")), "manifest_error": manifest_row.get("manifest_error", "")})
             continue
 
         instrument_key = str(manifest_row["option_instrument_key"])
