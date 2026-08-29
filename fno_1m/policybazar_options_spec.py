@@ -23,19 +23,27 @@ def select_atm_strike(paired_strikes: Iterable[float], stock_price: float) -> fl
     return min(strikes, key=lambda strike: (abs(strike - stock_price), strike))
 
 
-def expiry_week(signal_date: date, expiry_date: date, trading_dates: Iterable[date]) -> int:
-    dates = sorted({d for d in trading_dates if signal_date <= d <= expiry_date})
-    if signal_date not in dates:
-        raise ValueError("signal_date must be a trading date")
-    if expiry_date not in dates:
-        dates.append(expiry_date)
-        dates.sort()
-    return min(4, dates.index(signal_date) // 5 + 1)
+def expiry_week(signal_date: date, expiry_date: date, trading_dates: Iterable[date] | None = None) -> int:
+    """Return a time-to-expiry bucket using calendar days remaining.
+
+    The stock calendar may end before the option expiry date, so expiry-week
+    classification deliberately does not depend on that file being complete.
+    """
+    if signal_date > expiry_date:
+        raise ValueError("signal_date cannot be after expiry_date")
+    remaining_days = (expiry_date - signal_date).days
+    if remaining_days <= 7:
+        return 4
+    if remaining_days <= 14:
+        return 3
+    if remaining_days <= 21:
+        return 2
+    return 1
 
 
-def expiry_week_label(signal_date: date, expiry_date: date, trading_dates: Iterable[date]) -> str:
+def expiry_week_label(signal_date: date, expiry_date: date, trading_dates: Iterable[date] | None = None) -> str:
     week = expiry_week(signal_date, expiry_date, trading_dates)
-    return "EXPIRY_WEEK" if week >= 4 else f"WEEK_{week}"
+    return "EXPIRY_WEEK" if week == 4 else f"WEEK_{week}"
 
 
 def _last_calendar_day(year: int, month: int) -> date:
@@ -46,9 +54,9 @@ def historical_monthly_expiry_candidates(trading_dates: Iterable[date]) -> list[
     """Resolve historical NSE stock-option monthly expiry dates.
 
     NSE stock derivatives used Thursday expiries for contracts expiring on or
-    before 31-Aug-2025 and Tuesday expiries for contracts expiring on or after
-    01-Sep-2025. For the new schedule, a contract expires on the last Tuesday
-    of the month; for a holiday, the previous trading day applies.
+    before 31-Aug-2025 and Tuesday expiries from 01-Sep-2025 onward. For the
+    new schedule, a contract expires on the last Tuesday of the month; when
+    that Tuesday is a trading holiday, expiry moves to the previous trading day.
     """
     dates = sorted(set(trading_dates))
     if not dates:
@@ -59,14 +67,15 @@ def historical_monthly_expiry_candidates(trading_dates: Iterable[date]) -> list[
     for year, month in months:
         month_end = _last_calendar_day(year, month)
         if (year, month) == (2025, 8):
-            weekday = 3  # Thursday for the legacy August 2025 contract
-            candidates = [d for d in dates if d.year == year and d.month == month and d.weekday() == weekday]
+            candidates = [d for d in dates if d.year == year and d.month == month and d.weekday() == 3]
             if not candidates:
-                raise ValueError(f"Could not resolve August 2025 expiry")
+                raise ValueError("Could not resolve August 2025 expiry")
             out.append(max(candidates))
             continue
-        weekday = 1  # Tuesday
-        candidates = [d for d in dates if d.year == year and d.month == month and d.weekday() == weekday and d <= month_end]
+        candidates = [
+            d for d in dates
+            if d.year == year and d.month == month and d.weekday() == 1 and d <= month_end
+        ]
         if not candidates:
             raise ValueError(f"Could not resolve historical expiry for {year}-{month:02d}")
         out.append(max(candidates))
