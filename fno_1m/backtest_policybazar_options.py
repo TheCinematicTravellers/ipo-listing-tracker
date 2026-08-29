@@ -5,10 +5,17 @@ from pathlib import Path
 
 import pandas as pd
 
+IST="Asia/Kolkata"
+
+
+def localize_ist(values):
+    x=pd.to_datetime(values)
+    return x.dt.tz_localize(IST) if x.dt.tz is None else x.dt.tz_convert(IST)
+
 
 def load_option(path: Path) -> pd.DataFrame:
     x=pd.read_csv(path)
-    x["datetime"]=pd.to_datetime(x["datetime"])
+    x["datetime"]=localize_ist(x["datetime"])
     return x.sort_values("datetime").reset_index(drop=True)
 
 
@@ -16,14 +23,6 @@ def first_option_entry(opt: pd.DataFrame, signal_dt: pd.Timestamp) -> tuple[pd.T
     # 5-minute option data cannot observe the exact intrabar stock breakout.
     # Use the next option candle OPEN to avoid look-ahead.
     x=opt[opt.datetime > signal_dt]
-    if x.empty:
-        return None
-    row=x.iloc[0]
-    return row.datetime, float(row.open)
-
-
-def option_price_at_or_after(opt: pd.DataFrame, dt: pd.Timestamp) -> tuple[pd.Timestamp,float] | None:
-    x=opt[opt.datetime >= dt]
     if x.empty:
         return None
     row=x.iloc[0]
@@ -50,6 +49,7 @@ def stock_exit(stock: pd.DataFrame, signal_dt: pd.Timestamp, side: str, entry: f
         else:
             hit_t=float(b.low)<=target; hit_s=float(b.high)>=sl
         if hit_t and hit_s:
+            # Intrabar ambiguity is not guessed. Continue to the 15:05 EOD exit.
             break
         if hit_t:
             return b.datetime,target,"STOCK_1R"
@@ -78,6 +78,7 @@ def option_driven_exit(opt: pd.DataFrame, entry_dt: pd.Timestamp, entry: float, 
         if hs:
             return b.datetime,stop,"OPTION_SL"
     eod=opt[opt.datetime.dt.strftime("%H:%M")=="15:05"]
+    eod=eod[eod.datetime>=entry_dt]
     if eod.empty:
         eod=bars
     if eod.empty:
@@ -89,13 +90,13 @@ def option_driven_exit(opt: pd.DataFrame, entry_dt: pd.Timestamp, entry: float, 
 def run(manifest_path: Path, stock_csv: Path, raw_root: Path, output: Path, option_stop_pct: float) -> int:
     manifest=pd.read_csv(manifest_path)
     stock=pd.read_csv(stock_csv)
-    stock["datetime"]=pd.to_datetime(stock["datetime"])
+    stock["datetime"]=localize_ist(stock["datetime"])
     stock=stock.sort_values("datetime")
     rows=[]
     for _,m in manifest.iterrows():
         day=pd.Timestamp(m["date"]).date()
         side=str(m["side"])
-        signal_dt=pd.Timestamp(f"{m['date']} {m['stock_breakout_time']}",tz="Asia/Kolkata")
+        signal_dt=pd.Timestamp(f"{m['date']} {m['stock_breakout_time']}",tz=IST)
         stock_day=stock[stock.datetime.dt.date==day]
         if stock_day.empty: continue
         token=str(m["ce_token"] if side=="LONG" else m["pe_token"])
