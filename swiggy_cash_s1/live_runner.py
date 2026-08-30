@@ -6,7 +6,7 @@ import os
 import threading
 import time as time_mod
 from dataclasses import dataclass
-from datetime import date, datetime, time
+from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -16,18 +16,9 @@ from SmartApi.smartWebSocketV2 import SmartWebSocketV2
 
 from algotest import AlgoTestCashForward
 from strategy import (
-    DEFAULT_QTY,
-    IST_OPEN,
-    LONG_CUTOFF_TIME,
-    LONG_START_TIME,
-    SHORT_TRIGGER_TIME,
-    TIME_EXIT,
-    OpeningCandle,
-    build_long_setup,
-    build_short_setup,
-    exit_reason,
-    long_signal_allowed,
-    short_signal_allowed,
+    DEFAULT_QTY, IST_OPEN, SHORT_TRIGGER_TIME, SHORT_TRIGGER_END,
+    LONG_CUTOFF_TIME, LONG_START_TIME, TIME_EXIT,
+    OpeningCandle, build_long_setup, build_short_setup, exit_reason,
 )
 
 IST = ZoneInfo("Asia/Kolkata")
@@ -56,6 +47,7 @@ class RuntimeState:
     entered: bool = False
     entry_price: float | None = None
     entry_time: str | None = None
+    last_price: float | None = None
     exit_price: float | None = None
     exit_time: str | None = None
     exit_reason: str | None = None
@@ -77,12 +69,8 @@ def login():
 def load_stock_token() -> str:
     with open(MASTER_FILE, encoding="utf-8") as f:
         master = json.load(f)
-    rows = [
-        r for r in master
-        if str(r.get("exch_seg", "")).upper() == "NSE"
-        and str(r.get("symbol", "")).upper() == EQ_SYMBOL
-        and r.get("token")
-    ]
+    rows = [r for r in master if str(r.get("exch_seg", "")).upper() == "NSE"
+            and str(r.get("symbol", "")).upper() == EQ_SYMBOL and r.get("token")]
     if not rows:
         raise RuntimeError(f"{EQ_SYMBOL} not found in Angel instrument master")
     return str(rows[0]["token"])
@@ -99,23 +87,20 @@ def event_time(message: dict) -> datetime:
 
 
 def ltp(message: dict) -> float | None:
-    raw = message.get("last_traded_price")
     try:
-        value = float(raw) / 100.0
+        value = float(message.get("last_traded_price")) / 100.0
     except (TypeError, ValueError):
         return None
     return value if value > 0 else None
 
 
-def write_state(state: RuntimeState, status: str, price: float | None = None):
+def write_state(state: RuntimeState, status: str):
     payload = {
         "date_ist": datetime.now(IST).date().isoformat(),
         "updated_ist": datetime.now(IST).isoformat(timespec="seconds"),
-        "symbol": STOCK_SYMBOL,
-        "qty": QTY,
+        "symbol": STOCK_SYMBOL, "qty": QTY,
         "mode": "ALGOTEST_FORWARD_ONLY" if ENABLE_ALGOTEST else "PAPER_FORWARD_TEST",
-        "status": status,
-        "price": price,
+        "status": status, "price": state.last_price,
         "opening_candle": None if state.candle is None else vars(state.candle),
         "first_break": state.first_break,
         "side": None if state.setup is None else state.setup.side,
@@ -123,8 +108,7 @@ def write_state(state: RuntimeState, status: str, price: float | None = None):
         "stop": None if state.setup is None else state.setup.stop,
         "target": None if state.setup is None else state.setup.target,
         "entry_time": state.entry_time,
-        "exit": state.exit_price,
-        "exit_time": state.exit_time,
+        "exit": state.exit_price, "exit_time": state.exit_time,
         "exit_reason": state.exit_reason,
     }
     STATE_FILE.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
@@ -137,15 +121,16 @@ def ensure_ledger():
     with LEDGER.open("w", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow([
             "date", "symbol", "side", "qty", "entry_time", "entry_price",
-            "stock_sl", "stock_target_1R", "exit_time", "exit_price", "exit_reason",
-            "gross_pnl_rupees", "status",
+            "stock_sl", "stock_target_1R", "exit_time", "exit_price",
+            "exit_reason", "gross_pnl_rupees", "status",
         ])
 
 
 def write_ledger(state: RuntimeState):
     if not state.entered or state.entry_price is None or state.exit_price is None or state.setup is None:
         return
-    pnl_per_share = state.exit_price - state.entry_price if state.setup.side == "LONG" else state.entry_price - state.exit_price
+    pnl_per_share = (state.exit_price - state.entry_price if state.setup.side == "LONG"
+                     else state.entry_price - state.exit_price)
     pnl = pnl_per_share * QTY
     status = "WIN" if state.exit_reason == "STOCK_1R" else "SL" if state.exit_reason == "STOCK_SL" else "TIME_EXIT"
     with LEDGER.open("a", newline="", encoding="utf-8") as f:
@@ -161,14 +146,14 @@ def send_entry(bridge: AlgoTestCashForward, state: RuntimeState, price: float):
     state.entry_price = price
     state.entry_time = datetime.now(IST).isoformat(timespec="seconds")
     state.entered = True
+    action = "buy" if state.setup.side == "LONG" else "sell"
     if ENABLE_ALGOTEST:
-        action = "buy" if state.setup.side == "LONG" else "sell"
         result = bridge.send(STOCK_SYMBOL, action, QTY)
         print(f"[ALGOTEST] ENTRY SENT | {result['message']} | HTTP={result['status_code']}")
     else:
         print(f"[PAPER] ENTRY | {STOCK_SYMBOL} {state.setup.side} {QTY} @ {price:.2f}")
     state.order_entry_sent = True
-    write_state(state, "ACTIVE", price)
+    write_state(state, "ACTIVE")
 
 
 def send_exit(bridge: AlgoTestCashForward, state: RuntimeState, reason: str, price: float):
@@ -177,8 +162,8 @@ def send_exit(bridge: AlgoTestCashForward, state: RuntimeState, reason: str, pri
     state.exit_price = price
     state.exit_time = datetime.now(IST).isoformat(timespec="seconds")
     state.exit_reason = reason
+    action = "sell" if state.setup.side == "LONG" else "buy"
     if ENABLE_ALGOTEST:
-        action = "sell" if state.setup.side == "LONG" else "buy"
         result = bridge.send(STOCK_SYMBOL, action, QTY)
         print(f"[ALGOTEST] EXIT SENT | {result['message']} | HTTP={result['status_code']} | REASON={reason}")
     else:
@@ -186,7 +171,7 @@ def send_exit(bridge: AlgoTestCashForward, state: RuntimeState, reason: str, pri
     state.order_exit_sent = True
     state.finished = True
     write_ledger(state)
-    write_state(state, reason, price)
+    write_state(state, reason)
 
 
 def main():
@@ -194,7 +179,6 @@ def main():
         raise RuntimeError("Safety stop: FORWARD_TEST_ONLY must remain true")
     if QTY <= 0:
         raise RuntimeError("SWIGGY_TRADE_QTY must be positive")
-
     now = datetime.now(IST)
     if now.weekday() >= 5:
         print("[SAFE STOP] NSE closed for weekend")
@@ -211,34 +195,37 @@ def main():
     bridge = AlgoTestCashForward()
     state = RuntimeState()
     ensure_ledger()
+    lock = threading.Lock()
 
     ws = SmartWebSocketV2(
         api.access_token, API_KEY, CLIENT_ID, feed_token,
         max_retry_attempt=5, retry_strategy=1, retry_delay=2, retry_multiplier=2, retry_duration=5,
     )
-    lock = threading.Lock()
 
     def on_open(wsapp):
         wsapp.subscribe("swiggy_cash_s1", LTP, [{"exchangeType": NSE, "tokens": [stock_token]}])
         print("[LIVE] SWIGGY subscribed | building 09:15 opening candle")
         print(f"[MODE] {'ALGOTEST FORWARD TEST' if ENABLE_ALGOTEST else 'PAPER FORWARD TEST'} | CASH | QTY={QTY}")
-        print("[RULE] SHORT: 09:20 low break all weekdays")
-        print("[RULE] LONG: Tuesday high break 09:20-<10:00")
+        print("[RULE] SHORT: 09:20 candle low break, all weekdays")
+        print("[RULE] LONG: Tuesday first high break from 09:20 to <10:00")
+        print("[RULE] FIRST BREAK WINS | one trade max per day")
 
     def on_data(wsapp, message):
-        price = ltp(message) if isinstance(message, dict) else None
+        if not isinstance(message, dict):
+            return
+        price = ltp(message)
         if price is None:
             return
-        when = event_time(message) if isinstance(message, dict) else datetime.now(IST)
+        when = event_time(message)
         if when.date() != now.date():
             return
         t = when.time()
-
         with lock:
+            state.last_price = price
             if state.finished:
                 return
 
-            # Build the actual 09:15 candle from live exchange ticks.
+            # Build the complete 09:15 candle from exchange-timestamped live ticks.
             if IST_OPEN <= t < SHORT_TRIGGER_TIME:
                 if state.candle is None:
                     state.candle = OpeningCandle(price, price, price, price)
@@ -249,36 +236,45 @@ def main():
                         min(state.candle.low, price),
                         price,
                     )
-                write_state(state, "BUILDING_09_15", price)
+                write_state(state, "BUILDING_09_15")
                 return
 
             if state.candle is None:
                 return
 
-            # No short entry before 09:20. The short setup is specifically the
-            # 09:20 candle. Tuesday LONG remains eligible through 09:59:59.
             if not state.entered and state.first_break is None:
-                if t >= SHORT_TRIGGER_TIME:
-                    if price < state.candle.low:
-                        state.first_break = "SHORT"
-                        state.setup = build_short_setup(state.candle)
-                        if short_signal_allowed(now.weekday(), t):
-                            send_entry(bridge, state, price)
-                        else:
-                            state.finished = True
-                            write_state(state, "SHORT_NOT_ALLOWED", price)
+                # The first directional break determines the day. A short is
+                # valid only inside the 09:20 5-minute candle. On Tuesday,
+                # a high break can remain eligible until 10:00, but a low break
+                # at any time first invalidates the Tuesday LONG opportunity.
+                if now.weekday() == 1:
+                    if t >= LONG_START_TIME and t < LONG_CUTOFF_TIME:
+                        if price < state.candle.low:
+                            state.first_break = "SHORT"
+                            if SHORT_TRIGGER_TIME <= t < SHORT_TRIGGER_END:
+                                state.setup = build_short_setup(state.candle)
+                                send_entry(bridge, state, price)
+                            else:
+                                state.finished = True
+                                write_state(state, "SHORT_AFTER_09_20_CUTOFF")
                             return
-                    elif now.weekday() == 1 and LONG_START_TIME <= t < LONG_CUTOFF_TIME and price > state.candle.high:
-                        state.first_break = "LONG"
-                        state.setup = build_long_setup(state.candle)
-                        if long_signal_allowed(now.weekday(), t):
+                        if price > state.candle.high:
+                            state.first_break = "LONG"
+                            state.setup = build_long_setup(state.candle)
                             send_entry(bridge, state, price)
-                        return
-                    elif now.weekday() != 1 and t >= SHORT_TRIGGER_TIME and price > state.candle.high:
-                        state.first_break = "LONG_NOT_ELIGIBLE"
-                        state.finished = True
-                        write_state(state, "LONG_NOT_ELIGIBLE", price)
-                        return
+                            return
+                else:
+                    if SHORT_TRIGGER_TIME <= t < SHORT_TRIGGER_END:
+                        if price < state.candle.low:
+                            state.first_break = "SHORT"
+                            state.setup = build_short_setup(state.candle)
+                            send_entry(bridge, state, price)
+                            return
+                        if price > state.candle.high:
+                            state.first_break = "LONG_NOT_ELIGIBLE"
+                            state.finished = True
+                            write_state(state, "LONG_NOT_ELIGIBLE")
+                            return
 
             if state.entered and state.setup is not None:
                 reason = exit_reason(state.setup.side, price, state.setup.stop, state.setup.target, t)
@@ -295,7 +291,6 @@ def main():
     ws.on_data = on_data
     ws.on_error = on_error
     ws.on_close = on_close
-
     thread = threading.Thread(target=ws.connect, daemon=True)
     thread.start()
 
@@ -305,10 +300,8 @@ def main():
     finally:
         with lock:
             if state.entered and state.setup is not None:
-                # Force an intraday close at the configured safe cutoff using
-                # the latest observed stock price if available.
-                last = state.exit_price if state.exit_price is not None else state.entry_price
-                send_exit(bridge, state, "TIME_EXIT_15_13", float(last))
+                price = state.last_price if state.last_price is not None else state.entry_price
+                send_exit(bridge, state, "TIME_EXIT_15_13", float(price))
             elif not state.finished:
                 state.finished = True
                 write_state(state, "NO_TRADE")
