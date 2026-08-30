@@ -29,5 +29,5 @@ jobs:
       - name: Compile SWIGGY cash S1
         run: python -m py_compile swiggy_cash_s1/*.py
 
-      - name: Run SWIGGY strategy tests
-        run: pytest -q swiggy_cash_s1/test_strategy.py
+      - name: Run SWIGGY tests
+        run: pytest -q swiggy_cash_s1/test_strategy.py swiggy_cash_s1/test_algotest.py
