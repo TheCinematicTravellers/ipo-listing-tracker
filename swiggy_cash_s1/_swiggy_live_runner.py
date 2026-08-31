@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__
 
 import csv
 import json
@@ -101,7 +101,7 @@ def write_ledger(state: RuntimeState):
     pnl = pnl_per_share * QTY
     status = "WIN" if state.exit_reason == "STOCK_1R" else "SL" if state.exit_reason == "STOCK_SL" else "TIME_EXIT"
     with LEDGER.open("a", newline="", encoding="utf-8") as f:
-        csv.writer(f).writerow([datetime.now(IST).date().isoformat(), STOCK_SYMBOL, state.setup.side, QTY, state.entry_time or "", f"{state.entry_price:.2f}", f"{state.setup.stop:.2f}", f"{state.setup.target:.2f}", state.exit_time or "", f"{state.exit_price:.2f}", state.exit_reason or "", f"{pnl:.2f}", status])
+        csv.writer(f).writerow([datetime.now(IST).date().isoformat(), STOCK_SYMBOL, QTY, state.setup.side, state.entry_time or "", f"{state.entry_price:.2f}", f"{state.setup.stop:.2f}", f"{state.setup.target:.2f}", state.exit_time or "", f"{state.exit_price:.2f}", state.exit_reason or "", f"{pnl:.2f}", status])
 
 def send_entry(bridge: AlgoTestCashForward, state: RuntimeState, price: float):
     state.entry_price = price
@@ -159,7 +159,9 @@ def main():
     lock = threading.Lock()
 
     def on_open(wsapp):
-        wsapp.subscribe("swiggy_cash_s1", LTP, [{"exchangeType": NSE, "tokens": [stock_token]}])
+        # SmartWebSocketV2 exposes subscribe() on the SmartWebSocketV2 instance.
+        # The standalone diagnostic confirmed this exact call path works.
+        ws.subscribe("swiggy_cash_s1", LTP, [{"exchangeType": NSE, "tokens": [stock_token]}])
         print("[LIVE] SWIGGY subscribed | building 09:15 opening candle")
         print(f"[MODE] {'ALGOTEST FORWARD TEST' if ENABLE_ALGOTEST else 'PAPER FORWARD TEST'} | CASH | QTY={QTY}")
         print("[RULE] SHORT: first 09:15 low break in 09:20-09:24:59")
@@ -210,7 +212,7 @@ def main():
                     send_exit(bridge, state, reason, price)
 
     def on_error(wsapp, error): print(f"[WS ERROR] {error}")
-    def on_close(wsapp, code, reason): print(f"[WS CLOSED] code={code} reason={reason}")
+    def on_close(wsapp): print("[WS CLOSED]")
     ws.on_open = on_open
     ws.on_data = on_data
     ws.on_error = on_error
