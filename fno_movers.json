@@ -1,11 +1,121 @@
 {
-  "date_ist": "29-Aug-2026",
-  "updated_ist": "29-Aug-2026 02:41:53 AM",
+  "date_ist": "31-Aug-2026",
+  "updated_ist": "31-Aug-2026 11:06:47 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 0,
-  "eligible_open_low": 0,
-  "eligible_open_high": 0,
-  "gainers": [],
-  "losers": []
+  "available": 208,
+  "eligible_open_low": 2,
+  "eligible_open_high": 31,
+  "gainers": [
+    {
+      "symbol": "PAYTM",
+      "change_pct": 4.01,
+      "open": 1622.5,
+      "high": 1717.1,
+      "low": 1622.5,
+      "cmp": 1717.1,
+      "volume": 2673159
+    },
+    {
+      "symbol": "SBICARD",
+      "change_pct": 0.58,
+      "open": 632.9,
+      "high": 668.45,
+      "low": 632.9,
+      "cmp": 644.75,
+      "volume": 25677218
+    }
+  ],
+  "losers": [
+    {
+      "symbol": "ADANIENT",
+      "change_pct": -9.76,
+      "open": 3165.0,
+      "high": 3165.0,
+      "low": 2859.1,
+      "cmp": 2859.1,
+      "volume": 12690120
+    },
+    {
+      "symbol": "KAYNES",
+      "change_pct": -6.55,
+      "open": 3943.0,
+      "high": 3943.0,
+      "low": 3645.0,
+      "cmp": 3685.0,
+      "volume": 2143332
+    },
+    {
+      "symbol": "LODHA",
+      "change_pct": -5.92,
+      "open": 1260.0,
+      "high": 1260.0,
+      "low": 1198.6,
+      "cmp": 1198.6,
+      "volume": 2178510
+    },
+    {
+      "symbol": "PERSISTENT",
+      "change_pct": -4.77,
+      "open": 5855.5,
+      "high": 5855.5,
+      "low": 5593.0,
+      "cmp": 5594.5,
+      "volume": 1111436
+    },
+    {
+      "symbol": "HINDZINC",
+      "change_pct": -4.27,
+      "open": 602.9,
+      "high": 602.9,
+      "low": 592.0,
+      "cmp": 595.45,
+      "volume": 8581027
+    },
+    {
+      "symbol": "MUTHOOTFIN",
+      "change_pct": -3.47,
+      "open": 3048.2,
+      "high": 3048.2,
+      "low": 2978.1,
+      "cmp": 2978.1,
+      "volume": 894481
+    },
+    {
+      "symbol": "VEDL",
+      "change_pct": -3.39,
+      "open": 284.0,
+      "high": 284.0,
+      "low": 276.5,
+      "cmp": 278.2,
+      "volume": 16663204
+    },
+    {
+      "symbol": "VBL",
+      "change_pct": -3.27,
+      "open": 413.85,
+      "high": 413.85,
+      "low": 400.45,
+      "cmp": 400.45,
+      "volume": 7706888
+    },
+    {
+      "symbol": "TIINDIA",
+      "change_pct": -3.14,
+      "open": 2828.0,
+      "high": 2828.0,
+      "low": 2766.0,
+      "cmp": 2780.0,
+      "volume": 176760
+    },
+    {
+      "symbol": "MAZDOCK",
+      "change_pct": -2.94,
+      "open": 2555.0,
+      "high": 2555.0,
+      "low": 2476.1,
+      "cmp": 2480.0,
+      "volume": 607160
+    }
+  ]
 }
