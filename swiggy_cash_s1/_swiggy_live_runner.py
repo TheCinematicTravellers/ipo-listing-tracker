@@ -49,6 +49,10 @@ class RuntimeState:
     order_entry_sent: bool = False
     order_exit_sent: bool = False
     finished: bool = False
+    ws_connected: bool = False
+    ws_thread_alive: bool = False
+    ws_reconnecting: bool = False
+
 
 def login():
     if not all([API_KEY, CLIENT_ID, PIN, TOTP_SECRET]):
@@ -59,6 +63,7 @@ def login():
         raise RuntimeError(f"Angel One login failed: {session}")
     return api, session["data"]["feedToken"]
 
+
 def load_stock_token() -> str:
     with open(MASTER_FILE, encoding="utf-8") as f:
         master = json.load(f)
@@ -66,6 +71,7 @@ def load_stock_token() -> str:
     if not rows:
         raise RuntimeError(f"{EQ_SYMBOL} not found in Angel instrument master")
     return str(rows[0]["token"])
+
 
 def event_time(message: dict) -> datetime:
     raw = message.get("exchange_timestamp")
@@ -76,6 +82,7 @@ def event_time(message: dict) -> datetime:
             pass
     return datetime.now(IST)
 
+
 def ltp(message: dict) -> float | None:
     try:
         value = float(message.get("last_traded_price")) / 100.0
@@ -83,9 +90,11 @@ def ltp(message: dict) -> float | None:
         return None
     return value if value > 0 else None
 
+
 def write_state(state: RuntimeState, status: str):
-    payload = {"date_ist": datetime.now(IST).date().isoformat(), "updated_ist": datetime.now(IST).isoformat(timespec="seconds"), "symbol": STOCK_SYMBOL, "qty": QTY, "mode": "ALGOTEST_FORWARD_ONLY" if ENABLE_ALGOTEST else "PAPER_FORWARD_TEST", "status": status, "price": state.last_price, "opening_candle": None if state.candle is None else vars(state.candle), "first_break": state.first_break, "side": None if state.setup is None else state.setup.side, "entry": state.entry_price, "stop": None if state.setup is None else state.setup.stop, "target": None if state.setup is None else state.setup.target, "entry_time": state.entry_time, "exit": state.exit_price, "exit_time": state.exit_time, "exit_reason": state.exit_reason}
+    payload = {"date_ist": datetime.now(IST).date().isoformat(), "updated_ist": datetime.now(IST).isoformat(timespec="seconds"), "symbol": STOCK_SYMBOL, "qty": QTY, "mode": "ALGOTEST_FORWARD_ONLY" if ENABLE_ALGOTEST else "PAPER_FORWARD_TEST", "status": status, "price": state.last_price, "opening_candle": None if state.candle is None else vars(state.candle), "first_break": state.first_break, "side": None if state.setup is None else state.setup.side, "entry": state.entry_price, "stop": None if state.setup is None else state.setup.stop, "target": None if state.setup is None else state.setup.target, "entry_time": state.entry_time, "exit": state.exit_price, "exit_time": state.exit_time, "exit_reason": state.exit_reason, "ws_connected": state.ws_connected, "ws_thread_alive": state.ws_thread_alive, "ws_reconnecting": state.ws_reconnecting}
     STATE_FILE.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+
 
 def ensure_ledger():
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
@@ -93,6 +102,7 @@ def ensure_ledger():
         return
     with LEDGER.open("w", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow(["date", "symbol", "side", "qty", "entry_time", "entry_price", "stock_sl", "stock_target_1R", "exit_time", "exit_price", "exit_reason", "gross_pnl_rupees", "status"])
+
 
 def write_ledger(state: RuntimeState):
     if not state.entered or state.entry_price is None or state.exit_price is None or state.setup is None:
@@ -102,6 +112,7 @@ def write_ledger(state: RuntimeState):
     status = "WIN" if state.exit_reason == "STOCK_1R" else "SL" if state.exit_reason == "STOCK_SL" else "TIME_EXIT"
     with LEDGER.open("a", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow([datetime.now(IST).date().isoformat(), STOCK_SYMBOL, state.setup.side, QTY, state.entry_time or "", f"{state.entry_price:.2f}", f"{state.setup.stop:.2f}", f"{state.setup.target:.2f}", state.exit_time or "", f"{state.exit_price:.2f}", state.exit_reason or "", f"{pnl:.2f}", status])
+
 
 def send_entry(bridge: AlgoTestCashForward, state: RuntimeState, price: float):
     state.entry_price = price
@@ -116,6 +127,7 @@ def send_entry(bridge: AlgoTestCashForward, state: RuntimeState, price: float):
         print(f"[PAPER] ENTRY | {STOCK_SYMBOL} {state.setup.side} {QTY} @ {price:.2f}")
     state.order_entry_sent = True
     write_state(state, "ACTIVE")
+
 
 def send_exit(bridge: AlgoTestCashForward, state: RuntimeState, reason: str, price: float):
     if not state.entered or state.order_exit_sent:
@@ -133,6 +145,7 @@ def send_exit(bridge: AlgoTestCashForward, state: RuntimeState, reason: str, pri
     state.finished = True
     write_ledger(state)
     write_state(state, reason)
+
 
 def main():
     if not FORWARD_TEST_ONLY:
@@ -158,6 +171,9 @@ def main():
     lock = threading.Lock()
 
     def on_open(wsapp):
+        with lock:
+            state.ws_connected = True
+            state.ws_reconnecting = False
         ws.subscribe("swiggy_cash_s1", LTP, [{"exchangeType": NSE, "tokens": [stock_token]}])
         print("[LIVE] SWIGGY subscribed | building 09:15 opening candle")
         print(f"[MODE] {'ALGOTEST FORWARD TEST' if ENABLE_ALGOTEST else 'PAPER FORWARD TEST'} | CASH | QTY={QTY}")
@@ -208,16 +224,30 @@ def main():
                 if reason:
                     send_exit(bridge, state, reason, price)
 
-    def on_error(wsapp, error): print(f"[WS ERROR] {error}")
-    def on_close(wsapp): print("[WS CLOSED]")
+    def on_error(wsapp, error):
+        with lock:
+            state.ws_reconnecting = True
+        write_state(state, "WS_ERROR")
+        print(f"[WS ERROR] {error}")
+
+    def on_close(wsapp):
+        with lock:
+            state.ws_connected = False
+        write_state(state, "WS_CLOSED_RECONNECTING")
+        print("[WS CLOSED] SmartWebSocket closed; waiting for SDK reconnect")
+
     ws.on_open = on_open
     ws.on_data = on_data
     ws.on_error = on_error
     ws.on_close = on_close
     thread = threading.Thread(target=ws.connect, daemon=True)
     thread.start()
+    state.ws_thread_alive = True
+
     try:
         while datetime.now(IST).time() < TIME_EXIT and not state.finished:
+            with lock:
+                state.ws_thread_alive = thread.is_alive()
             time_mod.sleep(0.25)
     finally:
         with lock:
@@ -227,8 +257,10 @@ def main():
             elif not state.finished:
                 state.finished = True
                 write_state(state, "NO_TRADE")
-        try: ws.close_connection()
-        except Exception: pass
+        try:
+            ws.close_connection()
+        except Exception:
+            pass
         thread.join(timeout=3)
         print("[STOP] SWIGGY cash S1 runner stopped")
 
