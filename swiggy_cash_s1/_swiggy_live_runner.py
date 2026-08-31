@@ -107,6 +107,7 @@ def send_entry(bridge: AlgoTestCashForward, state: RuntimeState, price: float):
     state.entry_price = price
     state.entry_time = datetime.now(IST).isoformat(timespec="seconds")
     state.entered = True
+    # Keep the approved S1 ORB entry/SL/1R levels. The live tick only triggers the order.
     state.setup = build_short_setup(state.candle) if state.first_break == "SHORT" else build_long_setup(state.candle)
     action = "buy" if state.setup.side == "LONG" else "sell"
     if ENABLE_ALGOTEST:
@@ -154,7 +155,7 @@ def main():
     bridge = AlgoTestCashForward()
     state = RuntimeState()
     ensure_ledger()
-    ws = SmartWebSocketV2(api.access_token, API_KEY, CLIENT_ID, feed_token, max_retry_attempt=5, retry_strategy=1, retry_delay=2, retry_multiplier=2, retry_duration=5)
+    ws = SmartWebSocketV2(api.access_token, API_KEY, CLIENT_ID, feed_token)
     lock = threading.Lock()
 
     def on_open(wsapp):
