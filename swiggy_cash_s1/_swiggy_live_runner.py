@@ -1,4 +1,4 @@
-from __future__
+from __future__ import annotations
 
 import csv
 import json
@@ -101,13 +101,12 @@ def write_ledger(state: RuntimeState):
     pnl = pnl_per_share * QTY
     status = "WIN" if state.exit_reason == "STOCK_1R" else "SL" if state.exit_reason == "STOCK_SL" else "TIME_EXIT"
     with LEDGER.open("a", newline="", encoding="utf-8") as f:
-        csv.writer(f).writerow([datetime.now(IST).date().isoformat(), STOCK_SYMBOL, QTY, state.setup.side, state.entry_time or "", f"{state.entry_price:.2f}", f"{state.setup.stop:.2f}", f"{state.setup.target:.2f}", state.exit_time or "", f"{state.exit_price:.2f}", state.exit_reason or "", f"{pnl:.2f}", status])
+        csv.writer(f).writerow([datetime.now(IST).date().isoformat(), STOCK_SYMBOL, state.setup.side, QTY, state.entry_time or "", f"{state.entry_price:.2f}", f"{state.setup.stop:.2f}", f"{state.setup.target:.2f}", state.exit_time or "", f"{state.exit_price:.2f}", state.exit_reason or "", f"{pnl:.2f}", status])
 
 def send_entry(bridge: AlgoTestCashForward, state: RuntimeState, price: float):
     state.entry_price = price
     state.entry_time = datetime.now(IST).isoformat(timespec="seconds")
     state.entered = True
-    # Keep the approved S1 ORB entry/SL/1R levels. The live tick only triggers the order.
     state.setup = build_short_setup(state.candle) if state.first_break == "SHORT" else build_long_setup(state.candle)
     action = "buy" if state.setup.side == "LONG" else "sell"
     if ENABLE_ALGOTEST:
@@ -159,8 +158,6 @@ def main():
     lock = threading.Lock()
 
     def on_open(wsapp):
-        # SmartWebSocketV2 exposes subscribe() on the SmartWebSocketV2 instance.
-        # The standalone diagnostic confirmed this exact call path works.
         ws.subscribe("swiggy_cash_s1", LTP, [{"exchangeType": NSE, "tokens": [stock_token]}])
         print("[LIVE] SWIGGY subscribed | building 09:15 opening candle")
         print(f"[MODE] {'ALGOTEST FORWARD TEST' if ENABLE_ALGOTEST else 'PAPER FORWARD TEST'} | CASH | QTY={QTY}")
