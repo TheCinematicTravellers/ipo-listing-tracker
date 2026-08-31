@@ -60,7 +60,11 @@ API_KEY = os.getenv("ANGEL_API_KEY")
 CLIENT_ID = os.getenv("ANGEL_CLIENT_ID")
 PIN = os.getenv("ANGEL_PIN")
 TOTP_SECRET = os.getenv("ANGEL_TOTP_SECRET")
-ENABLE_ENTRIES = os.getenv("FORWARD_TEST_ENABLE_ENTRIES", "false").lower() == "true"
+
+# Forward-test safety contract:
+# - entries are ENABLED by default for this dedicated forward-test branch
+# - operator can explicitly disable by setting FORWARD_TEST_ENABLE_ENTRIES=false
+ENABLE_ENTRIES = os.getenv("FORWARD_TEST_ENABLE_ENTRIES", "true").lower() == "true"
 
 
 class RateLimitError(RuntimeError):
@@ -225,6 +229,7 @@ class LiveState:
     option_exit_time: str | None = None
     target: float | None = None
     entered: bool = False
+    trade_used: bool = False
     entry_sent: bool = False
     exit_sent: bool = False
     invalidated: bool = False
@@ -269,6 +274,7 @@ def write_trade_ledger(symbol: str, state: LiveState):
 
 
 def main():
+    ensure_ledger_file()
     now = datetime.now(IST)
     if now.time() >= TIME_EXIT:
         print("[STOP] After 15:40 IST")
@@ -296,7 +302,6 @@ def main():
     option_tokens: dict[str, tuple[str, str]] = {}
     ws_ready = threading.Event()
     freeze_done = threading.Event()
-    lock = threading.Lock()
 
     sws = SmartWebSocketV2(
         api.access_token,
@@ -325,8 +330,6 @@ def main():
         if state.option_subscribed:
             return
         wanted = "ce" if state.setup.side == "LONG" else "pe"
-        # Subscribe both legs so reconnect state is complete, but only the
-        # strategy direction can trigger an entry.
         legs = [state.locked_option["ce"], state.locked_option["pe"]]
         for leg in legs:
             option_tokens[str(leg["token"])] = (symbol, "CE" if leg is state.locked_option["ce"] else "PE")
@@ -340,6 +343,8 @@ def main():
         print(f"[OPTION FEED] {symbol} {state.setup.side} subscribed {contract['symbol']}")
 
     def send_entry(symbol: str, state: LiveState, ltp: float):
+        if state.trade_used or state.exit_sent or state.invalidated:
+            return
         side_key = "ce" if state.setup.side == "LONG" else "pe"
         contract = state.locked_option[side_key]
         state.option_entry_ltp = ltp
@@ -347,6 +352,7 @@ def main():
         state.target = option_target(ltp, 9.5)
         state.entry_sent = True
         state.entered = True
+        state.trade_used = True
         print(
             f"[OPTION ENTRY] {symbol} {state.setup.side} | OPTION={contract['symbol']} | "
             f"ENTRY={ltp:.2f} | TARGET={state.target:.2f} | LOTS=1"
@@ -357,6 +363,8 @@ def main():
             )
             result = AlgoTestForward().send_entry(ticker, "LONG", algotest_quantity(contract["lot_size"]))
             print(f"[ALGOTEST] ENTRY SENT {ticker} | LOTS=1 | HTTP={result['status_code']}")
+        else:
+            print("[ALGOTEST] ENTRY SKIPPED | FORWARD_TEST_ENABLE_ENTRIES=false")
 
     def send_exit(symbol: str, state: LiveState, reason: str, exit_ltp: float | None):
         if not state.entered or state.exit_sent:
@@ -372,6 +380,8 @@ def main():
             )
             result = AlgoTestForward().send_exit(ticker, algotest_quantity(contract["lot_size"]))
             print(f"[ALGOTEST] EXIT SENT {ticker} | LOTS=1 | HTTP={result['status_code']} | REASON={reason}")
+        else:
+            print("[ALGOTEST] EXIT SKIPPED | FORWARD_TEST_ENABLE_ENTRIES=false")
         state.exit_sent = True
         state.entered = False
         write_trade_ledger(symbol, state)
@@ -422,6 +432,10 @@ def main():
                 previous = state.option_ltp
                 state.option_ltp = ltp
                 if not state.entered:
+                    # Before entry we are waiting for the first option LTP.
+                    # After a completed/closed trade, do not create another entry.
+                    if state.trade_used or state.exit_sent:
+                        return
                     if not should_print_option_ltp(previous, ltp):
                         return
                     send_entry(symbol, state, ltp)
@@ -434,7 +448,7 @@ def main():
             if freeze_done.is_set() and token in token_to_symbol:
                 symbol = token_to_symbol[token]
                 state = states.get(symbol)
-                if not state or state.invalidated or state.time_exit_reported:
+                if not state or state.invalidated or state.time_exit_reported or state.trade_used:
                     return
                 stock_ltp = ltp
                 setup = state.setup
@@ -544,7 +558,7 @@ def main():
             state.time_exit_reported = True
             if state.entered:
                 send_exit(symbol, state, "TIME_EXIT_15_40", state.option_ltp)
-            else:
+            elif not state.trade_used:
                 print(f"[EXPIRED] {symbol} {state.setup.side} | no option entry before 15:40")
         try:
             sws.close_connection()
