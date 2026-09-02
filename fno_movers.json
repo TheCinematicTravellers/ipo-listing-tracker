@@ -1,139 +1,121 @@
 {
-  "date_ist": "01-Sep-2026",
-  "updated_ist": "01-Sep-2026 08:22:01 PM",
+  "date_ist": "02-Sep-2026",
+  "updated_ist": "02-Sep-2026 07:58:01 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 207,
-  "eligible_open_low": 4,
-  "eligible_open_high": 36,
+  "available": 208,
+  "eligible_open_low": 2,
+  "eligible_open_high": 26,
   "gainers": [
     {
-      "symbol": "ITC",
-      "change_pct": 4.34,
-      "open": 261.5,
-      "high": 268.2,
-      "low": 261.5,
-      "cmp": 266.6,
-      "volume": 31232541
+      "symbol": "BPCL",
+      "change_pct": 0.61,
+      "open": 312.1,
+      "high": 319.6,
+      "low": 312.1,
+      "cmp": 319.6,
+      "volume": 8277377
     },
     {
-      "symbol": "ADANIPORTS",
-      "change_pct": 3.41,
-      "open": 1625.0,
-      "high": 1655.6,
-      "low": 1625.0,
-      "cmp": 1647.5,
-      "volume": 3770067
-    },
-    {
-      "symbol": "MARICO",
-      "change_pct": 2.21,
-      "open": 823.15,
-      "high": 840.05,
-      "low": 823.15,
-      "cmp": 838.1,
-      "volume": 3684792
-    },
-    {
-      "symbol": "DRREDDY",
-      "change_pct": 1.44,
-      "open": 1166.5,
-      "high": 1179.9,
-      "low": 1166.5,
-      "cmp": 1171.0,
-      "volume": 556175
+      "symbol": "SUNPHARMA",
+      "change_pct": 0.14,
+      "open": 1910.0,
+      "high": 1948.5,
+      "low": 1910.0,
+      "cmp": 1931.7,
+      "volume": 1245246
     }
   ],
   "losers": [
     {
-      "symbol": "SHRIRAMFIN",
-      "change_pct": -4.58,
-      "open": 1099.0,
-      "high": 1099.0,
-      "low": 1050.6,
-      "cmp": 1059.1,
-      "volume": 5670625
+      "symbol": "VOLTAS",
+      "change_pct": -4.39,
+      "open": 1199.9,
+      "high": 1199.9,
+      "low": 1151.0,
+      "cmp": 1152.1,
+      "volume": 1979841
     },
     {
-      "symbol": "MARUTI",
-      "change_pct": -4.41,
-      "open": 13540.0,
-      "high": 13540.0,
-      "low": 12851.0,
-      "cmp": 12950.0,
-      "volume": 915695
+      "symbol": "KEI",
+      "change_pct": -3.33,
+      "open": 5335.0,
+      "high": 5335.0,
+      "low": 5132.0,
+      "cmp": 5170.0,
+      "volume": 666046
     },
     {
-      "symbol": "ICICIPRULI",
-      "change_pct": -4.18,
-      "open": 507.0,
-      "high": 507.0,
-      "low": 495.0,
-      "cmp": 495.45,
-      "volume": 2199511
-    },
-    {
-      "symbol": "NESTLEIND",
-      "change_pct": -3.9,
-      "open": 1514.8,
-      "high": 1514.8,
-      "low": 1436.0,
-      "cmp": 1438.2,
-      "volume": 2554784
-    },
-    {
-      "symbol": "PRESTIGE",
-      "change_pct": -3.86,
-      "open": 1597.1,
-      "high": 1597.1,
-      "low": 1548.2,
-      "cmp": 1570.0,
-      "volume": 701645
-    },
-    {
-      "symbol": "MAXHEALTH",
-      "change_pct": -3.75,
-      "open": 1022.0,
-      "high": 1022.0,
-      "low": 1000.2,
-      "cmp": 1003.0,
-      "volume": 2828705
-    },
-    {
-      "symbol": "BHEL",
-      "change_pct": -3.64,
-      "open": 437.25,
-      "high": 437.25,
-      "low": 423.2,
-      "cmp": 426.55,
-      "volume": 7138019
-    },
-    {
-      "symbol": "KFINTECH",
-      "change_pct": -3.35,
-      "open": 961.1,
-      "high": 961.1,
-      "low": 931.0,
-      "cmp": 937.5,
-      "volume": 575479
-    },
-    {
-      "symbol": "POWERINDIA",
+      "symbol": "SONACOMS",
       "change_pct": -3.32,
-      "open": 33450.0,
-      "high": 33450.0,
-      "low": 32400.0,
-      "cmp": 32640.0,
-      "volume": 100862
+      "open": 803.0,
+      "high": 803.0,
+      "low": 773.4,
+      "cmp": 782.65,
+      "volume": 3609175
     },
     {
-      "symbol": "NYKAA",
-      "change_pct": -3.16,
-      "open": 347.15,
-      "high": 347.15,
-      "low": 337.0,
-      "cmp": 338.5,
-      "volume": 8375735
+      "symbol": "BLUESTARCO",
+      "change_pct": -3.06,
+      "open": 1491.0,
+      "high": 1491.0,
+      "low": 1432.5,
+      "cmp": 1445.3,
+      "volume": 657740
+    },
+    {
+      "symbol": "HAVELLS",
+      "change_pct": -2.44,
+      "open": 1220.0,
+      "high": 1220.0,
+      "low": 1183.0,
+      "cmp": 1193.0,
+      "volume": 752057
+    },
+    {
+      "symbol": "SUZLON",
+      "change_pct": -2.24,
+      "open": 46.39,
+      "high": 46.39,
+      "low": 45.46,
+      "cmp": 45.46,
+      "volume": 52599122
+    },
+    {
+      "symbol": "MFSL",
+      "change_pct": -1.94,
+      "open": 1531.5,
+      "high": 1531.5,
+      "low": 1494.0,
+      "cmp": 1505.0,
+      "volume": 547750
+    },
+    {
+      "symbol": "ASIANPAINT",
+      "change_pct": -1.86,
+      "open": 2548.0,
+      "high": 2548.0,
+      "low": 2510.7,
+      "cmp": 2527.5,
+      "volume": 497830
+    },
+    {
+      "symbol": "TIINDIA",
+      "change_pct": -1.56,
+      "open": 2748.3,
+      "high": 2748.3,
+      "low": 2680.5,
+      "cmp": 2720.0,
+      "volume": 278272
+    },
+    {
+      "symbol": "CROMPTON",
+      "change_pct": -1.46,
+      "open": 230.9,
+      "high": 230.9,
+      "low": 226.05,
+      "cmp": 227.72,
+      "volume": 3475503
     }
   ]
 }
