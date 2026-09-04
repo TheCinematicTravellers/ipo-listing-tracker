@@ -3,20 +3,26 @@
 Live-first architecture:
 - Start before 09:15 IST; a late start is fail-safe and does not reconstruct
   the 09:15 candle through the historical API.
-- Angel One SmartWebSocketV2 QUOTE mode supplies 09:15 ticks plus previous
-  close, so the local 09:15 OHLC is built without getCandleData().
-- At 09:16:02 IST the Top 7 gainers and Top 7 losers are frozen.
-- The 09:15 candle is evaluated with the existing strategy rules.
-- The option is locked once from the 09:16 stock LTP and never recalculated.
+- Angel One SmartWebSocketV2 QUOTE mode supplies the setup-minute ticks plus
+  previous close, so the local OHLC is built without getCandleData().
+- At freeze time the Top 7 gainers and Top 7 losers are frozen.
+- The setup candle is evaluated with the existing strategy rules.
+- The option is locked once from the freeze-time stock LTP and never recalculated.
 - A stock trigger is intrabar/live. The first live LTP of the locked option
   after the trigger becomes the option entry.
 - AlgoTest receives one lot by default, using its documented ticker format.
 - AlgoTest webhook sends are JSON and are deliberately NOT retried, because
   retrying an uncertain order response could duplicate a trade.
 - WebSocket reconnect/resubscribe is delegated to SmartWebSocketV2 with a
-  bounded retry policy. If the 09:15 candle cannot be collected cleanly,
+  bounded retry policy. If the setup candle cannot be collected cleanly,
   the runner stops rather than inventing a setup.
 - Local exits are mirrored to AlgoTest with a sell signal for one lot.
+
+Late-start TEST mode:
+- Set FORWARD_TEST_LATE_START=true to run after 09:15 for same-day plumbing tests.
+- This mode uses the minute in which the runner starts as the TEST setup candle.
+- It does NOT use historical data and does NOT change the strategy formulas.
+- It is explicitly labeled TEST so it must not be mistaken for a normal 09:15 run.
 """
 from __future__ import annotations
 
@@ -26,7 +32,7 @@ import os
 import threading
 import time as time_mod
 from dataclasses import dataclass
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -65,6 +71,8 @@ TOTP_SECRET = os.getenv("ANGEL_TOTP_SECRET")
 # - entries are ENABLED by default for this dedicated forward-test branch
 # - operator can explicitly disable by setting FORWARD_TEST_ENABLE_ENTRIES=false
 ENABLE_ENTRIES = os.getenv("FORWARD_TEST_ENABLE_ENTRIES", "true").lower() == "true"
+# Late-start mode is OFF by default so normal 09:15 production behavior remains unchanged.
+LATE_START_TEST = os.getenv("FORWARD_TEST_LATE_START", "false").lower() == "true"
 
 
 class RateLimitError(RuntimeError):
@@ -96,7 +104,7 @@ def algotest_option_symbol(underlying: str, expiry: str, strike: float, option_t
 
 
 def can_start_live_collection(now: time) -> bool:
-    """Runner must be launched before 09:15 so the whole setup minute is live."""
+    """Normal production runner must be launched before 09:15."""
     return now < SETUP_START
 
 
@@ -279,9 +287,22 @@ def main():
     if now.time() >= TIME_EXIT:
         print("[STOP] After 15:40 IST")
         return
-    if not can_start_live_collection(now.time()):
+
+    if not LATE_START_TEST and not can_start_live_collection(now.time()):
         print("[SAFE STOP] Runner must be started before 09:15 IST; no historical 09:15 reconstruction is used.")
         return
+
+    if LATE_START_TEST:
+        setup_minute = now.strftime("%H:%M")
+        next_minute = (now.replace(second=0, microsecond=0) + timedelta(minutes=1))
+        freeze_at = next_minute.replace(second=2)
+        print("[TEST MODE] Late-start mode ENABLED")
+        print(f"[TEST MODE] LIVE setup candle = {setup_minute} IST")
+        print(f"[TEST MODE] Freeze = {freeze_at.strftime('%H:%M:%S')} IST")
+        print("[TEST MODE] Historical candle API remains DISABLED")
+    else:
+        setup_minute = "09:15"
+        freeze_at = datetime.combine(now.date(), FREEZE_TIME, tzinfo=IST)
 
     api, feed_token = login()
     master = load_master()
@@ -292,11 +313,11 @@ def main():
     print(f"[OK] Real F&O universe: {len(token_map)}")
     print(f"[OK] Max stock price: Rs {MAX_STOCK_PRICE:.0f}")
     print(f"[OK] AlgoTest entries: {'ENABLED' if ENABLE_ENTRIES else 'DISABLED (paper forward-test)'}")
-    print("[ARCH] 09:15 candle source = LIVE WEBSOCKET QUOTE | Historical candle API = DISABLED")
+    print(f"[ARCH] {setup_minute} candle source = LIVE WEBSOCKET QUOTE | Historical candle API = DISABLED")
     print("[ARCH] AlgoTest quantity = 1 LOT | Webhook retries = DISABLED to prevent duplicate orders")
 
     token_to_symbol = {token: symbol for symbol, token in token_map.items()}
-    collector = MinuteCandleCollector("09:15")
+    collector = MinuteCandleCollector(setup_minute)
     latest_quotes: dict[str, dict[str, float]] = {}
     states: dict[str, LiveState] = {}
     option_tokens: dict[str, tuple[str, str]] = {}
@@ -432,8 +453,6 @@ def main():
                 previous = state.option_ltp
                 state.option_ltp = ltp
                 if not state.entered:
-                    # Before entry we are waiting for the first option LTP.
-                    # After a completed/closed trade, do not create another entry.
                     if state.trade_used or state.exit_sent:
                         return
                     if not should_print_option_ltp(previous, ltp):
@@ -485,15 +504,15 @@ def main():
     ws_thread = threading.Thread(target=sws.connect, daemon=True)
     ws_thread.start()
     if not ws_ready.wait(timeout=20):
-        raise RuntimeError("WebSocket did not become ready before 09:15")
+        raise RuntimeError(f"WebSocket did not become ready before {setup_minute} test freeze")
 
-    target = datetime.combine(now.date(), FREEZE_TIME, tzinfo=IST)
-    while datetime.now(IST) < target:
+    while datetime.now(IST) < freeze_at:
         time_mod.sleep(0.2)
 
     if collector.count() < len(token_map):
         missing = len(token_map) - collector.count()
-        print(f"[SAFE STOP] 09:15 candle incomplete: {collector.count()}/{len(token_map)} stocks received; missing={missing}")
+        label = "TEST setup candle" if LATE_START_TEST else "09:15 candle"
+        print(f"[SAFE STOP] {label} incomplete: {collector.count()}/{len(token_map)} stocks received; missing={missing}")
         try:
             sws.close_connection()
         except Exception:
@@ -518,20 +537,21 @@ def main():
             pass
         return
 
-    print("\n[LOCKED 09:16] Top 7 gainers + Top 7 losers | LOCAL 09:15 CANDLE")
+    label = "TEST" if LATE_START_TEST else "09:16"
+    print(f"\n[LOCKED {label}] Top 7 gainers + Top 7 losers | LOCAL {setup_minute} CANDLE")
     for row, side in ranked:
         try:
             o, h, l, c = row["candle"]
             setup = make_setup(row["symbol"], o, h, l, c, side)
             if setup is None:
-                print(f"  {row['symbol']:<14} {side:<5} REJECTED 09:15 candle")
+                print(f"  {row['symbol']:<14} {side:<5} REJECTED {setup_minute} candle")
                 continue
             locked_option = lock_option_contract(master, row["symbol"], row["ltp"], now.date())
             states[row["symbol"]] = LiveState(setup=setup, locked_option=locked_option)
             wanted = "ce" if side == "LONG" else "pe"
             contract = locked_option[wanted]
             print(
-                f"  {row['symbol']:<14} {side:<5} READY stock_ltp_0916={row['ltp']:.2f} "
+                f"  {row['symbol']:<14} {side:<5} READY stock_ltp_freeze={row['ltp']:.2f} "
                 f"stock_entry={setup.entry_level:.2f} stock_sl={setup.stock_sl:.2f} "
                 f"ATM={locked_option['atm']:.2f} ATM-1={locked_option['strike']:.2f} option={contract['symbol']}"
             )
@@ -549,6 +569,8 @@ def main():
 
     print(f"[READY] {len(states)} eligible setups. Live stock trigger monitoring active until 15:40 IST.")
     print("[READY] AlgoTest entry/exit path uses 1 lot and JSON webhook messages.")
+    if LATE_START_TEST:
+        print("[TEST MODE] This run used a live late-start setup minute, not the normal 09:15 candle.")
 
     try:
         while datetime.now(IST).time() < TIME_EXIT:
