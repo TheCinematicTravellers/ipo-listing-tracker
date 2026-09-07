@@ -7,7 +7,7 @@ IST = ZoneInfo("Asia/Kolkata")
 
 
 def test_local_collector_builds_252_candle_without_api():
-    collector = MinuteCandleCollector("252")
+    collector = MinuteCandleCollector("14:52")
     collector.on_ltp("123", 100.0, datetime(2026, 8, 28, 14, 52, 1, tzinfo=IST))
     collector.on_ltp("123", 101.5, datetime(2026, 8, 28, 14, 52, 20, tzinfo=IST))
     collector.on_ltp("123", 99.5, datetime(2026, 8, 28, 14, 52, 40, tzinfo=IST))
@@ -17,7 +17,7 @@ def test_local_collector_builds_252_candle_without_api():
 
 
 def test_local_collector_ignores_ticks_outside_setup_minute():
-    collector = MinuteCandleCollector("252")
+    collector = MinuteCandleCollector("14:52")
     collector.on_ltp("123", 100.0, datetime(2026, 8, 28, 14, 51, 59, tzinfo=IST))
     collector.on_ltp("123", 101.0, datetime(2026, 8, 28, 14, 53, 0, tzinfo=IST))
     assert collector.candle("123") is None

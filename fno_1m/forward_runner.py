@@ -383,7 +383,7 @@ def main():
                 symbol, state.locked_option["expiry"], contract["strike"], side_key.upper()
             )
             result = AlgoTestForward().send_entry(ticker, "LONG", algotest_quantity(contract["lot_size"]))
-            print(f"[ALGOTEST] ENTRY SENT {ticker} | LOTS=1 | HTTP={result['status_code']}")
+            print(format_algotest_result("ENTRY", ticker, result) + " | LOTS=1")
         else:
             print("[ALGOTEST] ENTRY SKIPPED | FORWARD_TEST_ENABLE_ENTRIES=false")
 
@@ -592,3 +592,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+def format_algotest_result(action: str, ticker: str, result: dict) -> str:
+    return (
+        f"[ALGOTEST] {action} {ticker} | "
+        f"HTTP={result['status_code']} | "
+        f"RESPONSE={result.get('response', '')}"
+    )

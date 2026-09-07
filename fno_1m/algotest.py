@@ -33,7 +33,11 @@ class AlgoTestForward:
             raise RuntimeError(
                 f"AlgoTest webhook rejected entry: HTTP {response.status_code}: {response.text}"
             )
-        return {"status_code": response.status_code, "payload": payload}
+        return {
+            "status_code": response.status_code,
+            "payload": payload,
+            "response": response.text,
+        }
 
     def send_exit(self, symbol: str, quantity: int = 1) -> dict:
         if not self.forward_only:
