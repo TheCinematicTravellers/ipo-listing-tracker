@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>F&O 1M Forward Test</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 18px;background:#0b0b0b;color:#eee} .card{border:1px solid #333;border-radius:14px;padding:20px;margin:14px 0} code{background:#191919;padding:3px 6px;border-radius:5px}.ok{font-weight:700}</style>
+</head>
+<body>
+<h1>F&O 1M Forward Test</h1>
+<div class="card"><div class="ok">FORWARD TEST ONLY</div><p>No direct broker order placement from this subsystem.</p></div>
+<div class="card"><h2>Locked rules</h2><ul><li>208-stock F&O universe, excluding price &gt; ₹10,000</li><li>09:16 IST: lock Top 7 gainers + Top 7 losers</li><li>09:15–09:16 candle body ≥50%</li><li>Gainer Open=Low → LONG / ATM CE</li><li>Loser Open=High → SHORT / ATM PE</li><li>Option BUY LIMIT at current option LTP</li><li>Option target: +9.5% from option entry LTP</li><li>Underlying stock SL closes the option</li><li>15:05 IST time exit</li></ul></div>
+<div class="card"><h2>Runtime</h2><p>Configure the Python runtime separately. Keep secrets out of GitHub.</p></div>
+</body></html>
