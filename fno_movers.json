@@ -1,139 +1,166 @@
 {
-  "date_ist": "10-Sep-2026",
-  "updated_ist": "10-Sep-2026 07:54:49 PM",
+  "date_ist": "11-Sep-2026",
+  "updated_ist": "11-Sep-2026 07:54:35 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 4,
-  "eligible_open_high": 15,
+  "eligible_open_low": 7,
+  "eligible_open_high": 19,
   "gainers": [
     {
-      "symbol": "BLUESTARCO",
-      "change_pct": 3.92,
-      "open": 1450.0,
-      "high": 1518.5,
-      "low": 1450.0,
-      "cmp": 1514.0,
-      "volume": 997408
+      "symbol": "INDUSTOWER",
+      "change_pct": 4.3,
+      "open": 372.0,
+      "high": 390.85,
+      "low": 372.0,
+      "cmp": 388.0,
+      "volume": 16705183
     },
     {
-      "symbol": "RADICO",
-      "change_pct": 1.04,
-      "open": 4396.2,
-      "high": 4485.0,
-      "low": 4396.2,
-      "cmp": 4460.0,
-      "volume": 119987
+      "symbol": "DRREDDY",
+      "change_pct": 1.97,
+      "open": 1130.0,
+      "high": 1182.0,
+      "low": 1130.0,
+      "cmp": 1165.5,
+      "volume": 2403167
     },
     {
-      "symbol": "NBCC",
-      "change_pct": 0.41,
-      "open": 83.2,
-      "high": 84.7,
-      "low": 83.2,
-      "cmp": 83.94,
-      "volume": 4865181
+      "symbol": "LICHSGFIN",
+      "change_pct": 1.92,
+      "open": 546.0,
+      "high": 572.35,
+      "low": 546.0,
+      "cmp": 562.9,
+      "volume": 11553311
     },
     {
-      "symbol": "IOC",
-      "change_pct": -0.49,
-      "open": 134.31,
-      "high": 136.15,
-      "low": 134.31,
-      "cmp": 134.94,
-      "volume": 6622718
+      "symbol": "COFORGE",
+      "change_pct": 0.73,
+      "open": 1807.3,
+      "high": 1858.6,
+      "low": 1807.3,
+      "cmp": 1846.5,
+      "volume": 2687235
+    },
+    {
+      "symbol": "PFC",
+      "change_pct": 0.18,
+      "open": 348.0,
+      "high": 353.45,
+      "low": 348.0,
+      "cmp": 353.45,
+      "volume": 6192314
+    },
+    {
+      "symbol": "TCS",
+      "change_pct": -0.15,
+      "open": 2185.5,
+      "high": 2232.6,
+      "low": 2185.5,
+      "cmp": 2200.8,
+      "volume": 2633119
+    },
+    {
+      "symbol": "APOLLOHOSP",
+      "change_pct": -0.72,
+      "open": 8806.0,
+      "high": 8950.0,
+      "low": 8806.0,
+      "cmp": 8836.0,
+      "volume": 207702
     }
   ],
   "losers": [
     {
-      "symbol": "IDEA",
-      "change_pct": -3.99,
-      "open": 15.7,
-      "high": 15.7,
-      "low": 14.82,
-      "cmp": 14.9,
-      "volume": 887538004
+      "symbol": "COCHINSHIP",
+      "change_pct": -9.17,
+      "open": 1510.0,
+      "high": 1510.0,
+      "low": 1372.0,
+      "cmp": 1381.0,
+      "volume": 6385040
     },
     {
-      "symbol": "ADANIENSOL",
-      "change_pct": -2.21,
-      "open": 1439.4,
-      "high": 1439.4,
-      "low": 1382.1,
-      "cmp": 1391.9,
-      "volume": 1412366
+      "symbol": "GODREJPROP",
+      "change_pct": -6.62,
+      "open": 1855.0,
+      "high": 1855.0,
+      "low": 1719.0,
+      "cmp": 1748.0,
+      "volume": 2683753
     },
     {
-      "symbol": "AUROPHARMA",
-      "change_pct": -1.8,
-      "open": 1693.4,
-      "high": 1693.4,
-      "low": 1655.0,
-      "cmp": 1668.4,
-      "volume": 798157
+      "symbol": "SUPREMEIND",
+      "change_pct": -4.15,
+      "open": 3499.1,
+      "high": 3499.1,
+      "low": 3364.4,
+      "cmp": 3364.4,
+      "volume": 130082
     },
     {
-      "symbol": "BRITANNIA",
-      "change_pct": -1.59,
-      "open": 5108.0,
-      "high": 5108.0,
-      "low": 4997.0,
-      "cmp": 5009.0,
-      "volume": 262978
+      "symbol": "NATIONALUM",
+      "change_pct": -3.31,
+      "open": 365.0,
+      "high": 365.0,
+      "low": 352.35,
+      "cmp": 361.0,
+      "volume": 6558697
     },
     {
-      "symbol": "MARICO",
-      "change_pct": -1.34,
-      "open": 813.9,
-      "high": 813.9,
-      "low": 799.55,
-      "cmp": 803.0,
-      "volume": 2060125
+      "symbol": "NMDC",
+      "change_pct": -2.6,
+      "open": 83.79,
+      "high": 83.79,
+      "low": 82.25,
+      "cmp": 82.4,
+      "volume": 9227454
     },
     {
-      "symbol": "CROMPTON",
-      "change_pct": -1.27,
-      "open": 234.0,
-      "high": 234.0,
-      "low": 229.74,
-      "cmp": 230.0,
-      "volume": 2557072
+      "symbol": "SAIL",
+      "change_pct": -2.59,
+      "open": 182.43,
+      "high": 182.43,
+      "low": 178.65,
+      "cmp": 179.0,
+      "volume": 8751533
     },
     {
-      "symbol": "ADANIGREEN",
-      "change_pct": -1.21,
-      "open": 1322.0,
-      "high": 1322.0,
-      "low": 1292.0,
-      "cmp": 1299.1,
-      "volume": 1163000
+      "symbol": "GODFRYPHLP",
+      "change_pct": -2.28,
+      "open": 1965.8,
+      "high": 1965.8,
+      "low": 1921.2,
+      "cmp": 1927.0,
+      "volume": 229138
     },
     {
-      "symbol": "GMRAIRPORT",
-      "change_pct": -1.21,
-      "open": 98.61,
-      "high": 98.61,
-      "low": 96.82,
-      "cmp": 97.46,
-      "volume": 9680393
+      "symbol": "APLAPOLLO",
+      "change_pct": -1.88,
+      "open": 2176.2,
+      "high": 2176.2,
+      "low": 2109.8,
+      "cmp": 2153.5,
+      "volume": 591408
     },
     {
-      "symbol": "TATASTEEL",
-      "change_pct": -1.04,
-      "open": 189.0,
-      "high": 189.0,
-      "low": 185.0,
-      "cmp": 186.78,
-      "volume": 23326670
+      "symbol": "MAZDOCK",
+      "change_pct": -1.85,
+      "open": 2367.6,
+      "high": 2367.6,
+      "low": 2315.4,
+      "cmp": 2339.0,
+      "volume": 509100
     },
     {
-      "symbol": "ADANIENT",
-      "change_pct": -0.89,
-      "open": 3114.5,
-      "high": 3114.5,
-      "low": 3041.1,
-      "cmp": 3077.2,
-      "volume": 1715064
+      "symbol": "INDUSINDBK",
+      "change_pct": -1.52,
+      "open": 988.7,
+      "high": 988.7,
+      "low": 972.3,
+      "cmp": 978.2,
+      "volume": 2504299
     }
   ]
 }
