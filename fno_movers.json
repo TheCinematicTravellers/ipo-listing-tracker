@@ -1,6 +1,6 @@
 {
-  "date_ist": "11-Sep-2026",
-  "updated_ist": "11-Sep-2026 07:54:35 PM",
+  "date_ist": "14-Sep-2026",
+  "updated_ist": "14-Sep-2026 09:51:50 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
@@ -14,7 +14,7 @@
       "high": 390.85,
       "low": 372.0,
       "cmp": 388.0,
-      "volume": 16705183
+      "volume": 16707001
     },
     {
       "symbol": "DRREDDY",
@@ -23,7 +23,7 @@
       "high": 1182.0,
       "low": 1130.0,
       "cmp": 1165.5,
-      "volume": 2403167
+      "volume": 2403285
     },
     {
       "symbol": "LICHSGFIN",
@@ -32,7 +32,7 @@
       "high": 572.35,
       "low": 546.0,
       "cmp": 562.9,
-      "volume": 11553311
+      "volume": 11556446
     },
     {
       "symbol": "COFORGE",
@@ -41,7 +41,7 @@
       "high": 1858.6,
       "low": 1807.3,
       "cmp": 1846.5,
-      "volume": 2687235
+      "volume": 2687329
     },
     {
       "symbol": "PFC",
@@ -50,7 +50,7 @@
       "high": 353.45,
       "low": 348.0,
       "cmp": 353.45,
-      "volume": 6192314
+      "volume": 6198609
     },
     {
       "symbol": "TCS",
@@ -59,7 +59,7 @@
       "high": 2232.6,
       "low": 2185.5,
       "cmp": 2200.8,
-      "volume": 2633119
+      "volume": 2634124
     },
     {
       "symbol": "APOLLOHOSP",
@@ -68,7 +68,7 @@
       "high": 8950.0,
       "low": 8806.0,
       "cmp": 8836.0,
-      "volume": 207702
+      "volume": 207930
     }
   ],
   "losers": [
@@ -79,7 +79,7 @@
       "high": 1510.0,
       "low": 1372.0,
       "cmp": 1381.0,
-      "volume": 6385040
+      "volume": 6390480
     },
     {
       "symbol": "GODREJPROP",
@@ -88,7 +88,7 @@
       "high": 1855.0,
       "low": 1719.0,
       "cmp": 1748.0,
-      "volume": 2683753
+      "volume": 2684348
     },
     {
       "symbol": "SUPREMEIND",
@@ -97,7 +97,7 @@
       "high": 3499.1,
       "low": 3364.4,
       "cmp": 3364.4,
-      "volume": 130082
+      "volume": 130229
     },
     {
       "symbol": "NATIONALUM",
@@ -106,7 +106,7 @@
       "high": 365.0,
       "low": 352.35,
       "cmp": 361.0,
-      "volume": 6558697
+      "volume": 6560514
     },
     {
       "symbol": "NMDC",
@@ -115,7 +115,7 @@
       "high": 83.79,
       "low": 82.25,
       "cmp": 82.4,
-      "volume": 9227454
+      "volume": 9234255
     },
     {
       "symbol": "SAIL",
@@ -124,7 +124,7 @@
       "high": 182.43,
       "low": 178.65,
       "cmp": 179.0,
-      "volume": 8751533
+      "volume": 8764231
     },
     {
       "symbol": "GODFRYPHLP",
@@ -133,7 +133,7 @@
       "high": 1965.8,
       "low": 1921.2,
       "cmp": 1927.0,
-      "volume": 229138
+      "volume": 229401
     },
     {
       "symbol": "APLAPOLLO",
@@ -142,7 +142,7 @@
       "high": 2176.2,
       "low": 2109.8,
       "cmp": 2153.5,
-      "volume": 591408
+      "volume": 591497
     },
     {
       "symbol": "MAZDOCK",
@@ -151,7 +151,7 @@
       "high": 2367.6,
       "low": 2315.4,
       "cmp": 2339.0,
-      "volume": 509100
+      "volume": 509510
     },
     {
       "symbol": "INDUSINDBK",
@@ -160,7 +160,7 @@
       "high": 988.7,
       "low": 972.3,
       "cmp": 978.2,
-      "volume": 2504299
+      "volume": 2504608
     }
   ]
 }
