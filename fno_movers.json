@@ -1,121 +1,121 @@
 {
-  "date_ist": "15-Sep-2026",
-  "updated_ist": "15-Sep-2026 08:28:59 PM",
+  "date_ist": "16-Sep-2026",
+  "updated_ist": "16-Sep-2026 08:27:24 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 2,
-  "eligible_open_high": 23,
+  "eligible_open_low": 8,
+  "eligible_open_high": 4,
   "gainers": [
     {
-      "symbol": "MPHASIS",
-      "change_pct": 3.62,
-      "open": 2353.0,
-      "high": 2461.1,
-      "low": 2353.0,
-      "cmp": 2378.0,
-      "volume": 1176827
+      "symbol": "SBILIFE",
+      "change_pct": 2.65,
+      "open": 1656.4,
+      "high": 1705.0,
+      "low": 1656.4,
+      "cmp": 1697.9,
+      "volume": 834906
     },
     {
-      "symbol": "KPITTECH",
-      "change_pct": 1.67,
-      "open": 560.0,
-      "high": 580.95,
-      "low": 560.0,
-      "cmp": 563.0,
-      "volume": 4090212
+      "symbol": "OBEROIRLTY",
+      "change_pct": 2.3,
+      "open": 1660.0,
+      "high": 1717.3,
+      "low": 1660.0,
+      "cmp": 1706.9,
+      "volume": 599598
+    },
+    {
+      "symbol": "PIDILITIND",
+      "change_pct": 1.49,
+      "open": 1521.2,
+      "high": 1546.9,
+      "low": 1521.2,
+      "cmp": 1543.8,
+      "volume": 573317
+    },
+    {
+      "symbol": "HINDALCO",
+      "change_pct": 1.46,
+      "open": 956.4,
+      "high": 978.5,
+      "low": 956.4,
+      "cmp": 972.7,
+      "volume": 3439301
+    },
+    {
+      "symbol": "RECLTD",
+      "change_pct": 1.35,
+      "open": 308.7,
+      "high": 315.5,
+      "low": 308.7,
+      "cmp": 312.65,
+      "volume": 4651813
+    },
+    {
+      "symbol": "M&M",
+      "change_pct": 1.34,
+      "open": 3044.6,
+      "high": 3105.9,
+      "low": 3044.6,
+      "cmp": 3070.0,
+      "volume": 2390530
+    },
+    {
+      "symbol": "GODREJCP",
+      "change_pct": 0.7,
+      "open": 856.0,
+      "high": 876.85,
+      "low": 856.0,
+      "cmp": 863.0,
+      "volume": 1427680
+    },
+    {
+      "symbol": "IDFCFIRSTB",
+      "change_pct": 0.25,
+      "open": 84.61,
+      "high": 85.71,
+      "low": 84.61,
+      "cmp": 85.01,
+      "volume": 14271641
     }
   ],
   "losers": [
     {
-      "symbol": "GVT&D",
-      "change_pct": -6.62,
-      "open": 4520.0,
-      "high": 4520.0,
-      "low": 4191.6,
-      "cmp": 4246.9,
-      "volume": 1106294
+      "symbol": "SUZLON",
+      "change_pct": -1.75,
+      "open": 42.9,
+      "high": 42.9,
+      "low": 41.76,
+      "cmp": 42.15,
+      "volume": 65007079
     },
     {
-      "symbol": "SHRIRAMFIN",
-      "change_pct": -4.74,
-      "open": 1044.9,
-      "high": 1044.9,
-      "low": 979.8,
-      "cmp": 979.8,
-      "volume": 5925389
+      "symbol": "CHOLAFIN",
+      "change_pct": -1.45,
+      "open": 1800.7,
+      "high": 1800.7,
+      "low": 1756.3,
+      "cmp": 1765.6,
+      "volume": 1312950
     },
     {
-      "symbol": "LODHA",
-      "change_pct": -4.66,
-      "open": 1128.0,
-      "high": 1128.0,
-      "low": 1064.8,
-      "cmp": 1064.8,
-      "volume": 1479736
+      "symbol": "AUROPHARMA",
+      "change_pct": -1.02,
+      "open": 1657.1,
+      "high": 1657.1,
+      "low": 1623.0,
+      "cmp": 1643.0,
+      "volume": 522848
     },
     {
-      "symbol": "JSWENERGY",
-      "change_pct": -4.07,
-      "open": 526.45,
-      "high": 526.45,
-      "low": 505.0,
-      "cmp": 505.0,
-      "volume": 897076
-    },
-    {
-      "symbol": "COCHINSHIP",
-      "change_pct": -4.06,
-      "open": 1389.0,
-      "high": 1389.0,
-      "low": 1320.0,
-      "cmp": 1325.0,
-      "volume": 1989128
-    },
-    {
-      "symbol": "ABB",
-      "change_pct": -3.7,
-      "open": 7268.0,
-      "high": 7268.0,
-      "low": 7005.0,
-      "cmp": 7005.0,
-      "volume": 195023
-    },
-    {
-      "symbol": "TITAN",
-      "change_pct": -3.06,
-      "open": 5003.0,
-      "high": 5003.0,
-      "low": 4856.0,
-      "cmp": 4856.0,
-      "volume": 504321
-    },
-    {
-      "symbol": "PHOENIXLTD",
-      "change_pct": -2.98,
-      "open": 1890.0,
-      "high": 1890.0,
-      "low": 1833.6,
-      "cmp": 1833.6,
-      "volume": 366859
-    },
-    {
-      "symbol": "ADANIPORTS",
-      "change_pct": -2.88,
-      "open": 1791.4,
-      "high": 1791.4,
-      "low": 1713.8,
-      "cmp": 1713.8,
-      "volume": 1608188
-    },
-    {
-      "symbol": "ULTRACEMCO",
-      "change_pct": -2.75,
-      "open": 11045.0,
-      "high": 11045.0,
-      "low": 10697.0,
-      "cmp": 10697.0,
-      "volume": 335161
+      "symbol": "MAXHEALTH",
+      "change_pct": -0.49,
+      "open": 1036.4,
+      "high": 1036.4,
+      "low": 1021.6,
+      "cmp": 1025.0,
+      "volume": 1600452
     }
   ]
 }
