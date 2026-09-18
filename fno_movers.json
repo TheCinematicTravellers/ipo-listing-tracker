@@ -1,102 +1,139 @@
 {
-  "date_ist": "17-Sep-2026",
-  "updated_ist": "17-Sep-2026 08:29:01 PM",
+  "date_ist": "18-Sep-2026",
+  "updated_ist": "18-Sep-2026 07:59:35 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 28,
-  "eligible_open_high": 0,
+  "eligible_open_low": 25,
+  "eligible_open_high": 4,
   "gainers": [
     {
-      "symbol": "DRREDDY",
-      "change_pct": 3.07,
-      "open": 1140.0,
-      "high": 1189.8,
-      "low": 1140.0,
-      "cmp": 1175.0,
-      "volume": 2311919
+      "symbol": "SUPREMEIND",
+      "change_pct": 8.49,
+      "open": 3347.4,
+      "high": 3580.3,
+      "low": 3347.4,
+      "cmp": 3580.3,
+      "volume": 469754
     },
     {
-      "symbol": "SBICARD",
-      "change_pct": 3.05,
-      "open": 616.0,
-      "high": 641.55,
-      "low": 616.0,
-      "cmp": 636.95,
-      "volume": 1811826
+      "symbol": "ABCAPITAL",
+      "change_pct": 5.14,
+      "open": 390.5,
+      "high": 410.05,
+      "low": 390.5,
+      "cmp": 410.05,
+      "volume": 4888619
     },
     {
-      "symbol": "AUROPHARMA",
-      "change_pct": 2.86,
-      "open": 1634.0,
-      "high": 1692.3,
-      "low": 1634.0,
-      "cmp": 1690.0,
-      "volume": 758767
+      "symbol": "ADANIGREEN",
+      "change_pct": 5.06,
+      "open": 1274.2,
+      "high": 1337.9,
+      "low": 1274.2,
+      "cmp": 1334.5,
+      "volume": 2597171
     },
     {
-      "symbol": "GMRAIRPORT",
-      "change_pct": 2.79,
-      "open": 92.46,
-      "high": 95.72,
-      "low": 92.46,
-      "cmp": 95.04,
-      "volume": 11553632
+      "symbol": "HINDZINC",
+      "change_pct": 4.14,
+      "open": 578.3,
+      "high": 596.0,
+      "low": 578.3,
+      "cmp": 596.0,
+      "volume": 7197021
     },
     {
-      "symbol": "BEL",
-      "change_pct": 2.51,
-      "open": 387.0,
-      "high": 395.9,
-      "low": 387.0,
-      "cmp": 395.45,
-      "volume": 7817045
+      "symbol": "BHARATFORG",
+      "change_pct": 4.09,
+      "open": 1940.1,
+      "high": 1994.9,
+      "low": 1940.1,
+      "cmp": 1962.1,
+      "volume": 1602315
     },
     {
-      "symbol": "INDIGO",
-      "change_pct": 2.36,
-      "open": 4746.5,
-      "high": 4855.5,
-      "low": 4746.5,
-      "cmp": 4845.0,
-      "volume": 509588
+      "symbol": "VEDL",
+      "change_pct": 3.94,
+      "open": 258.0,
+      "high": 267.6,
+      "low": 258.0,
+      "cmp": 267.6,
+      "volume": 8484152
     },
     {
-      "symbol": "JINDALSTEL",
-      "change_pct": 2.3,
-      "open": 1104.1,
-      "high": 1134.6,
-      "low": 1104.1,
-      "cmp": 1128.4,
-      "volume": 719104
+      "symbol": "HAVELLS",
+      "change_pct": 3.9,
+      "open": 1086.0,
+      "high": 1132.4,
+      "low": 1086.0,
+      "cmp": 1132.4,
+      "volume": 745375
     },
     {
-      "symbol": "SWIGGY",
-      "change_pct": 2.22,
-      "open": 271.0,
-      "high": 278.65,
-      "low": 271.0,
-      "cmp": 276.5,
-      "volume": 9239331
+      "symbol": "SONACOMS",
+      "change_pct": 3.87,
+      "open": 780.2,
+      "high": 812.0,
+      "low": 780.2,
+      "cmp": 808.0,
+      "volume": 4201864
     },
     {
-      "symbol": "PAGEIND",
-      "change_pct": 2.17,
-      "open": 34300.0,
-      "high": 35290.0,
-      "low": 34300.0,
-      "cmp": 35020.0,
-      "volume": 14270
+      "symbol": "ADANIENSOL",
+      "change_pct": 3.55,
+      "open": 1380.9,
+      "high": 1436.5,
+      "low": 1380.9,
+      "cmp": 1436.1,
+      "volume": 2145921
     },
     {
-      "symbol": "RVNL",
-      "change_pct": 2.13,
-      "open": 196.5,
-      "high": 201.9,
-      "low": 196.5,
-      "cmp": 201.7,
-      "volume": 3551415
+      "symbol": "RADICO",
+      "change_pct": 3.55,
+      "open": 4381.0,
+      "high": 4535.4,
+      "low": 4381.0,
+      "cmp": 4535.4,
+      "volume": 371544
     }
   ],
-  "losers": []
+  "losers": [
+    {
+      "symbol": "TATAELXSI",
+      "change_pct": -3.15,
+      "open": 3399.0,
+      "high": 3399.0,
+      "low": 3266.7,
+      "cmp": 3266.7,
+      "volume": 297430
+    },
+    {
+      "symbol": "ITC",
+      "change_pct": -1.47,
+      "open": 266.6,
+      "high": 266.6,
+      "low": 262.3,
+      "cmp": 262.3,
+      "volume": 14399150
+    },
+    {
+      "symbol": "INFY",
+      "change_pct": -0.68,
+      "open": 1061.9,
+      "high": 1061.9,
+      "low": 1038.0,
+      "cmp": 1051.4,
+      "volume": 22124953
+    },
+    {
+      "symbol": "WIPRO",
+      "change_pct": 0.26,
+      "open": 166.9,
+      "high": 166.9,
+      "low": 163.3,
+      "cmp": 166.83,
+      "volume": 23606474
+    }
+  ]
 }
