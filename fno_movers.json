@@ -1,102 +1,130 @@
 {
-  "date_ist": "28-Sep-2026",
-  "updated_ist": "28-Sep-2026 11:39:45 PM",
+  "date_ist": "29-Sep-2026",
+  "updated_ist": "29-Sep-2026 10:00:14 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 0,
-  "eligible_open_high": 54,
-  "gainers": [],
+  "eligible_open_low": 3,
+  "eligible_open_high": 12,
+  "gainers": [
+    {
+      "symbol": "MANKIND",
+      "change_pct": 4.49,
+      "open": 2436.8,
+      "high": 2559.0,
+      "low": 2436.8,
+      "cmp": 2545.0,
+      "volume": 1973367
+    },
+    {
+      "symbol": "BSE",
+      "change_pct": 3.31,
+      "open": 3100.0,
+      "high": 3200.0,
+      "low": 3100.0,
+      "cmp": 3200.0,
+      "volume": 29963718
+    },
+    {
+      "symbol": "COALINDIA",
+      "change_pct": 0.59,
+      "open": 420.55,
+      "high": 426.0,
+      "low": 420.55,
+      "cmp": 425.0,
+      "volume": 7455548
+    }
+  ],
   "losers": [
     {
-      "symbol": "YESBANK",
-      "change_pct": -5.87,
-      "open": 22.38,
-      "high": 22.38,
-      "low": 21.11,
-      "cmp": 21.18,
-      "volume": 121853640
+      "symbol": "PRESTIGE",
+      "change_pct": -3.62,
+      "open": 1465.0,
+      "high": 1465.0,
+      "low": 1417.5,
+      "cmp": 1417.5,
+      "volume": 746008
     },
     {
-      "symbol": "BANKINDIA",
-      "change_pct": -5.76,
-      "open": 137.5,
-      "high": 137.5,
-      "low": 129.31,
-      "cmp": 129.99,
-      "volume": 10516501
-    },
-    {
-      "symbol": "NAM-INDIA",
-      "change_pct": -5.45,
-      "open": 1155.0,
-      "high": 1155.0,
-      "low": 1091.3,
-      "cmp": 1093.9,
-      "volume": 1009635
-    },
-    {
-      "symbol": "ADANIENSOL",
-      "change_pct": -3.78,
-      "open": 1338.0,
-      "high": 1338.0,
-      "low": 1283.0,
-      "cmp": 1287.9,
-      "volume": 1229906
-    },
-    {
-      "symbol": "BANDHANBNK",
+      "symbol": "MFSL",
       "change_pct": -3.57,
-      "open": 187.0,
-      "high": 187.0,
-      "low": 180.6,
-      "cmp": 181.0,
-      "volume": 8925964
+      "open": 1459.9,
+      "high": 1459.9,
+      "low": 1381.0,
+      "cmp": 1392.4,
+      "volume": 954190
     },
     {
-      "symbol": "CANBK",
-      "change_pct": -3.47,
-      "open": 124.68,
-      "high": 124.68,
-      "low": 120.26,
-      "cmp": 120.65,
-      "volume": 16248146
+      "symbol": "CROMPTON",
+      "change_pct": -3.4,
+      "open": 219.0,
+      "high": 219.0,
+      "low": 211.37,
+      "cmp": 211.37,
+      "volume": 5882906
     },
     {
-      "symbol": "PNB",
-      "change_pct": -3.43,
-      "open": 116.55,
-      "high": 116.55,
-      "low": 112.07,
-      "cmp": 112.6,
-      "volume": 14247343
+      "symbol": "RADICO",
+      "change_pct": -2.55,
+      "open": 4478.0,
+      "high": 4478.0,
+      "low": 4364.0,
+      "cmp": 4364.0,
+      "volume": 236377
     },
     {
-      "symbol": "BANKBARODA",
-      "change_pct": -3.3,
-      "open": 234.99,
-      "high": 234.99,
-      "low": 227.5,
-      "cmp": 227.5,
-      "volume": 7027638
+      "symbol": "RVNL",
+      "change_pct": -2.39,
+      "open": 202.0,
+      "high": 202.0,
+      "low": 195.32,
+      "cmp": 197.9,
+      "volume": 7340244
     },
     {
-      "symbol": "GMRAIRPORT",
-      "change_pct": -3.27,
-      "open": 97.5,
-      "high": 97.5,
-      "low": 94.06,
-      "cmp": 94.75,
-      "volume": 6334458
+      "symbol": "TIINDIA",
+      "change_pct": -1.87,
+      "open": 2455.3,
+      "high": 2455.3,
+      "low": 2397.8,
+      "cmp": 2413.0,
+      "volume": 392119
     },
     {
-      "symbol": "ANGELONE",
-      "change_pct": -3.06,
-      "open": 286.4,
-      "high": 286.4,
-      "low": 278.05,
-      "cmp": 279.2,
-      "volume": 4739888
+      "symbol": "SUPREMEIND",
+      "change_pct": -1.54,
+      "open": 3499.0,
+      "high": 3499.0,
+      "low": 3444.0,
+      "cmp": 3445.8,
+      "volume": 129015
+    },
+    {
+      "symbol": "JIOFIN",
+      "change_pct": -1.33,
+      "open": 220.5,
+      "high": 220.5,
+      "low": 215.36,
+      "cmp": 217.56,
+      "volume": 17112650
+    },
+    {
+      "symbol": "ASHOKLEY",
+      "change_pct": -1.15,
+      "open": 155.5,
+      "high": 155.5,
+      "low": 152.48,
+      "cmp": 153.44,
+      "volume": 14335882
+    },
+    {
+      "symbol": "MARUTI",
+      "change_pct": -1.09,
+      "open": 12046.0,
+      "high": 12046.0,
+      "low": 11831.0,
+      "cmp": 11877.0,
+      "volume": 519632
     }
   ]
 }
