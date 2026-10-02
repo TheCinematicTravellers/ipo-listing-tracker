@@ -1,6 +1,6 @@
 {
-  "date_ist": "01-Oct-2026",
-  "updated_ist": "01-Oct-2026 10:31:30 PM",
+  "date_ist": "02-Oct-2026",
+  "updated_ist": "02-Oct-2026 09:45:49 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
@@ -14,7 +14,7 @@
       "high": 2265.0,
       "low": 2160.1,
       "cmp": 2250.2,
-      "volume": 1178135
+      "volume": 1178274
     },
     {
       "symbol": "RBLBANK",
@@ -23,7 +23,7 @@
       "high": 417.8,
       "low": 405.05,
       "cmp": 411.4,
-      "volume": 5386481
+      "volume": 5387538
     }
   ],
   "losers": [
@@ -34,7 +34,7 @@
       "high": 1170.0,
       "low": 1099.1,
       "cmp": 1111.0,
-      "volume": 788521
+      "volume": 788650
     },
     {
       "symbol": "ADANIPORTS",
@@ -43,7 +43,7 @@
       "high": 1786.0,
       "low": 1716.0,
       "cmp": 1737.8,
-      "volume": 2157254
+      "volume": 2157928
     },
     {
       "symbol": "PIIND",
@@ -52,7 +52,7 @@
       "high": 2302.4,
       "low": 2220.0,
       "cmp": 2236.0,
-      "volume": 125253
+      "volume": 125263
     },
     {
       "symbol": "ITC",
@@ -61,7 +61,7 @@
       "high": 262.7,
       "low": 254.65,
       "cmp": 255.9,
-      "volume": 16440881
+      "volume": 16447266
     },
     {
       "symbol": "CHOLAFIN",
@@ -70,7 +70,7 @@
       "high": 1619.7,
       "low": 1563.2,
       "cmp": 1580.0,
-      "volume": 1699903
+      "volume": 1699959
     },
     {
       "symbol": "AUBANK",
@@ -79,7 +79,7 @@
       "high": 1009.0,
       "low": 974.2,
       "cmp": 987.0,
-      "volume": 2487888
+      "volume": 2487890
     },
     {
       "symbol": "JSWENERGY",
@@ -88,7 +88,7 @@
       "high": 493.0,
       "low": 475.1,
       "cmp": 485.0,
-      "volume": 1851165
+      "volume": 1851516
     },
     {
       "symbol": "GODREJCP",
@@ -97,7 +97,7 @@
       "high": 852.0,
       "low": 838.0,
       "cmp": 840.0,
-      "volume": 838028
+      "volume": 838419
     },
     {
       "symbol": "BAJAJHLDNG",
@@ -106,7 +106,7 @@
       "high": 10775.0,
       "low": 10415.0,
       "cmp": 10666.0,
-      "volume": 39881
+      "volume": 39942
     }
   ]
 }
