@@ -1,112 +1,11 @@
 {
-  "date_ist": "02-Oct-2026",
-  "updated_ist": "02-Oct-2026 09:45:49 PM",
+  "date_ist": "06-Oct-2026",
+  "updated_ist": "06-Oct-2026 12:47:33 AM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 208,
-  "eligible_open_low": 2,
-  "eligible_open_high": 9,
-  "gainers": [
-    {
-      "symbol": "MPHASIS",
-      "change_pct": 4.45,
-      "open": 2160.1,
-      "high": 2265.0,
-      "low": 2160.1,
-      "cmp": 2250.2,
-      "volume": 1178274
-    },
-    {
-      "symbol": "RBLBANK",
-      "change_pct": 2.0,
-      "open": 405.05,
-      "high": 417.8,
-      "low": 405.05,
-      "cmp": 411.4,
-      "volume": 5387538
-    }
-  ],
-  "losers": [
-    {
-      "symbol": "UNOMINDA",
-      "change_pct": -5.04,
-      "open": 1170.0,
-      "high": 1170.0,
-      "low": 1099.1,
-      "cmp": 1111.0,
-      "volume": 788650
-    },
-    {
-      "symbol": "ADANIPORTS",
-      "change_pct": -3.36,
-      "open": 1786.0,
-      "high": 1786.0,
-      "low": 1716.0,
-      "cmp": 1737.8,
-      "volume": 2157928
-    },
-    {
-      "symbol": "PIIND",
-      "change_pct": -3.2,
-      "open": 2302.4,
-      "high": 2302.4,
-      "low": 2220.0,
-      "cmp": 2236.0,
-      "volume": 125263
-    },
-    {
-      "symbol": "ITC",
-      "change_pct": -2.61,
-      "open": 262.7,
-      "high": 262.7,
-      "low": 254.65,
-      "cmp": 255.9,
-      "volume": 16447266
-    },
-    {
-      "symbol": "CHOLAFIN",
-      "change_pct": -2.47,
-      "open": 1619.7,
-      "high": 1619.7,
-      "low": 1563.2,
-      "cmp": 1580.0,
-      "volume": 1699959
-    },
-    {
-      "symbol": "AUBANK",
-      "change_pct": -2.31,
-      "open": 1009.0,
-      "high": 1009.0,
-      "low": 974.2,
-      "cmp": 987.0,
-      "volume": 2487890
-    },
-    {
-      "symbol": "JSWENERGY",
-      "change_pct": -1.96,
-      "open": 493.0,
-      "high": 493.0,
-      "low": 475.1,
-      "cmp": 485.0,
-      "volume": 1851516
-    },
-    {
-      "symbol": "GODREJCP",
-      "change_pct": -1.18,
-      "open": 852.0,
-      "high": 852.0,
-      "low": 838.0,
-      "cmp": 840.0,
-      "volume": 838419
-    },
-    {
-      "symbol": "BAJAJHLDNG",
-      "change_pct": -1.13,
-      "open": 10775.0,
-      "high": 10775.0,
-      "low": 10415.0,
-      "cmp": 10666.0,
-      "volume": 39942
-    }
-  ]
+  "available": 0,
+  "eligible_open_low": 0,
+  "eligible_open_high": 0,
+  "gainers": [],
+  "losers": []
 }
