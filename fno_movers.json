@@ -1,11 +1,139 @@
 {
   "date_ist": "06-Oct-2026",
-  "updated_ist": "06-Oct-2026 12:47:33 AM",
+  "updated_ist": "06-Oct-2026 10:17:03 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 0,
-  "eligible_open_low": 0,
-  "eligible_open_high": 0,
-  "gainers": [],
-  "losers": []
+  "available": 208,
+  "eligible_open_low": 8,
+  "eligible_open_high": 6,
+  "gainers": [
+    {
+      "symbol": "HAL",
+      "change_pct": 2.91,
+      "open": 4680.0,
+      "high": 4837.1,
+      "low": 4680.0,
+      "cmp": 4816.0,
+      "volume": 935635
+    },
+    {
+      "symbol": "RELIANCE",
+      "change_pct": 2.66,
+      "open": 1188.1,
+      "high": 1219.1,
+      "low": 1188.1,
+      "cmp": 1218.0,
+      "volume": 17995025
+    },
+    {
+      "symbol": "DELHIVERY",
+      "change_pct": 1.8,
+      "open": 400.3,
+      "high": 410.8,
+      "low": 400.3,
+      "cmp": 407.5,
+      "volume": 2098849
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "change_pct": 1.8,
+      "open": 1145.0,
+      "high": 1164.8,
+      "low": 1145.0,
+      "cmp": 1159.5,
+      "volume": 1575401
+    },
+    {
+      "symbol": "INDHOTEL",
+      "change_pct": 1.52,
+      "open": 720.3,
+      "high": 736.0,
+      "low": 720.3,
+      "cmp": 736.0,
+      "volume": 2461719
+    },
+    {
+      "symbol": "UPL",
+      "change_pct": 1.4,
+      "open": 503.9,
+      "high": 511.55,
+      "low": 503.9,
+      "cmp": 509.55,
+      "volume": 1193813
+    },
+    {
+      "symbol": "SHREECEM",
+      "change_pct": 1.0,
+      "open": 21800.0,
+      "high": 22210.0,
+      "low": 21800.0,
+      "cmp": 22210.0,
+      "volume": 22432
+    },
+    {
+      "symbol": "PFC",
+      "change_pct": 0.19,
+      "open": 322.3,
+      "high": 327.25,
+      "low": 322.3,
+      "cmp": 322.6,
+      "volume": 7467128
+    }
+  ],
+  "losers": [
+    {
+      "symbol": "PHOENIXLTD",
+      "change_pct": -2.66,
+      "open": 1946.8,
+      "high": 1946.8,
+      "low": 1857.8,
+      "cmp": 1883.5,
+      "volume": 617638
+    },
+    {
+      "symbol": "JINDALSTEL",
+      "change_pct": -1.04,
+      "open": 1090.0,
+      "high": 1090.0,
+      "low": 1034.8,
+      "cmp": 1085.9,
+      "volume": 4442443
+    },
+    {
+      "symbol": "YESBANK",
+      "change_pct": -0.95,
+      "open": 21.05,
+      "high": 21.05,
+      "low": 20.81,
+      "cmp": 20.86,
+      "volume": 48824934
+    },
+    {
+      "symbol": "KAYNES",
+      "change_pct": 0.3,
+      "open": 3430.8,
+      "high": 3430.8,
+      "low": 3333.0,
+      "cmp": 3405.0,
+      "volume": 908101
+    },
+    {
+      "symbol": "MARICO",
+      "change_pct": 0.53,
+      "open": 796.95,
+      "high": 796.95,
+      "low": 784.5,
+      "cmp": 794.15,
+      "volume": 1467096
+    },
+    {
+      "symbol": "GODFRYPHLP",
+      "change_pct": 1.28,
+      "open": 1900.0,
+      "high": 1900.0,
+      "low": 1872.6,
+      "cmp": 1900.0,
+      "volume": 146191
+    }
+  ]
 }
