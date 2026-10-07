@@ -1,139 +1,130 @@
 {
-  "date_ist": "06-Oct-2026",
-  "updated_ist": "06-Oct-2026 10:17:03 PM",
+  "date_ist": "07-Oct-2026",
+  "updated_ist": "07-Oct-2026 10:55:00 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 8,
-  "eligible_open_high": 6,
+  "eligible_open_low": 3,
+  "eligible_open_high": 29,
   "gainers": [
     {
-      "symbol": "HAL",
-      "change_pct": 2.91,
-      "open": 4680.0,
-      "high": 4837.1,
-      "low": 4680.0,
-      "cmp": 4816.0,
-      "volume": 935635
+      "symbol": "PNBHOUSING",
+      "change_pct": 2.62,
+      "open": 1105.1,
+      "high": 1139.7,
+      "low": 1105.1,
+      "cmp": 1131.0,
+      "volume": 1125048
     },
     {
-      "symbol": "RELIANCE",
-      "change_pct": 2.66,
-      "open": 1188.1,
-      "high": 1219.1,
-      "low": 1188.1,
-      "cmp": 1218.0,
-      "volume": 17995025
+      "symbol": "JUBLFOOD",
+      "change_pct": 2.41,
+      "open": 455.55,
+      "high": 467.0,
+      "low": 455.55,
+      "cmp": 460.6,
+      "volume": 2597038
     },
     {
-      "symbol": "DELHIVERY",
-      "change_pct": 1.8,
-      "open": 400.3,
-      "high": 410.8,
-      "low": 400.3,
-      "cmp": 407.5,
-      "volume": 2098849
-    },
-    {
-      "symbol": "ZYDUSLIFE",
-      "change_pct": 1.8,
-      "open": 1145.0,
-      "high": 1164.8,
-      "low": 1145.0,
-      "cmp": 1159.5,
-      "volume": 1575401
-    },
-    {
-      "symbol": "INDHOTEL",
-      "change_pct": 1.52,
-      "open": 720.3,
-      "high": 736.0,
-      "low": 720.3,
-      "cmp": 736.0,
-      "volume": 2461719
-    },
-    {
-      "symbol": "UPL",
-      "change_pct": 1.4,
-      "open": 503.9,
-      "high": 511.55,
-      "low": 503.9,
-      "cmp": 509.55,
-      "volume": 1193813
-    },
-    {
-      "symbol": "SHREECEM",
-      "change_pct": 1.0,
-      "open": 21800.0,
-      "high": 22210.0,
-      "low": 21800.0,
-      "cmp": 22210.0,
-      "volume": 22432
-    },
-    {
-      "symbol": "PFC",
-      "change_pct": 0.19,
-      "open": 322.3,
-      "high": 327.25,
-      "low": 322.3,
-      "cmp": 322.6,
-      "volume": 7467128
+      "symbol": "NYKAA",
+      "change_pct": 0.9,
+      "open": 337.0,
+      "high": 346.45,
+      "low": 337.0,
+      "cmp": 341.25,
+      "volume": 6076314
     }
   ],
   "losers": [
     {
-      "symbol": "PHOENIXLTD",
-      "change_pct": -2.66,
-      "open": 1946.8,
-      "high": 1946.8,
-      "low": 1857.8,
-      "cmp": 1883.5,
-      "volume": 617638
+      "symbol": "NATIONALUM",
+      "change_pct": -4.73,
+      "open": 337.25,
+      "high": 337.25,
+      "low": 321.05,
+      "cmp": 321.3,
+      "volume": 9471136
     },
     {
-      "symbol": "JINDALSTEL",
-      "change_pct": -1.04,
-      "open": 1090.0,
-      "high": 1090.0,
-      "low": 1034.8,
-      "cmp": 1085.9,
-      "volume": 4442443
+      "symbol": "COLPAL",
+      "change_pct": -2.87,
+      "open": 1800.9,
+      "high": 1800.9,
+      "low": 1757.4,
+      "cmp": 1757.4,
+      "volume": 184399
     },
     {
-      "symbol": "YESBANK",
-      "change_pct": -0.95,
-      "open": 21.05,
-      "high": 21.05,
-      "low": 20.81,
-      "cmp": 20.86,
-      "volume": 48824934
+      "symbol": "UPL",
+      "change_pct": -2.86,
+      "open": 510.0,
+      "high": 510.0,
+      "low": 494.6,
+      "cmp": 495.0,
+      "volume": 2174071
     },
     {
-      "symbol": "KAYNES",
-      "change_pct": 0.3,
-      "open": 3430.8,
-      "high": 3430.8,
-      "low": 3333.0,
-      "cmp": 3405.0,
-      "volume": 908101
+      "symbol": "PRESTIGE",
+      "change_pct": -2.62,
+      "open": 1467.5,
+      "high": 1467.5,
+      "low": 1425.5,
+      "cmp": 1429.3,
+      "volume": 589880
     },
     {
-      "symbol": "MARICO",
-      "change_pct": 0.53,
-      "open": 796.95,
-      "high": 796.95,
-      "low": 784.5,
-      "cmp": 794.15,
-      "volume": 1467096
+      "symbol": "IDFCFIRSTB",
+      "change_pct": -2.48,
+      "open": 81.46,
+      "high": 81.46,
+      "low": 78.75,
+      "cmp": 79.54,
+      "volume": 20244769
     },
     {
-      "symbol": "GODFRYPHLP",
-      "change_pct": 1.28,
-      "open": 1900.0,
-      "high": 1900.0,
-      "low": 1872.6,
-      "cmp": 1900.0,
-      "volume": 146191
+      "symbol": "BIOCON",
+      "change_pct": -2.47,
+      "open": 368.4,
+      "high": 368.4,
+      "low": 358.4,
+      "cmp": 360.0,
+      "volume": 4414801
+    },
+    {
+      "symbol": "BEL",
+      "change_pct": -2.35,
+      "open": 386.5,
+      "high": 386.5,
+      "low": 378.0,
+      "cmp": 378.3,
+      "volume": 13633083
+    },
+    {
+      "symbol": "DELHIVERY",
+      "change_pct": -2.29,
+      "open": 407.5,
+      "high": 407.5,
+      "low": 398.15,
+      "cmp": 398.15,
+      "volume": 1068073
+    },
+    {
+      "symbol": "HYUNDAI",
+      "change_pct": -2.21,
+      "open": 1989.0,
+      "high": 1989.0,
+      "low": 1935.0,
+      "cmp": 1945.0,
+      "volume": 498857
+    },
+    {
+      "symbol": "NMDC",
+      "change_pct": -2.12,
+      "open": 73.8,
+      "high": 73.8,
+      "low": 72.44,
+      "cmp": 72.8,
+      "volume": 15123571
     }
   ]
 }
