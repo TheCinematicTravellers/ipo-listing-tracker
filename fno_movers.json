@@ -1,130 +1,102 @@
 {
-  "date_ist": "07-Oct-2026",
-  "updated_ist": "07-Oct-2026 10:55:00 PM",
+  "date_ist": "08-Oct-2026",
+  "updated_ist": "08-Oct-2026 10:54:01 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 3,
-  "eligible_open_high": 29,
-  "gainers": [
-    {
-      "symbol": "PNBHOUSING",
-      "change_pct": 2.62,
-      "open": 1105.1,
-      "high": 1139.7,
-      "low": 1105.1,
-      "cmp": 1131.0,
-      "volume": 1125048
-    },
-    {
-      "symbol": "JUBLFOOD",
-      "change_pct": 2.41,
-      "open": 455.55,
-      "high": 467.0,
-      "low": 455.55,
-      "cmp": 460.6,
-      "volume": 2597038
-    },
-    {
-      "symbol": "NYKAA",
-      "change_pct": 0.9,
-      "open": 337.0,
-      "high": 346.45,
-      "low": 337.0,
-      "cmp": 341.25,
-      "volume": 6076314
-    }
-  ],
+  "eligible_open_low": 0,
+  "eligible_open_high": 31,
+  "gainers": [],
   "losers": [
     {
-      "symbol": "NATIONALUM",
-      "change_pct": -4.73,
-      "open": 337.25,
-      "high": 337.25,
-      "low": 321.05,
-      "cmp": 321.3,
-      "volume": 9471136
+      "symbol": "AMBER",
+      "change_pct": -5.34,
+      "open": 6839.5,
+      "high": 6839.5,
+      "low": 6550.0,
+      "cmp": 6555.0,
+      "volume": 241532
     },
     {
-      "symbol": "COLPAL",
-      "change_pct": -2.87,
-      "open": 1800.9,
-      "high": 1800.9,
-      "low": 1757.4,
-      "cmp": 1757.4,
-      "volume": 184399
+      "symbol": "ADANIENSOL",
+      "change_pct": -5.1,
+      "open": 1328.9,
+      "high": 1328.9,
+      "low": 1241.2,
+      "cmp": 1251.5,
+      "volume": 2431059
     },
     {
-      "symbol": "UPL",
-      "change_pct": -2.86,
-      "open": 510.0,
-      "high": 510.0,
-      "low": 494.6,
-      "cmp": 495.0,
-      "volume": 2174071
+      "symbol": "MOTILALOFS",
+      "change_pct": -5.02,
+      "open": 1066.9,
+      "high": 1066.9,
+      "low": 1011.25,
+      "cmp": 1014.3,
+      "volume": 788865
     },
     {
-      "symbol": "PRESTIGE",
-      "change_pct": -2.62,
-      "open": 1467.5,
-      "high": 1467.5,
-      "low": 1425.5,
-      "cmp": 1429.3,
-      "volume": 589880
+      "symbol": "PIIND",
+      "change_pct": -4.98,
+      "open": 2212.7,
+      "high": 2212.7,
+      "low": 2100.0,
+      "cmp": 2100.0,
+      "volume": 246233
     },
     {
-      "symbol": "IDFCFIRSTB",
-      "change_pct": -2.48,
-      "open": 81.46,
-      "high": 81.46,
-      "low": 78.75,
-      "cmp": 79.54,
-      "volume": 20244769
+      "symbol": "SUZLON",
+      "change_pct": -4.98,
+      "open": 38.43,
+      "high": 38.43,
+      "low": 36.31,
+      "cmp": 36.43,
+      "volume": 85647153
     },
     {
-      "symbol": "BIOCON",
-      "change_pct": -2.47,
-      "open": 368.4,
-      "high": 368.4,
-      "low": 358.4,
-      "cmp": 360.0,
-      "volume": 4414801
+      "symbol": "CAMS",
+      "change_pct": -4.62,
+      "open": 691.6,
+      "high": 691.6,
+      "low": 662.0,
+      "cmp": 662.5,
+      "volume": 1020255
     },
     {
-      "symbol": "BEL",
-      "change_pct": -2.35,
-      "open": 386.5,
-      "high": 386.5,
-      "low": 378.0,
-      "cmp": 378.3,
-      "volume": 13633083
+      "symbol": "SAIL",
+      "change_pct": -4.62,
+      "open": 175.65,
+      "high": 175.65,
+      "low": 165.76,
+      "cmp": 166.25,
+      "volume": 13691154
     },
     {
-      "symbol": "DELHIVERY",
-      "change_pct": -2.29,
-      "open": 407.5,
-      "high": 407.5,
-      "low": 398.15,
-      "cmp": 398.15,
-      "volume": 1068073
+      "symbol": "BANDHANBNK",
+      "change_pct": -4.57,
+      "open": 163.29,
+      "high": 163.29,
+      "low": 154.13,
+      "cmp": 155.54,
+      "volume": 14673745
     },
     {
-      "symbol": "HYUNDAI",
-      "change_pct": -2.21,
-      "open": 1989.0,
-      "high": 1989.0,
-      "low": 1935.0,
-      "cmp": 1945.0,
-      "volume": 498857
+      "symbol": "APLAPOLLO",
+      "change_pct": -4.45,
+      "open": 2125.0,
+      "high": 2125.0,
+      "low": 2040.0,
+      "cmp": 2040.0,
+      "volume": 253098
     },
     {
-      "symbol": "NMDC",
-      "change_pct": -2.12,
-      "open": 73.8,
-      "high": 73.8,
-      "low": 72.44,
-      "cmp": 72.8,
-      "volume": 15123571
+      "symbol": "OBEROIRLTY",
+      "change_pct": -4.19,
+      "open": 1730.0,
+      "high": 1730.0,
+      "low": 1663.3,
+      "cmp": 1663.3,
+      "volume": 351751
     }
   ]
 }
