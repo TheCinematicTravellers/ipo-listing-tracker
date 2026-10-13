@@ -1,11 +1,94 @@
 {
   "date_ist": "13-Oct-2026",
-  "updated_ist": "13-Oct-2026 01:17:50 AM",
+  "updated_ist": "13-Oct-2026 11:04:58 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 0,
-  "eligible_open_low": 0,
-  "eligible_open_high": 0,
-  "gainers": [],
-  "losers": []
+  "available": 208,
+  "eligible_open_low": 6,
+  "eligible_open_high": 3,
+  "gainers": [
+    {
+      "symbol": "PHOENIXLTD",
+      "change_pct": 4.94,
+      "open": 1840.4,
+      "high": 1902.6,
+      "low": 1840.4,
+      "cmp": 1902.6,
+      "volume": 611017
+    },
+    {
+      "symbol": "MPHASIS",
+      "change_pct": 4.5,
+      "open": 2377.0,
+      "high": 2467.4,
+      "low": 2377.0,
+      "cmp": 2466.3,
+      "volume": 1103755
+    },
+    {
+      "symbol": "RECLTD",
+      "change_pct": 2.33,
+      "open": 302.3,
+      "high": 307.8,
+      "low": 302.3,
+      "cmp": 307.0,
+      "volume": 15379071
+    },
+    {
+      "symbol": "TECHM",
+      "change_pct": 1.94,
+      "open": 1479.5,
+      "high": 1543.5,
+      "low": 1479.5,
+      "cmp": 1543.5,
+      "volume": 3258527
+    },
+    {
+      "symbol": "INDIANB",
+      "change_pct": 1.42,
+      "open": 817.0,
+      "high": 841.55,
+      "low": 817.0,
+      "cmp": 841.55,
+      "volume": 2373885
+    },
+    {
+      "symbol": "BHARTIARTL",
+      "change_pct": 0.08,
+      "open": 1756.2,
+      "high": 1806.5,
+      "low": 1756.2,
+      "cmp": 1806.5,
+      "volume": 5942724
+    }
+  ],
+  "losers": [
+    {
+      "symbol": "AUROPHARMA",
+      "change_pct": -0.5,
+      "open": 1706.9,
+      "high": 1706.9,
+      "low": 1665.5,
+      "cmp": 1684.6,
+      "volume": 953116
+    },
+    {
+      "symbol": "KEI",
+      "change_pct": 1.21,
+      "open": 4650.0,
+      "high": 4650.0,
+      "low": 4502.2,
+      "cmp": 4640.6,
+      "volume": 335824
+    },
+    {
+      "symbol": "FORCEMOT",
+      "change_pct": 1.6,
+      "open": 17180.0,
+      "high": 17180.0,
+      "low": 16856.0,
+      "cmp": 17170.0,
+      "volume": 53710
+    }
+  ]
 }
