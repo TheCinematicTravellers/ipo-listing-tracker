@@ -1,6 +1,6 @@
 {
-  "date_ist": "19-Oct-2026",
-  "updated_ist": "19-Oct-2026 10:28:40 PM",
+  "date_ist": "20-Oct-2026",
+  "updated_ist": "20-Oct-2026 08:32:10 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
@@ -14,7 +14,7 @@
       "high": 226.25,
       "low": 223.0,
       "cmp": 225.0,
-      "volume": 5257311
+      "volume": 5262091
     },
     {
       "symbol": "HINDPETRO",
@@ -23,7 +23,7 @@
       "high": 349.55,
       "low": 344.0,
       "cmp": 348.5,
-      "volume": 3971710
+      "volume": 3972010
     },
     {
       "symbol": "GMRAIRPORT",
@@ -32,7 +32,7 @@
       "high": 90.45,
       "low": 89.0,
       "cmp": 90.1,
-      "volume": 6632470
+      "volume": 6633009
     },
     {
       "symbol": "INDIANB",
@@ -41,7 +41,7 @@
       "high": 874.65,
       "low": 855.15,
       "cmp": 856.85,
-      "volume": 1105120
+      "volume": 1105179
     },
     {
       "symbol": "BPCL",
@@ -50,7 +50,7 @@
       "high": 298.0,
       "low": 292.0,
       "cmp": 294.3,
-      "volume": 2430982
+      "volume": 2432283
     }
   ],
   "losers": [
@@ -61,7 +61,7 @@
       "high": 1264.9,
       "low": 1225.3,
       "cmp": 1236.0,
-      "volume": 12761304
+      "volume": 12762071
     },
     {
       "symbol": "SUZLON",
@@ -70,7 +70,7 @@
       "high": 41.58,
       "low": 40.25,
       "cmp": 40.38,
-      "volume": 65155205
+      "volume": 65237716
     },
     {
       "symbol": "INFY",
@@ -79,7 +79,7 @@
       "high": 1156.95,
       "low": 1125.1,
       "cmp": 1130.7,
-      "volume": 13255049
+      "volume": 13258477
     },
     {
       "symbol": "POLYCAB",
@@ -88,7 +88,7 @@
       "high": 8238.0,
       "low": 7990.0,
       "cmp": 8025.0,
-      "volume": 294278
+      "volume": 294308
     },
     {
       "symbol": "HDFCBANK",
@@ -97,7 +97,7 @@
       "high": 733.4,
       "low": 707.15,
       "cmp": 712.0,
-      "volume": 33521732
+      "volume": 33524133
     },
     {
       "symbol": "TRENT",
@@ -106,7 +106,7 @@
       "high": 2958.0,
       "low": 2867.0,
       "cmp": 2891.6,
-      "volume": 813587
+      "volume": 813750
     },
     {
       "symbol": "NATIONALUM",
@@ -115,7 +115,7 @@
       "high": 324.25,
       "low": 316.9,
       "cmp": 318.0,
-      "volume": 2825431
+      "volume": 2826003
     },
     {
       "symbol": "360ONE",
@@ -133,7 +133,7 @@
       "high": 10386.0,
       "low": 10134.0,
       "cmp": 10214.0,
-      "volume": 119527
+      "volume": 119668
     },
     {
       "symbol": "JUBLFOOD",
@@ -142,7 +142,7 @@
       "high": 420.0,
       "low": 412.0,
       "cmp": 413.5,
-      "volume": 795535
+      "volume": 795567
     }
   ]
 }
