@@ -1,148 +1,112 @@
 {
-  "date_ist": "20-Oct-2026",
-  "updated_ist": "20-Oct-2026 08:32:10 PM",
+  "date_ist": "21-Oct-2026",
+  "updated_ist": "21-Oct-2026 08:42:52 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 5,
-  "eligible_open_high": 13,
+  "eligible_open_low": 1,
+  "eligible_open_high": 18,
   "gainers": [
     {
-      "symbol": "ONGC",
-      "change_pct": 1.35,
-      "open": 223.0,
-      "high": 226.25,
-      "low": 223.0,
-      "cmp": 225.0,
-      "volume": 5262091
-    },
-    {
-      "symbol": "HINDPETRO",
-      "change_pct": 0.72,
-      "open": 344.0,
-      "high": 349.55,
-      "low": 344.0,
-      "cmp": 348.5,
-      "volume": 3972010
-    },
-    {
-      "symbol": "GMRAIRPORT",
-      "change_pct": 0.67,
-      "open": 89.0,
-      "high": 90.45,
-      "low": 89.0,
-      "cmp": 90.1,
-      "volume": 6633009
-    },
-    {
-      "symbol": "INDIANB",
-      "change_pct": 0.32,
-      "open": 855.15,
-      "high": 874.65,
-      "low": 855.15,
-      "cmp": 856.85,
-      "volume": 1105179
-    },
-    {
-      "symbol": "BPCL",
-      "change_pct": 0.27,
-      "open": 292.0,
-      "high": 298.0,
-      "low": 292.0,
-      "cmp": 294.3,
-      "volume": 2432283
+      "symbol": "KPITTECH",
+      "change_pct": 1.44,
+      "open": 538.0,
+      "high": 550.95,
+      "low": 538.0,
+      "cmp": 544.7,
+      "volume": 2886497
     }
   ],
   "losers": [
     {
-      "symbol": "AXISBANK",
-      "change_pct": -4.19,
-      "open": 1264.9,
-      "high": 1264.9,
-      "low": 1225.3,
-      "cmp": 1236.0,
-      "volume": 12762071
+      "symbol": "ABB",
+      "change_pct": -5.94,
+      "open": 7038.0,
+      "high": 7038.0,
+      "low": 6510.0,
+      "cmp": 6559.5,
+      "volume": 656643
     },
     {
-      "symbol": "SUZLON",
-      "change_pct": -3.86,
-      "open": 41.58,
-      "high": 41.58,
-      "low": 40.25,
-      "cmp": 40.38,
-      "volume": 65237716
+      "symbol": "MANAPPURAM",
+      "change_pct": -5.62,
+      "open": 318.0,
+      "high": 318.0,
+      "low": 298.2,
+      "cmp": 301.6,
+      "volume": 6857611
     },
     {
-      "symbol": "INFY",
-      "change_pct": -2.63,
-      "open": 1156.95,
-      "high": 1156.95,
-      "low": 1125.1,
-      "cmp": 1130.7,
-      "volume": 13258477
+      "symbol": "IDEA",
+      "change_pct": -5.21,
+      "open": 12.38,
+      "high": 12.38,
+      "low": 11.62,
+      "cmp": 11.64,
+      "volume": 525409360
+    },
+    {
+      "symbol": "UNITDSPR",
+      "change_pct": -4.96,
+      "open": 1357.7,
+      "high": 1357.7,
+      "low": 1282.2,
+      "cmp": 1296.3,
+      "volume": 914707
+    },
+    {
+      "symbol": "KEI",
+      "change_pct": -4.76,
+      "open": 4454.0,
+      "high": 4454.0,
+      "low": 4218.1,
+      "cmp": 4230.4,
+      "volume": 258418
     },
     {
       "symbol": "POLYCAB",
-      "change_pct": -2.36,
-      "open": 8238.0,
-      "high": 8238.0,
-      "low": 7990.0,
-      "cmp": 8025.0,
-      "volume": 294308
+      "change_pct": -3.17,
+      "open": 8095.0,
+      "high": 8095.0,
+      "low": 7712.0,
+      "cmp": 7770.5,
+      "volume": 308717
     },
     {
-      "symbol": "HDFCBANK",
-      "change_pct": -2.31,
-      "open": 733.4,
-      "high": 733.4,
-      "low": 707.15,
-      "cmp": 712.0,
-      "volume": 33524133
+      "symbol": "MUTHOOTFIN",
+      "change_pct": -2.97,
+      "open": 2530.0,
+      "high": 2530.0,
+      "low": 2445.9,
+      "cmp": 2489.8,
+      "volume": 951131
     },
     {
-      "symbol": "TRENT",
-      "change_pct": -2.27,
-      "open": 2958.0,
-      "high": 2958.0,
-      "low": 2867.0,
-      "cmp": 2891.6,
-      "volume": 813750
+      "symbol": "YESBANK",
+      "change_pct": -2.78,
+      "open": 16.95,
+      "high": 16.95,
+      "low": 16.02,
+      "cmp": 16.41,
+      "volume": 207035128
     },
     {
-      "symbol": "NATIONALUM",
-      "change_pct": -1.93,
-      "open": 324.25,
-      "high": 324.25,
-      "low": 316.9,
-      "cmp": 318.0,
-      "volume": 2826003
+      "symbol": "VEDL",
+      "change_pct": -2.61,
+      "open": 247.0,
+      "high": 247.0,
+      "low": 233.1,
+      "cmp": 236.85,
+      "volume": 12179171
     },
     {
-      "symbol": "360ONE",
-      "change_pct": -1.86,
-      "open": 1075.0,
-      "high": 1075.0,
-      "low": 1043.2,
-      "cmp": 1055.0,
-      "volume": 1696837
-    },
-    {
-      "symbol": "OFSS",
-      "change_pct": -1.66,
-      "open": 10386.0,
-      "high": 10386.0,
-      "low": 10134.0,
-      "cmp": 10214.0,
-      "volume": 119668
-    },
-    {
-      "symbol": "JUBLFOOD",
-      "change_pct": -1.06,
-      "open": 420.0,
-      "high": 420.0,
-      "low": 412.0,
-      "cmp": 413.5,
-      "volume": 795567
+      "symbol": "TIINDIA",
+      "change_pct": -2.59,
+      "open": 2177.3,
+      "high": 2177.3,
+      "low": 2100.5,
+      "cmp": 2113.9,
+      "volume": 296595
     }
   ]
 }
