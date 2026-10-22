@@ -1,112 +1,102 @@
 {
-  "date_ist": "21-Oct-2026",
-  "updated_ist": "21-Oct-2026 08:42:52 PM",
+  "date_ist": "22-Oct-2026",
+  "updated_ist": "22-Oct-2026 08:44:39 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 1,
-  "eligible_open_high": 18,
-  "gainers": [
-    {
-      "symbol": "KPITTECH",
-      "change_pct": 1.44,
-      "open": 538.0,
-      "high": 550.95,
-      "low": 538.0,
-      "cmp": 544.7,
-      "volume": 2886497
-    }
-  ],
+  "eligible_open_low": 0,
+  "eligible_open_high": 14,
+  "gainers": [],
   "losers": [
     {
-      "symbol": "ABB",
-      "change_pct": -5.94,
-      "open": 7038.0,
-      "high": 7038.0,
-      "low": 6510.0,
-      "cmp": 6559.5,
-      "volume": 656643
-    },
-    {
-      "symbol": "MANAPPURAM",
-      "change_pct": -5.62,
-      "open": 318.0,
-      "high": 318.0,
-      "low": 298.2,
-      "cmp": 301.6,
-      "volume": 6857611
-    },
-    {
-      "symbol": "IDEA",
-      "change_pct": -5.21,
-      "open": 12.38,
-      "high": 12.38,
-      "low": 11.62,
-      "cmp": 11.64,
-      "volume": 525409360
-    },
-    {
-      "symbol": "UNITDSPR",
-      "change_pct": -4.96,
-      "open": 1357.7,
-      "high": 1357.7,
-      "low": 1282.2,
-      "cmp": 1296.3,
-      "volume": 914707
-    },
-    {
       "symbol": "KEI",
-      "change_pct": -4.76,
-      "open": 4454.0,
-      "high": 4454.0,
-      "low": 4218.1,
-      "cmp": 4230.4,
-      "volume": 258418
+      "change_pct": -8.45,
+      "open": 4099.8,
+      "high": 4099.8,
+      "low": 3744.8,
+      "cmp": 3873.0,
+      "volume": 3434175
     },
     {
-      "symbol": "POLYCAB",
-      "change_pct": -3.17,
-      "open": 8095.0,
-      "high": 8095.0,
-      "low": 7712.0,
-      "cmp": 7770.5,
-      "volume": 308717
+      "symbol": "POWERINDIA",
+      "change_pct": -3.62,
+      "open": 28000.0,
+      "high": 28000.0,
+      "low": 26820.0,
+      "cmp": 27035.0,
+      "volume": 211829
     },
     {
-      "symbol": "MUTHOOTFIN",
-      "change_pct": -2.97,
-      "open": 2530.0,
-      "high": 2530.0,
-      "low": 2445.9,
-      "cmp": 2489.8,
-      "volume": 951131
+      "symbol": "DABUR",
+      "change_pct": -2.92,
+      "open": 375.4,
+      "high": 375.4,
+      "low": 367.6,
+      "cmp": 368.0,
+      "volume": 1184558
     },
     {
-      "symbol": "YESBANK",
+      "symbol": "NESTLEIND",
       "change_pct": -2.78,
-      "open": 16.95,
-      "high": 16.95,
-      "low": 16.02,
-      "cmp": 16.41,
-      "volume": 207035128
+      "open": 1210.0,
+      "high": 1210.0,
+      "low": 1181.3,
+      "cmp": 1189.9,
+      "volume": 1993076
     },
     {
-      "symbol": "VEDL",
-      "change_pct": -2.61,
-      "open": 247.0,
-      "high": 247.0,
-      "low": 233.1,
-      "cmp": 236.85,
-      "volume": 12179171
+      "symbol": "ABCAPITAL",
+      "change_pct": -2.67,
+      "open": 366.0,
+      "high": 366.0,
+      "low": 355.4,
+      "cmp": 357.2,
+      "volume": 3102586
     },
     {
-      "symbol": "TIINDIA",
-      "change_pct": -2.59,
-      "open": 2177.3,
-      "high": 2177.3,
-      "low": 2100.5,
-      "cmp": 2113.9,
-      "volume": 296595
+      "symbol": "COLPAL",
+      "change_pct": -2.03,
+      "open": 1719.9,
+      "high": 1719.9,
+      "low": 1677.6,
+      "cmp": 1685.0,
+      "volume": 362205
+    },
+    {
+      "symbol": "BHARATFORG",
+      "change_pct": -1.86,
+      "open": 1767.8,
+      "high": 1767.8,
+      "low": 1723.4,
+      "cmp": 1741.0,
+      "volume": 1353866
+    },
+    {
+      "symbol": "BEL",
+      "change_pct": -1.8,
+      "open": 369.55,
+      "high": 369.55,
+      "low": 361.7,
+      "cmp": 364.5,
+      "volume": 8169838
+    },
+    {
+      "symbol": "HDFCAMC",
+      "change_pct": -1.65,
+      "open": 2308.0,
+      "high": 2308.0,
+      "low": 2258.0,
+      "cmp": 2273.2,
+      "volume": 1139972
+    },
+    {
+      "symbol": "COALINDIA",
+      "change_pct": -1.21,
+      "open": 404.7,
+      "high": 404.7,
+      "low": 395.65,
+      "cmp": 402.55,
+      "volume": 6753782
     }
   ]
 }
