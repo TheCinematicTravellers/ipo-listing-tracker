@@ -1,76 +1,130 @@
 {
-  "date_ist": "26-Oct-2026",
-  "updated_ist": "26-Oct-2026 10:17:05 PM",
+  "date_ist": "27-Oct-2026",
+  "updated_ist": "27-Oct-2026 09:21:54 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
   "available": 208,
-  "eligible_open_low": 4,
-  "eligible_open_high": 3,
+  "eligible_open_low": 7,
+  "eligible_open_high": 6,
   "gainers": [
     {
-      "symbol": "BSE",
-      "change_pct": 3.97,
-      "open": 3213.0,
-      "high": 3379.3,
-      "low": 3213.0,
-      "cmp": 3359.0,
-      "volume": 4230739
+      "symbol": "CUMMINSIND",
+      "change_pct": 3.34,
+      "open": 4387.0,
+      "high": 4532.0,
+      "low": 4387.0,
+      "cmp": 4532.0,
+      "volume": 583976
     },
     {
-      "symbol": "MPHASIS",
-      "change_pct": 3.13,
-      "open": 2435.0,
-      "high": 2563.3,
-      "low": 2435.0,
-      "cmp": 2557.6,
-      "volume": 523355
+      "symbol": "BAJAJ-AUTO",
+      "change_pct": 3.17,
+      "open": 10075.0,
+      "high": 10390.0,
+      "low": 10075.0,
+      "cmp": 10390.0,
+      "volume": 340297
     },
     {
-      "symbol": "PERSISTENT",
-      "change_pct": 2.14,
-      "open": 5600.0,
-      "high": 5873.5,
-      "low": 5600.0,
-      "cmp": 5850.0,
-      "volume": 458522
+      "symbol": "ANGELONE",
+      "change_pct": 2.34,
+      "open": 281.85,
+      "high": 292.75,
+      "low": 281.85,
+      "cmp": 289.2,
+      "volume": 4628386
+    },
+    {
+      "symbol": "BANKBARODA",
+      "change_pct": 0.83,
+      "open": 230.9,
+      "high": 234.41,
+      "low": 230.9,
+      "cmp": 233.93,
+      "volume": 5683062
+    },
+    {
+      "symbol": "SUNPHARMA",
+      "change_pct": 0.64,
+      "open": 1740.0,
+      "high": 1767.9,
+      "low": 1740.0,
+      "cmp": 1751.2,
+      "volume": 1547719
+    },
+    {
+      "symbol": "HINDALCO",
+      "change_pct": 0.63,
+      "open": 881.0,
+      "high": 894.5,
+      "low": 881.0,
+      "cmp": 891.2,
+      "volume": 3781023
     },
     {
       "symbol": "PHOENIXLTD",
-      "change_pct": 1.16,
-      "open": 1842.6,
-      "high": 1904.9,
-      "low": 1842.6,
-      "cmp": 1894.0,
-      "volume": 406388
+      "change_pct": 0.58,
+      "open": 1894.0,
+      "high": 1931.5,
+      "low": 1894.0,
+      "cmp": 1905.0,
+      "volume": 401432
     }
   ],
   "losers": [
     {
-      "symbol": "TATACONSUM",
-      "change_pct": -2.84,
-      "open": 960.0,
-      "high": 960.0,
-      "low": 916.0,
-      "cmp": 936.5,
-      "volume": 2325152
+      "symbol": "PIDILITIND",
+      "change_pct": -1.89,
+      "open": 1477.9,
+      "high": 1477.9,
+      "low": 1443.2,
+      "cmp": 1450.0,
+      "volume": 630112
     },
     {
-      "symbol": "GODREJCP",
-      "change_pct": -2.71,
-      "open": 850.1,
-      "high": 850.1,
-      "low": 827.0,
-      "cmp": 833.15,
-      "volume": 1201885
+      "symbol": "BAJAJHLDNG",
+      "change_pct": -1.35,
+      "open": 11083.0,
+      "high": 11083.0,
+      "low": 10730.0,
+      "cmp": 10901.0,
+      "volume": 84249
     },
     {
-      "symbol": "ICICIPRULI",
-      "change_pct": -2.04,
-      "open": 430.9,
-      "high": 430.9,
-      "low": 413.4,
-      "cmp": 422.2,
-      "volume": 1601001
+      "symbol": "ICICIBANK",
+      "change_pct": -1.15,
+      "open": 1400.9,
+      "high": 1400.9,
+      "low": 1377.6,
+      "cmp": 1386.9,
+      "volume": 15877198
+    },
+    {
+      "symbol": "SHREECEM",
+      "change_pct": -1.02,
+      "open": 23690.0,
+      "high": 23690.0,
+      "low": 23125.0,
+      "cmp": 23300.0,
+      "volume": 26216
+    },
+    {
+      "symbol": "VMM",
+      "change_pct": -0.8,
+      "open": 88.68,
+      "high": 88.68,
+      "low": 87.12,
+      "cmp": 87.99,
+      "volume": 8499543
+    },
+    {
+      "symbol": "BRITANNIA",
+      "change_pct": -0.44,
+      "open": 4580.0,
+      "high": 4580.0,
+      "low": 4520.3,
+      "cmp": 4560.0,
+      "volume": 308062
     }
   ]
 }
