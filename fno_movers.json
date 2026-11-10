@@ -1,9 +1,9 @@
 {
   "date_ist": "10-Nov-2026",
-  "updated_ist": "10-Nov-2026 02:11:29 AM",
+  "updated_ist": "10-Nov-2026 11:16:02 PM",
   "timezone": "Asia/Kolkata",
   "universe_size": 208,
-  "available": 207,
+  "available": 208,
   "eligible_open_low": 4,
   "eligible_open_high": 7,
   "gainers": [
@@ -14,7 +14,7 @@
       "high": 2480.0,
       "low": 2351.5,
       "cmp": 2454.0,
-      "volume": 4025076
+      "volume": 4026300
     },
     {
       "symbol": "KALYANKJIL",
@@ -23,7 +23,7 @@
       "high": 614.45,
       "low": 595.0,
       "cmp": 611.0,
-      "volume": 13926450
+      "volume": 13929833
     },
     {
       "symbol": "POWERINDIA",
@@ -32,7 +32,7 @@
       "high": 28745.0,
       "low": 27980.0,
       "cmp": 28150.0,
-      "volume": 151614
+      "volume": 151631
     },
     {
       "symbol": "IOC",
@@ -41,7 +41,7 @@
       "high": 149.08,
       "low": 145.61,
       "cmp": 146.85,
-      "volume": 22640944
+      "volume": 22650357
     }
   ],
   "losers": [
@@ -52,7 +52,7 @@
       "high": 6340.0,
       "low": 6094.0,
       "cmp": 6230.0,
-      "volume": 355476
+      "volume": 355568
     },
     {
       "symbol": "HCLTECH",
@@ -61,7 +61,7 @@
       "high": 1432.0,
       "low": 1394.1,
       "cmp": 1407.0,
-      "volume": 3949176
+      "volume": 3949445
     },
     {
       "symbol": "MFSL",
@@ -79,7 +79,7 @@
       "high": 283.45,
       "low": 277.9,
       "cmp": 278.8,
-      "volume": 18568003
+      "volume": 18577205
     },
     {
       "symbol": "VMM",
@@ -88,7 +88,7 @@
       "high": 93.9,
       "low": 90.7,
       "cmp": 92.62,
-      "volume": 6279681
+      "volume": 6280761
     },
     {
       "symbol": "GODFRYPHLP",
@@ -97,7 +97,7 @@
       "high": 1810.0,
       "low": 1766.5,
       "cmp": 1774.8,
-      "volume": 192372
+      "volume": 192382
     },
     {
       "symbol": "INDUSTOWER",
@@ -106,7 +106,7 @@
       "high": 383.75,
       "low": 377.1,
       "cmp": 383.55,
-      "volume": 4538295
+      "volume": 4538429
     }
   ]
 }
